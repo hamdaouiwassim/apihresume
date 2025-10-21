@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('experiences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('resume_id')->constrained()->onDelete('cascade');
-            $table->string('job_title');
+            $table->string('position');
             $table->string('company');
-            $table->date('start_date');
-            $table->date('end_date')->nullable(); // null if currently working
+            $table->date('startDate');
+            $table->date('endDate')->nullable(); // null if currently working
             $table->text('description')->nullable();
             $table->timestamps();
         });

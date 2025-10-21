@@ -12,6 +12,7 @@ class BasicInfo extends Model
         'resume_id',
         'full_name',
         'email',
+        'phone',
         'job_title',
         'address',
         'linkedin',

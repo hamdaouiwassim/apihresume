@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\BasicInfoController;
+use App\Http\Controllers\ExperienceContoller;
 use App\Http\Controllers\ResumeController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +15,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-
+    Route::apiResource("experiences" , ExperienceContoller::class);
+    Route::apiResource('templates', TemplateController::class);
     Route::apiResource('resumes', ResumeController::class);
     Route::apiResource('basic-info', BasicInfoController::class);
     Route::get('/my-resumes', [UserController::class, 'myResumes']);

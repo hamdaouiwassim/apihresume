@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Template;
 use Illuminate\Http\Request;
 
 class TemplateController extends Controller
@@ -12,6 +13,18 @@ class TemplateController extends Controller
     public function index()
     {
         //
+        try {
+            $templates = Template::all();
+            return response()->json([
+                'status' => 'success',
+                'data' => $templates
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve templates'
+            ], 500);
+        }
     }
 
     /**
