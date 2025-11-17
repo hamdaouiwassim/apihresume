@@ -12,7 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Enable method spoofing for PUT/PATCH/DELETE via POST with _method parameter
+        $middleware->validateCsrfTokens(except: [
+            'api/*'
+        ]);
+        
+        // Register custom middleware aliases
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'recruiter' => \App\Http\Middleware\RecruiterMiddleware::class,
+            'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

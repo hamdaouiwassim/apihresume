@@ -15,10 +15,11 @@ class ResumeController extends Controller
         //
         try{
              // Assuming User model has a 'resumes' relationship
+            $resumes = auth()->user()->resumes()->with('template')->orderBy('updated_at', 'desc')->get();
             return response()->json([
                 "status" => true,
                 "message" => "Resume fetched successfully",
-                "data" => auth()->user()->resumes
+                "data" => $resumes
             ], 200);
         }catch(\Exception $e){
             return response()->json([
@@ -80,7 +81,7 @@ class ResumeController extends Controller
         //
 
         try {
-            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences");
+            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates");
 
             // Check if the authenticated user owns the resume
             if ($resume->user_id !== auth()->id()) {
