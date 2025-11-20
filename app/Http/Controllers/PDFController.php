@@ -15,7 +15,7 @@ class PDFController extends Controller
     private function getNodeBinaryPath(): ?string
     {
         // Try to get Node.js path from environment variable first
-        $nodePath = env('NODE_BINARY_PATH');
+        $nodePath = getenv('NODE_BINARY_PATH') ?: ($_ENV['NODE_BINARY_PATH'] ?? null);
         if ($nodePath && file_exists($nodePath)) {
             return $nodePath;
         }
