@@ -118,8 +118,19 @@ class PDFController extends Controller
             $nodePath = $this->getNodeBinaryPath();
             Log::info('PDF generation node path', ['nodePath' => $nodePath]);
 
+            $chromePath = '/usr/bin/chromium-browser';
+
             // Generate PDF using Browsershot (Puppeteer)
             $browsershot = Browsershot::html($html)
+                ->setChromePath($chromePath)
+                ->setChromeOptions([
+                    'args' => [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-dev-shm-usage',
+                        '--disable-gpu',
+                    ],
+                ])
                 ->setOption('args', [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
