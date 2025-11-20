@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,3 +21,5 @@ Route::get('/debug-env', function () {
         'PATH' => $path,
     ];
 });
+
+Route::get('/resume-template-preview', [PDFController::class, 'preview']);
