@@ -7,8 +7,16 @@ Route::get('/', function () {
 });
 
 Route::get('/debug-env', function () {
+    $nodeBinaryPath = getenv('NODE_BINARY_PATH');
+    $path = getenv('PATH');
+
+    \Log::info('Debug env route', [
+        'NODE_BINARY_PATH' => $nodeBinaryPath,
+        'PATH' => $path,
+    ]);
+
     return [
-        'NODE_BINARY_PATH' => getenv('NODE_BINARY_PATH'),
-        'PATH' => getenv('PATH'),
+        'NODE_BINARY_PATH' => $nodeBinaryPath,
+        'PATH' => $path,
     ];
 });

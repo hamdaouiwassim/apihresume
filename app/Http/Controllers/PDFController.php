@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Browsershot\Browsershot;
 
@@ -115,6 +116,7 @@ class PDFController extends Controller
 
             // Get Node.js binary path
             $nodePath = $this->getNodeBinaryPath();
+            Log::info('PDF generation node path', ['nodePath' => $nodePath]);
 
             // Generate PDF using Browsershot (Puppeteer)
             $browsershot = Browsershot::html($html)
@@ -135,12 +137,17 @@ class PDFController extends Controller
             // Note: Browsershot uses setNodeBinary() method to set the Node.js path
             if ($nodePath && method_exists($browsershot, 'setNodeBinary')) {
                 $browsershot->setNodeBinary($nodePath);
+                Log::info('Browsershot setNodeBinary called', ['nodePath' => $nodePath]);
             } elseif ($nodePath && method_exists($browsershot, 'setNodePath')) {
                 $browsershot->setNodePath($nodePath);
+                Log::info('Browsershot setNodePath called', ['nodePath' => $nodePath]);
             } elseif ($nodePath) {
                 // If methods don't exist, set via environment variable
                 // This ensures the correct Node.js is used when browsershot executes
                 putenv('PATH=' . dirname($nodePath) . ':' . getenv('PATH'));
+                Log::info('Browsershot PATH updated via putenv', ['nodePath' => $nodePath]);
+            } else {
+                Log::warning('Browsershot node path missing');
             }
 
             $pdf = $browsershot->pdf();
