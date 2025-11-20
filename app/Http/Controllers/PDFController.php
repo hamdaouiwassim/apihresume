@@ -130,6 +130,11 @@ class PDFController extends Controller
                     '--disable-dev-shm-usage',
                     '--disable-gpu',
                     '--user-data-dir=' . $userDataDir,
+                    '--no-first-run',
+                    '--no-default-browser-check',
+                    '--disable-software-rasterizer',
+                    '--disable-dev-tools',
+                    '--disable-crash-reporter',
                 ]])
                 ->setOption('args', [
                     '--no-sandbox',
