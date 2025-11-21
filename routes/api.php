@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::get('/auth/google/url', [AuthController::class, 'getGoogleAuthUrl']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::get('/share/{token}', [ShareableLinkController::class, 'view']);
@@ -29,7 +29,7 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware(['signed'])
     ->name('verification.verify');
 
-Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
+Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
@@ -56,14 +56,14 @@ Route::middleware(['auth:sanctum', 'track.activity'])->group(function () {
 });
 
 // Admin routes
-Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throttle:120,1'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::apiResource('users', AdminUserController::class);
     Route::apiResource('templates', AdminTemplateController::class);
 });
 
 // Recruiter routes
-Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'recruiter'])->prefix('recruiter')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'recruiter', 'throttle:120,1'])->prefix('recruiter')->group(function () {
     Route::get('/resumes', [RecruiterResumeController::class, 'index']);
     Route::get('/resumes/{resume}', [RecruiterResumeController::class, 'show']);
     Route::get('/templates/proposals', [RecruiterTemplateProposalController::class, 'index']);

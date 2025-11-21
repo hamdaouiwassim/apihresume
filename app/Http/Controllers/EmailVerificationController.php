@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class EmailVerificationController extends Controller
 {
@@ -39,7 +40,19 @@ class EmailVerificationController extends Controller
             ], 200);
         }
 
+        $email = $request->user()->email;
+        $cacheKey = sprintf('email_verification_attempts:%s:%s', sha1($email), now()->format('Y-m-d'));
+        $attempts = Cache::get($cacheKey, 0);
+
+        if ($attempts >= 3) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You have reached the maximum number of verification emails for today. Please try again tomorrow.',
+            ], 429);
+        }
+
         $request->user()->sendEmailVerificationNotification();
+        Cache::put($cacheKey, $attempts + 1, now()->endOfDay());
 
         return response()->json([
             'status' => true,

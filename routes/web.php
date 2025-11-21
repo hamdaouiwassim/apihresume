@@ -45,4 +45,4 @@ Route::get('/test-email', function () {
             'error' => $exception->getMessage(),
         ], 500);
     }
-});
+})->middleware('throttle:3,1');
