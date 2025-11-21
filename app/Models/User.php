@@ -103,6 +103,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's review.
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
+
+    /**
      * Accessor for backward compatibility - recruiter_status
      */
     public function getRecruiterStatusAttribute()

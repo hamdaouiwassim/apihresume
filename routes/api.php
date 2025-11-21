@@ -11,8 +11,12 @@ use App\Http\Controllers\HobbieController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ShareableLinkController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\TemplateController as AdminTemplateController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
 use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
@@ -25,6 +29,10 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10
 Route::get('/auth/google/url', [AuthController::class, 'getGoogleAuthUrl']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::get('/share/{token}', [ShareableLinkController::class, 'view']);
+Route::get('/reviews', [ReviewController::class, 'index']);
+Route::get('/blog', [BlogController::class, 'index']);
+Route::get('/blog/{slug}', [BlogController::class, 'show']);
+Route::get('/stats', [StatsController::class, 'index']);
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
     ->middleware(['signed'])
     ->name('verification.verify');
@@ -47,6 +55,9 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
         Route::apiResource('basic-info', BasicInfoController::class);
         Route::get('/my-resumes', [UserController::class, 'myResumes']);
         Route::post('/generate-pdf', [PDFController::class, 'generate']);
+        Route::get('/reviews/my-review', [ReviewController::class, 'myReview']);
+        Route::post('/reviews', [ReviewController::class, 'store']);
+        Route::put('/reviews/{review}', [ReviewController::class, 'update']);
         
         // Shareable links routes (protected)
         Route::post('/resumes/{resumeId}/shareable-link/generate', [ShareableLinkController::class, 'generate']);
@@ -60,6 +71,7 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::apiResource('users', AdminUserController::class);
     Route::apiResource('templates', AdminTemplateController::class);
+    Route::apiResource('blog', AdminBlogController::class);
 });
 
 // Recruiter routes
