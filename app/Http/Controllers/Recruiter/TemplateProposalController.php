@@ -42,7 +42,7 @@ class TemplateProposalController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:5000',
             'category' => 'required|string|max:100',
             'preview_image_url' => 'nullable|url|max:2048',
         ]);

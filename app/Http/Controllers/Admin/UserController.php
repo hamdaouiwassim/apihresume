@@ -20,6 +20,7 @@ class UserController extends Controller
             $perPage = $request->input('per_page', 15);
             $search = $request->input('search');
             $role = $request->input('role');
+            $verificationStatus = $request->input('verification_status'); // 'verified' or 'unverified'
 
             $query = User::with(['recruiter', 'admin', 'candidate'])
                 ->withCount('resumes')
@@ -35,6 +36,7 @@ class UserController extends Controller
                 });
             }
 
+            // Filter by role
             if ($role === 'admin') {
                 $query->where('is_admin', true);
             } elseif ($role === 'recruiter') {
@@ -42,6 +44,16 @@ class UserController extends Controller
                     ->whereHas('recruiter', function ($q) {
                         $q->where('status', 'approved');
                     });
+            } elseif ($role === 'candidate') {
+                $query->where('is_admin', false)
+                    ->where('is_recruiter', false);
+            }
+
+            // Filter by email verification status
+            if ($verificationStatus === 'verified') {
+                $query->whereNotNull('email_verified_at');
+            } elseif ($verificationStatus === 'unverified') {
+                $query->whereNull('email_verified_at');
             }
 
             $users = $query->paginate($perPage);

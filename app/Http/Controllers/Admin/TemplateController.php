@@ -56,7 +56,7 @@ class TemplateController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
+                'description' => 'nullable|string|max:5000',
                 'category' => 'required|in:Corporate,Creative,Simple',
                 'preview_image_url' => 'nullable|url|max:500',
             ]);
@@ -93,7 +93,7 @@ class TemplateController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|string|max:255',
-                'description' => 'nullable|string',
+                'description' => 'nullable|string|max:5000',
                 'category' => 'sometimes|in:Corporate,Creative,Simple',
                 'preview_image_url' => 'nullable|url|max:500',
             ]);

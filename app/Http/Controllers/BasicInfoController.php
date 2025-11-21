@@ -28,7 +28,7 @@ class BasicInfoController extends Controller
         'email' => 'required|email|max:255',
         'phone' => 'required|string|max:20',
         'job_title' => 'required|string|max:255',
-        'professional_summary' => 'required|string',
+        'professional_summary' => 'required|string|max:5000',
         'location' => 'nullable|string|max:255',
         'linkedin' => 'nullable|url|max:255',
         'github' => 'nullable|url|max:255',

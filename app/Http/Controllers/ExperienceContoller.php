@@ -28,7 +28,7 @@ class ExperienceContoller extends Controller
         'company' => 'required|string|max:255',
         'startDate' => 'required|date',
         'endDate' => 'required|date',
-        'description' => 'required|string|max:255',
+        'description' => 'required|string|max:5000',
         'position' => 'required|string',
 
     ]);
@@ -84,7 +84,7 @@ class ExperienceContoller extends Controller
         'company' => 'required|string|max:255',
         'startDate' => 'required|date',
         'endDate' => 'required|date',
-        'description' => 'required|string|max:255',
+        'description' => 'required|string|max:5000',
         'position' => 'required|string',
 
     ]);

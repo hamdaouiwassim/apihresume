@@ -88,7 +88,7 @@ class ReviewController extends Controller
         return $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'title' => ['required', 'string', 'max:120'],
-            'comment' => ['required', 'string', 'min:10'],
+            'comment' => ['required', 'string', 'min:10', 'max:5000'],
             'is_public' => ['nullable', 'boolean'],
         ]);
     }

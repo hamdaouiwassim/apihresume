@@ -28,7 +28,7 @@ class EducationContoller extends Controller
         'institution' => 'required|string|max:255',
         'start_date' => 'required|date',
         'end_date' => 'required|date',
-        'description' => 'required|string|max:255',
+        'description' => 'required|string|max:5000',
         'degree' => 'required|string',
 
     ]);
@@ -84,7 +84,7 @@ class EducationContoller extends Controller
         'institution' => 'required|string|max:255',
         'start_date' => 'required|date',
         'end_date' => 'required|date',
-        'description' => 'required|string|max:255',
+        'description' => 'required|string|max:5000',
         'degree' => 'required|string',
 
     ]);
