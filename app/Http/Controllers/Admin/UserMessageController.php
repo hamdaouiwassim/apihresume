@@ -20,8 +20,8 @@ class UserMessageController extends Controller
         Mail::to($user->email)->queue(new AdminUserMessage(
             admin: $request->user(),
             user: $user,
-            subject: $data['subject'],
-            message: $data['message'],
+            subjectLine: $data['subject'],
+            bodyMessage: $data['message'],
         ));
 
         return response()->json([
