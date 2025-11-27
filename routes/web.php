@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Laravel\Pulse\Facades\Pulse;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,3 +48,18 @@ Route::get('/test-email', function () {
         ], 500);
     }
 })->middleware('throttle:3,1');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+});
+
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('admin.logout');
+
+if (class_exists(\Laravel\Pulse\Facades\Pulse::class) && method_exists(\Laravel\Pulse\Facades\Pulse::class, 'route')) {
+    Route::middleware(['auth', 'can:viewPulse'])->group(function () {
+        Pulse::route('/pulse');
+    });
+}

@@ -20,6 +20,7 @@ class PDFController extends Controller
             'resume.education' => 'nullable|array',
             'resume.skills' => 'nullable|array',
             'resume.certifications' => 'nullable|array',
+            'resume.languages' => 'nullable|array',
             'html' => 'nullable|string',
             'filename' => 'nullable|string|max:255',
             'locale' => 'nullable|in:en,fr',
@@ -53,7 +54,7 @@ class PDFController extends Controller
             $options = new Options();
             $options->set('isRemoteEnabled', true);
             $options->set('isHtml5ParserEnabled', true);
-            $options->set('defaultFont', 'DejaVu Sans');
+            $options->set('defaultFont', 'Arial');
             $options->set('dpi', 120);
 
             $dompdf = new Dompdf($options);
@@ -94,6 +95,7 @@ class PDFController extends Controller
         return view('pdf.resume', [
             'resume' => $resume,
             'strings' => $this->getPdfTranslations($locale),
+            'template_view' => $this->resolveTemplateView($resume),
         ]);
     }
 
@@ -102,6 +104,7 @@ class PDFController extends Controller
         return view('pdf.resume', [
             'resume' => $resume,
             'strings' => $this->getPdfTranslations($locale),
+            'template_view' => $this->resolveTemplateView($resume),
         ])->render();
     }
 
@@ -115,7 +118,11 @@ class PDFController extends Controller
             'skills' => 'Skills',
             'interests' => 'Interests',
             'certifications' => 'Certifications',
+            'languages' => 'Languages',
             'graduated' => 'Graduated',
+            'contact' => 'Contact',
+            'present' => 'Present',
+            'hobbies' => 'Hobbies',
         ];
 
         $map = [
@@ -125,13 +132,27 @@ class PDFController extends Controller
                 'work_experience' => 'Expérience professionnelle',
                 'education' => 'Formation',
                 'skills' => 'Compétences',
-                'interests' => 'Centres d’intérêt',
+                'interests' => 'Centres d\'intérêt',
                 'certifications' => 'Certifications',
+                'languages' => 'Langues',
                 'graduated' => 'Diplômé',
+                'contact' => 'Contact',
+                'present' => 'Présent',
+                'hobbies' => 'Passions',
             ],
         ];
 
-    return $map[$locale] ?? $defaults;
+        return $map[$locale] ?? $defaults;
+    }
+
+    private function resolveTemplateView(array $resume): string
+    {
+        $layout = strtolower($resume['template_layout'] ?? 'classic');
+
+        return match ($layout) {
+            'executive-split', 'executive_split', 'executive' => 'pdf.templates.executive-split',
+            default => 'pdf.templates.classic',
+        };
     }
 
     private function wrapRawHtml(?string $html): string
@@ -149,7 +170,7 @@ class PDFController extends Controller
     <meta charset="UTF-8">
     <style>
         @page { margin: 20mm; }
-        body { font-family: 'DejaVu Sans', sans-serif; margin: 0; padding: 20px; }
+        body { font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 20px; }
     </style>
 </head>
 <body>

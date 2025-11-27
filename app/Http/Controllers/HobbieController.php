@@ -72,8 +72,15 @@ class HobbieController extends Controller
         try {
             $hobbie = Hobbie::findOrFail($id);
 
-            // Check if the authenticated user owns the resume
             $resume = $hobbie->resume;
+            
+            if (!$resume) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Associated resume not found'
+                ], 404);
+            }
+
             if ($resume->user_id !== auth()->id()) {
                 return response()->json([
                     'status' => false,
@@ -113,9 +120,20 @@ class HobbieController extends Controller
                     'errors' => $validator->errors()
                 ], 422);
             }
+return response()->json([
+    'status' => true,
+    'message' => 'Hobby fetched successfully',
+    'data' => $hobbie
+], 200);
+            //$resume = $hobbie->resume;
+            $resume = Resume::findOrFail($hobbie->resume_id);
+            if (!$resume) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Associated resume not found'
+                ], 404);
+            }
 
-            // Check if the authenticated user owns the resume
-            $resume = $hobbie->resume;
             if ($resume->user_id !== auth()->id()) {
                 return response()->json([
                     'status' => false,

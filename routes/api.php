@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\HobbieController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ShareableLinkController;
 use App\Http\Controllers\ReviewController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\TemplateController as AdminTemplateController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ResumeController as AdminResumeController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
 use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
 use Illuminate\Support\Facades\Route;
@@ -43,26 +45,28 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
         ->middleware('throttle:6,1');
 
+    Route::match(['put', 'post'], '/profile', [AuthController::class, 'updateProfile']);
+    Route::apiResource("experiences" , ExperienceContoller::class);
+    Route::apiResource("educations" , EducationContoller::class);
+    Route::apiResource('skills', SkillController::class);
+    Route::apiResource('hobbies', HobbieController::class);
+    Route::apiResource('certificates', CertificateController::class);
+    Route::apiResource('languages', LanguageController::class);
+    Route::apiResource('templates', TemplateController::class);
+    Route::apiResource('resumes', ResumeController::class);
+    Route::apiResource('basic-info', BasicInfoController::class);
+    Route::get('/my-resumes', [UserController::class, 'myResumes']);
+    Route::get('/reviews/my-review', [ReviewController::class, 'myReview']);
+    Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    
+    // Shareable links routes (protected)
+    Route::post('/resumes/{resumeId}/shareable-link/generate', [ShareableLinkController::class, 'generate']);
+    Route::get('/resumes/{resumeId}/shareable-link', [ShareableLinkController::class, 'getCurrentLink']);
+    Route::post('/resumes/{resumeId}/shareable-link/deactivate', [ShareableLinkController::class, 'deactivate']);
+
     Route::middleware(['verified'])->group(function () {
-        Route::match(['put', 'post'], '/profile', [AuthController::class, 'updateProfile']);
-        Route::apiResource("experiences" , ExperienceContoller::class);
-        Route::apiResource("educations" , EducationContoller::class);
-        Route::apiResource('skills', SkillController::class);
-        Route::apiResource('hobbies', HobbieController::class);
-        Route::apiResource('certificates', CertificateController::class);
-        Route::apiResource('templates', TemplateController::class);
-        Route::apiResource('resumes', ResumeController::class);
-        Route::apiResource('basic-info', BasicInfoController::class);
-        Route::get('/my-resumes', [UserController::class, 'myResumes']);
         Route::post('/generate-pdf', [PDFController::class, 'generate']);
-        Route::get('/reviews/my-review', [ReviewController::class, 'myReview']);
-        Route::post('/reviews', [ReviewController::class, 'store']);
-        Route::put('/reviews/{review}', [ReviewController::class, 'update']);
-        
-        // Shareable links routes (protected)
-        Route::post('/resumes/{resumeId}/shareable-link/generate', [ShareableLinkController::class, 'generate']);
-        Route::get('/resumes/{resumeId}/shareable-link', [ShareableLinkController::class, 'getCurrentLink']);
-        Route::post('/resumes/{resumeId}/shareable-link/deactivate', [ShareableLinkController::class, 'deactivate']);
     });
 });
 
@@ -72,6 +76,9 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::apiResource('users', AdminUserController::class);
     Route::apiResource('templates', AdminTemplateController::class);
     Route::apiResource('blog', AdminBlogController::class);
+    Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
+    Route::get('/resumes', [AdminResumeController::class, 'index']);
+    Route::get('/resumes/{id}', [AdminResumeController::class, 'show']);
 });
 
 // Recruiter routes

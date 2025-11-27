@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Recruiter;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Resume;
@@ -19,6 +19,7 @@ class ResumeController extends Controller
             $templateId = $request->input('template_id');
             $fromDate = $request->input('from_date');
             $toDate = $request->input('to_date');
+            $userId = $request->input('user_id');
 
             $query = Resume::with(['user:id,name,email,avatar', 'template:id,name'])
                 ->orderByDesc('updated_at');
@@ -35,6 +36,10 @@ class ResumeController extends Controller
 
             if ($templateId) {
                 $query->where('template_id', $templateId);
+            }
+
+            if ($userId) {
+                $query->where('user_id', $userId);
             }
 
             if ($fromDate) {
@@ -67,17 +72,8 @@ class ResumeController extends Controller
     public function show($id)
     {
         try {
-            $resume = Resume::with([
-                'user:id,name,email,avatar',
-                'template',
-                'basicInfo',
-                'experiences',
-                'educations',
-                'skills',
-                'hobbies',
-                'certificates',
-                'languages',
-            ])->findOrFail($id);
+            $resume = Resume::with(['user', 'template', 'basicInfo', 'experiences', 'educations', 'skills', 'certificates', 'hobbies', 'languages'])
+                ->findOrFail($id);
 
             return response()->json([
                 'status' => true,

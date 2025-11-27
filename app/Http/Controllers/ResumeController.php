@@ -81,7 +81,7 @@ class ResumeController extends Controller
         //
 
         try {
-            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates");
+            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates","languages","template");
 
             // Check if the authenticated user owns the resume
             if ($resume->user_id !== auth()->id()) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Jobs\SendBlogPostNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -146,6 +147,11 @@ class BlogController extends Controller
 
             $post->load('user:id,name,avatar');
 
+            // Queue email notification to all users only when post is first published
+            if ($request->status === 'published') {
+                SendBlogPostNotifications::dispatch($post);
+            }
+
             return response()->json([
                 'status' => true,
                 'message' => 'Blog post created successfully',
@@ -244,9 +250,15 @@ class BlogController extends Controller
             }
 
             // Handle published_at
+            $wasDraft = $post->status === 'draft';
+            $wasAlreadyPublished = $post->status === 'published' && $post->published_at !== null;
+            $isNowPublished = false;
+            
             if ($request->has('status')) {
                 if ($request->status === 'published' && !$post->published_at) {
+                    // Only set published_at if it wasn't already published
                     $updateData['published_at'] = $request->published_at ?? now();
+                    $isNowPublished = true;
                 } elseif ($request->status === 'draft') {
                     $updateData['published_at'] = null;
                 } elseif ($request->has('published_at')) {
@@ -258,6 +270,12 @@ class BlogController extends Controller
 
             $post->update($updateData);
             $post->load('user:id,name,avatar');
+
+            // Queue email notification only when post transitions from draft to published (first time only)
+            // Don't send if post was already published before this update
+            if ($isNowPublished && $wasDraft && !$wasAlreadyPublished) {
+                SendBlogPostNotifications::dispatch($post);
+            }
 
             return response()->json([
                 'status' => true,

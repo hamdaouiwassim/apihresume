@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Template extends Model
 {
@@ -20,5 +21,18 @@ class Template extends Model
     public function resumes()
     {
         return $this->hasMany(\App\Models\Resume::class);
+    }
+
+    public function getPreviewImageUrlAttribute($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        if (Str::startsWith($value, ['http://', 'https://'])) {
+            return $value;
+        }
+
+        return rtrim(config('app.url'), '/') . $value;
     }
 }

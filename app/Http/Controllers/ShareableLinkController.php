@@ -114,7 +114,9 @@ class ShareableLinkController extends Controller
                 'educations',
                 'skills',
                 'hobbies',
-                'certificates'
+                'certificates',
+                'languages',
+                'template'
             );
 
             return response()->json([

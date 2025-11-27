@@ -24,38 +24,10 @@ class TemplatesData extends Seeder
         ]);
 
         Template::create([
-            'name' => 'Modern',
-            'description' => 'Clean and contemporary design with a focus on visual hierarchy. Perfect for tech professionals and modern industries.',
+            'name' => 'Executive Split',
+            'description' => 'Premium split-column layout with a dedicated sidebar for contact info, skills, and education. Inspired by modern sales executive resumes.',
             'category' => 'Corporate',
-            'preview_image_url' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=1000&fit=crop'
-        ]);
-
-        Template::create([
-            'name' => 'Creative',
-            'description' => 'Bold design for creative professionals and designers. Showcase your personality while maintaining professionalism.',
-            'category' => 'Creative',
-            'preview_image_url' => 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=1000&fit=crop'
-        ]);
-
-        Template::create([
-            'name' => 'Minimal',
-            'description' => 'Simple and elegant design that puts content first. Perfect for those who prefer a clean, uncluttered aesthetic.',
-            'category' => 'Simple',
-            'preview_image_url' => 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=1000&fit=crop'
-        ]);
-
-        Template::create([
-            'name' => 'Professional',
-            'description' => 'Executive-level template designed for senior professionals. Emphasizes experience and achievements.',
-            'category' => 'Corporate',
-            'preview_image_url' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop'
-        ]);
-
-        Template::create([
-            'name' => 'Bold',
-            'description' => 'Eye-catching design for those who want to stand out. Great for artists, marketers, and creative fields.',
-            'category' => 'Creative',
-            'preview_image_url' => 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&h=1000&fit=crop'
+            'preview_image_url' => 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&h=1000&fit=crop'
         ]);
     }
 }

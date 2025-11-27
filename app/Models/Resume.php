@@ -94,4 +94,14 @@ class Resume extends Model
         return $this->hasMany(Certificate::class);
     }
 
+    /**
+     * Get all of the languages for the Resume
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function languages(): HasMany
+    {
+        return $this->hasMany(Language::class);
+    }
+
 }

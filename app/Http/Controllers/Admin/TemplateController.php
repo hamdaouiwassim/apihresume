@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Template;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class TemplateController extends Controller
@@ -58,7 +59,7 @@ class TemplateController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string|max:5000',
                 'category' => 'required|in:Corporate,Creative,Simple',
-                'preview_image_url' => 'nullable|url|max:500',
+                'preview_image' => 'required|image|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -69,7 +70,14 @@ class TemplateController extends Controller
                 ], 422);
             }
 
-            $template = Template::create($request->all());
+            $data = $validator->validated();
+
+            if ($request->hasFile('preview_image')) {
+                $path = $request->file('preview_image')->store('templates', 'public');
+                $data['preview_image_url'] = Storage::url($path);
+            }
+
+            $template = Template::create($data);
 
             return response()->json([
                 'status' => true,
@@ -95,7 +103,7 @@ class TemplateController extends Controller
                 'name' => 'sometimes|string|max:255',
                 'description' => 'nullable|string|max:5000',
                 'category' => 'sometimes|in:Corporate,Creative,Simple',
-                'preview_image_url' => 'nullable|url|max:500',
+                'preview_image' => 'nullable|image|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -107,7 +115,16 @@ class TemplateController extends Controller
             }
 
             $template = Template::findOrFail($id);
-            $template->update($request->all());
+
+            $data = $validator->validated();
+
+            if ($request->hasFile('preview_image')) {
+                $this->deletePreviewImage($template->preview_image_url);
+                $path = $request->file('preview_image')->store('templates', 'public');
+                $data['preview_image_url'] = Storage::url($path);
+            }
+
+            $template->update($data);
 
             return response()->json([
                 'status' => true,
@@ -139,6 +156,7 @@ class TemplateController extends Controller
                 ], 403);
             }
 
+            $this->deletePreviewImage($template->preview_image_url);
             $template->delete();
 
             return response()->json([
@@ -151,6 +169,24 @@ class TemplateController extends Controller
                 'message' => 'Failed to delete template',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    protected function deletePreviewImage(?string $url): void
+    {
+        if (!$url) {
+            return;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH);
+        if (!$path) {
+            return;
+        }
+
+        $relativePath = ltrim(str_replace('/storage/', '', $path), '/');
+
+        if ($relativePath && Storage::disk('public')->exists($relativePath)) {
+            Storage::disk('public')->delete($relativePath);
         }
     }
 }
