@@ -104,4 +104,35 @@ class Resume extends Model
         return $this->hasMany(Language::class);
     }
 
+    /**
+     * Get all collaborators for the Resume
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function collaborators(): HasMany
+    {
+        return $this->hasMany(ResumeCollaborator::class);
+    }
+
+    /**
+     * Check if a user can edit this resume (owner or active collaborator)
+     */
+    public function canBeEditedBy(?int $userId): bool
+    {
+        if (!$userId) {
+            return false;
+        }
+
+        // Owner can always edit
+        if ($this->user_id === $userId) {
+            return true;
+        }
+
+        // Check if user is an active collaborator
+        return $this->collaborators()
+            ->where('user_id', $userId)
+            ->where('is_active', true)
+            ->whereNotNull('accepted_at')
+            ->exists();
+    }
 }

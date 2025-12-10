@@ -42,6 +42,15 @@ class ExperienceContoller extends Controller
             ], 422);
         }
 
+        // Check if user can edit the resume
+        $resume = \App\Models\Resume::findOrFail($request->resume_id);
+        if (!$resume->canBeEditedBy(auth()->id())) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
         // Use updateOrCreate to find a BasicInfo by 'resume_id' and update it,
         // or create a new one if it doesn't exist.
         $basicInfo = Experience::create(
@@ -96,6 +105,15 @@ class ExperienceContoller extends Controller
                 'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        // Check if user can edit the resume
+        $resume = $experience->resume;
+        if (!$resume || !$resume->canBeEditedBy(auth()->id())) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
         }
 
         // Use updateOrCreate to find a BasicInfo by 'resume_id' and update it,

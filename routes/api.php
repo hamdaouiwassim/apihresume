@@ -12,6 +12,7 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ShareableLinkController;
+use App\Http\Controllers\ResumeCollaboratorController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\StatsController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ResumeController as AdminResumeController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
 use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
+use App\Http\Controllers\SubscriberController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
@@ -31,10 +33,13 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10
 Route::get('/auth/google/url', [AuthController::class, 'getGoogleAuthUrl']);
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::get('/share/{token}', [ShareableLinkController::class, 'view']);
+Route::post('/collaborate/accept/{token}', [ResumeCollaboratorController::class, 'accept']);
 Route::get('/reviews', [ReviewController::class, 'index']);
 Route::get('/blog', [BlogController::class, 'index']);
 Route::get('/blog/{slug}', [BlogController::class, 'show']);
 Route::get('/stats', [StatsController::class, 'index']);
+Route::post('/subscribers/subscribe', [SubscriberController::class, 'subscribe'])->middleware('throttle:10,1');
+Route::post('/subscribers/unsubscribe', [SubscriberController::class, 'unsubscribe'])->middleware('throttle:10,1');
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
     ->middleware(['signed'])
     ->name('verification.verify');
@@ -64,6 +69,11 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/resumes/{resumeId}/shareable-link/generate', [ShareableLinkController::class, 'generate']);
     Route::get('/resumes/{resumeId}/shareable-link', [ShareableLinkController::class, 'getCurrentLink']);
     Route::post('/resumes/{resumeId}/shareable-link/deactivate', [ShareableLinkController::class, 'deactivate']);
+    
+    // Resume collaboration routes (protected)
+    Route::post('/resumes/{resumeId}/collaborators/invite', [ResumeCollaboratorController::class, 'invite']);
+    Route::get('/resumes/{resumeId}/collaborators', [ResumeCollaboratorController::class, 'index']);
+    Route::delete('/resumes/{resumeId}/collaborators/{collaboratorId}', [ResumeCollaboratorController::class, 'remove']);
 
     Route::middleware(['verified'])->group(function () {
         Route::post('/generate-pdf', [PDFController::class, 'generate']);

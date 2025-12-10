@@ -14,12 +14,31 @@ class ResumeController extends Controller
     {
         //
         try{
-             // Assuming User model has a 'resumes' relationship
-            $resumes = auth()->user()->resumes()->with('template')->orderBy('updated_at', 'desc')->get();
+            $user = auth()->user();
+            
+            // Get resumes owned by the user
+            $ownedResumes = $user->resumes()->with('template')->get();
+            
+            // Get resumes where user is a collaborator (but not the owner)
+            $collaboratedResumes = Resume::whereHas('collaborators', function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->where('is_active', true)
+                    ->whereNotNull('accepted_at');
+            })->with('template', 'user')
+            ->where('user_id', '!=', $user->id) // Exclude resumes where user is also the owner
+            ->get();
+            
+            // Sort by updated_at descending
+            $sortedOwnedResumes = $ownedResumes->sortByDesc('updated_at')->values();
+            $sortedSharedResumes = $collaboratedResumes->sortByDesc('updated_at')->values();
+            
             return response()->json([
                 "status" => true,
                 "message" => "Resume fetched successfully",
-                "data" => $resumes
+                "data" => [
+                    "owned" => $sortedOwnedResumes,
+                    "shared" => $sortedSharedResumes
+                ]
             ], 200);
         }catch(\Exception $e){
             return response()->json([
@@ -83,8 +102,8 @@ class ResumeController extends Controller
         try {
             $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates","languages","template");
 
-            // Check if the authenticated user owns the resume
-            if ($resume->user_id !== auth()->id()) {
+            // Check if the authenticated user can edit the resume (owner or collaborator)
+            if (!$resume->canBeEditedBy(auth()->id())) {
                 return response()->json([
                     "status" => false,
                     "message" => "Unauthorized access"
