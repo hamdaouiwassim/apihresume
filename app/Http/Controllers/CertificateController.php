@@ -39,12 +39,22 @@ class CertificateController extends Controller
                 ], 422);
             }
 
-            // Check if the authenticated user owns the resume
+            // Check if user can edit the resume and the certificates section
             $resume = Resume::findOrFail($request->resume_id);
-            if ($resume->user_id !== auth()->id()) {
+            $userId = auth()->id();
+            
+            if (!$resume->canBeEditedBy($userId)) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Check section-specific permission for collaborators
+            if (!$resume->canEditSection($userId, 'certificates')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the certificates section'
                 ], 403);
             }
 
@@ -118,12 +128,22 @@ class CertificateController extends Controller
                 ], 422);
             }
 
-            // Check if the authenticated user owns the resume
+            // Check if user can edit the resume and the certificates section
             $resume = $certificate->resume;
-            if ($resume->user_id !== auth()->id()) {
+            $userId = auth()->id();
+            
+            if (!$resume->canBeEditedBy($userId)) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Check section-specific permission for collaborators
+            if (!$resume->canEditSection($userId, 'certificates')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the certificates section'
                 ], 403);
             }
 
@@ -151,12 +171,22 @@ class CertificateController extends Controller
     {
         //
         try {
-            // Check if the authenticated user owns the resume
+            // Check if user can edit the resume and the certificates section
             $resume = $certificate->resume;
-            if ($resume->user_id !== auth()->id()) {
+            $userId = auth()->id();
+            
+            if (!$resume->canBeEditedBy($userId)) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Check section-specific permission for collaborators
+            if (!$resume->canEditSection($userId, 'certificates')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the certificates section'
                 ], 403);
             }
 

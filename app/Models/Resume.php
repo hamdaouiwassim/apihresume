@@ -135,4 +135,55 @@ class Resume extends Model
             ->whereNotNull('accepted_at')
             ->exists();
     }
+
+    /**
+     * Check if a user can edit a specific section of this resume
+     * 
+     * @param int|null $userId
+     * @param string $section Section name (e.g., 'basic_info', 'experiences', etc.)
+     * @return bool
+     */
+    public function canEditSection(?int $userId, string $section): bool
+    {
+        if (!$userId) {
+            return false;
+        }
+
+        // Owner can always edit all sections
+        if ($this->user_id === $userId) {
+            return true;
+        }
+
+        // Check if user is an active collaborator with permission for this section
+        $collaborator = $this->collaborators()
+            ->where('user_id', $userId)
+            ->where('is_active', true)
+            ->whereNotNull('accepted_at')
+            ->first();
+
+        if (!$collaborator) {
+            return false;
+        }
+
+        return $collaborator->canEditSection($section);
+    }
+
+    /**
+     * Get the collaborator record for a user
+     * 
+     * @param int|null $userId
+     * @return ResumeCollaborator|null
+     */
+    public function getCollaboratorForUser(?int $userId): ?ResumeCollaborator
+    {
+        if (!$userId || $this->user_id === $userId) {
+            return null; // Owner doesn't need collaborator record
+        }
+
+        return $this->collaborators()
+            ->where('user_id', $userId)
+            ->where('is_active', true)
+            ->whereNotNull('accepted_at')
+            ->first();
+    }
 }

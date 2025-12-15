@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Language;
+use App\Models\Resume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,6 +35,25 @@ class LanguageController extends Controller
                     'message' => 'Validation error',
                     'errors' => $validator->errors()
                 ], 422);
+            }
+
+            // Check if user can edit the resume and the languages section
+            $resume = Resume::findOrFail($request->resume_id);
+            $userId = auth()->id();
+            
+            if (!$resume->canBeEditedBy($userId)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Check section-specific permission for collaborators
+            if (!$resume->canEditSection($userId, 'languages')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the languages section'
+                ], 403);
             }
 
             $language = Language::create($request->all());
@@ -79,6 +99,25 @@ class LanguageController extends Controller
                 ], 422);
             }
 
+            // Check if user can edit the resume and the languages section
+            $resume = $language->resume;
+            $userId = auth()->id();
+            
+            if (!$resume || !$resume->canBeEditedBy($userId)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Check section-specific permission for collaborators
+            if (!$resume->canEditSection($userId, 'languages')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the languages section'
+                ], 403);
+            }
+
             $language->update($request->all());
             return response()->json([
                 'status' => true,
@@ -101,12 +140,22 @@ class LanguageController extends Controller
     public function destroy(Language $language)
     {
         try {
-            // Check if the authenticated user owns the resume
+            // Check if user can edit the resume and the languages section
             $resume = $language->resume;
-            if ($resume->user_id !== auth()->id()) {
+            $userId = auth()->id();
+            
+            if (!$resume || !$resume->canBeEditedBy($userId)) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            // Check section-specific permission for collaborators
+            if (!$resume->canEditSection($userId, 'languages')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the languages section'
                 ], 403);
             }
 

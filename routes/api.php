@@ -74,6 +74,9 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/resumes/{resumeId}/collaborators/invite', [ResumeCollaboratorController::class, 'invite']);
     Route::get('/resumes/{resumeId}/collaborators', [ResumeCollaboratorController::class, 'index']);
     Route::delete('/resumes/{resumeId}/collaborators/{collaboratorId}', [ResumeCollaboratorController::class, 'remove']);
+    Route::get('/collaborations/pending', [ResumeCollaboratorController::class, 'getPendingInvitations']);
+    Route::post('/collaborations/{invitationId}/accept', [ResumeCollaboratorController::class, 'acceptInvitation']);
+    Route::post('/collaborations/{invitationId}/refuse', [ResumeCollaboratorController::class, 'refuseInvitation']);
 
     Route::middleware(['verified'])->group(function () {
         Route::post('/generate-pdf', [PDFController::class, 'generate']);

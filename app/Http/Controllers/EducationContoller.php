@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Education;
+use App\Models\Resume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -40,6 +41,25 @@ class EducationContoller extends Controller
                 'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        // Check if user can edit the resume and the educations section
+        $resume = Resume::findOrFail($request->resume_id);
+        $userId = auth()->id();
+        
+        if (!$resume->canBeEditedBy($userId)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        // Check section-specific permission for collaborators
+        if (!$resume->canEditSection($userId, 'educations')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You do not have permission to edit the educations section'
+            ], 403);
         }
 
         // Use updateOrCreate to find a BasicInfo by 'resume_id' and update it,
@@ -96,6 +116,25 @@ class EducationContoller extends Controller
                 'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
+        }
+
+        // Check if user can edit the resume and the educations section
+        $resume = $education->resume;
+        $userId = auth()->id();
+        
+        if (!$resume || !$resume->canBeEditedBy($userId)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        // Check section-specific permission for collaborators
+        if (!$resume->canEditSection($userId, 'educations')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You do not have permission to edit the educations section'
+            ], 403);
         }
 
         // Use updateOrCreate to find a BasicInfo by 'resume_id' and update it,

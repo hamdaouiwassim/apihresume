@@ -42,12 +42,22 @@ class ExperienceContoller extends Controller
             ], 422);
         }
 
-        // Check if user can edit the resume
+        // Check if user can edit the resume and the experiences section
         $resume = \App\Models\Resume::findOrFail($request->resume_id);
-        if (!$resume->canBeEditedBy(auth()->id())) {
+        $userId = auth()->id();
+        
+        if (!$resume->canBeEditedBy($userId)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        // Check section-specific permission for collaborators
+        if (!$resume->canEditSection($userId, 'experiences')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You do not have permission to edit the experiences section'
             ], 403);
         }
 
@@ -107,12 +117,22 @@ class ExperienceContoller extends Controller
             ], 422);
         }
 
-        // Check if user can edit the resume
+        // Check if user can edit the resume and the experiences section
         $resume = $experience->resume;
-        if (!$resume || !$resume->canBeEditedBy(auth()->id())) {
+        $userId = auth()->id();
+        
+        if (!$resume || !$resume->canBeEditedBy($userId)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        // Check section-specific permission for collaborators
+        if (!$resume->canEditSection($userId, 'experiences')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You do not have permission to edit the experiences section'
             ], 403);
         }
 
