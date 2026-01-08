@@ -197,7 +197,7 @@
             }
         ],
         'certificates' => [
-            'hasData' => true, // Always show if in section order
+            'hasData' => !empty($certifications), // Always show if in section order
             'render' => function() use ($certifications, $strings) {
                 $html = '<section class="exec-section">';
                 $html .= '<h3>' . ($strings['certifications'] ?? 'Certifications') . '</h3>';
