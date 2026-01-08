@@ -140,140 +140,255 @@
         @endif
     </div>
 
+    @php
+    // Define available sidebar sections
+    $availableSidebarSections = [
+        'personal' => [
+            'hasData' => !empty($contactItems),
+            'render' => function() use ($contactItems, $strings) {
+                if (empty($contactItems)) return '';
+
+                $html = '<section class="exec-section">';
+                $html .= '<h3>' . ($strings['contact'] ?? 'Contact') . '</h3>';
+                foreach($contactItems as $item) {
+                    $html .= '<div class="exec-contact-item">';
+                    $html .= '<span class="exec-contact-label">' . strtoupper($item['label']) . '</span>';
+                    $html .= '<span class="exec-contact-value">' . $item['value'] . '</span>';
+                    $html .= '</div>';
+                }
+                $html .= '</section>';
+                return $html;
+            }
+        ],
+        'education' => [
+            'hasData' => !empty($education),
+            'render' => function() use ($education, $strings) {
+                if (empty($education)) return '';
+
+                $html = '<section class="exec-section">';
+                $html .= '<h3>' . ($strings['education'] ?? 'Education') . '</h3>';
+                $html .= '<ul class="exec-list">';
+                foreach($education as $edu) {
+                    $html .= '<li><strong>' . ($edu['degree'] ?? '') . '</strong>';
+                    if (!empty($edu['school'])) $html .= ' | ' . $edu['school'];
+                    if (!empty($edu['location'])) $html .= ' | ' . $edu['location'];
+                    if (!empty($edu['graduated'])) {
+                        $html .= ' (' . (($strings['graduated'] ?? 'Graduated') . ' ' . $edu['graduated']) . ')';
+                    }
+                    $html .= '</li>';
+                }
+                $html .= '</ul></section>';
+                return $html;
+            }
+        ],
+        'skills' => [
+            'hasData' => !empty($skills),
+            'render' => function() use ($skills, $strings) {
+                if (empty($skills)) return '';
+
+                $html = '<section class="exec-section">';
+                $html .= '<h3>' . ($strings['skills'] ?? 'Skills') . '</h3>';
+                $html .= '<ul class="exec-list">';
+                foreach($skills as $skillLine) {
+                    $html .= '<li>' . $skillLine . '</li>';
+                }
+                $html .= '</ul></section>';
+                return $html;
+            }
+        ],
+        'certificates' => [
+            'hasData' => true, // Always show if in section order
+            'render' => function() use ($certifications, $strings) {
+                $html = '<section class="exec-section">';
+                $html .= '<h3>' . ($strings['certifications'] ?? 'Certifications') . '</h3>';
+                if (!empty($certifications)) {
+                    $html .= '<ul class="exec-list">';
+                    foreach($certifications as $cert) {
+                        $html .= '<li>' . $cert . '</li>';
+                    }
+                    $html .= '</ul>';
+                }
+                $html .= '</section>';
+                return $html;
+            }
+        ],
+        'languages' => [
+            'hasData' => !empty($languages),
+            'render' => function() use ($languages, $strings) {
+                if (empty($languages)) return '';
+
+                $html = '<section class="exec-section">';
+                $html .= '<h3>' . ($strings['languages'] ?? 'Languages') . '</h3>';
+                $html .= '<ul class="exec-list">';
+                foreach($languages as $language) {
+                    $html .= '<li>' . $language . '</li>';
+                }
+                $html .= '</ul></section>';
+                return $html;
+            }
+        ],
+        'hobbies' => [
+            'hasData' => !empty($hobbies),
+            'render' => function() use ($hobbies, $strings) {
+                if (empty($hobbies)) return '';
+
+                $html = '<section class="exec-section">';
+                $html .= '<h3>' . ($strings['hobbies'] ?? 'Hobbies') . '</h3>';
+                $html .= '<ul class="exec-list">';
+                foreach($hobbies as $hobby) {
+                    $html .= '<li>' . $hobby . '</li>';
+                }
+                $html .= '</ul></section>';
+                return $html;
+            }
+        ],
+        'socialMedia' => [
+            'hasData' => false, // Social media handled in personal/contact
+            'render' => function() { return ''; }
+        ],
+    ];
+
+    // Define available main sections
+    $availableMainSections = [
+        'personal' => [
+            'hasData' => !empty($resume['summary']),
+            'render' => function() use ($resume, $strings) {
+                if (empty($resume['summary'])) return '';
+
+                $html = '<div class="exec-section">';
+                $html .= '<h3 class="section-title">' . ($strings['professional_summary'] ?? 'Professional Summary') . '</h3>';
+                $html .= '<p class="exec-summary">' . $resume['summary'] . '</p>';
+                $html .= '</div>';
+                return $html;
+            }
+        ],
+        'experience' => [
+            'hasData' => !empty($experience),
+            'render' => function() use ($experience, $strings, $formatTimeline) {
+                if (empty($experience)) return '';
+
+                $html = '<div class="exec-section">';
+                $html .= '<h3 class="section-title">' . ($strings['work_experience'] ?? 'Work Experience') . '</h3>';
+
+                foreach($experience as $role) {
+                    $timeline = $formatTimeline($role['start'] ?? null, $role['end'] ?? null);
+
+                    $html .= '<div class="exec-role">';
+                    if (!empty($role['title'])) {
+                        $html .= '<p class="exec-role-title">' . $role['title'] . '</p>';
+                    }
+                    if (!empty($timeline)) {
+                        $html .= '<p class="exec-timeline">' . $timeline . '</p>';
+                    }
+                    if (!empty($role['company']) || !empty($role['location'])) {
+                        $html .= '<p class="exec-company">' . ($role['company'] ?? '') . (!empty($role['location']) ? ' | ' . $role['location'] : '') . '</p>';
+                    }
+                    if (!empty($role['summary'])) {
+                        $html .= '<p class="exec-summary">' . $role['summary'] . '</p>';
+                    }
+                    if (!empty($role['bullets'])) {
+                        $html .= '<ul class="exec-bullets">';
+                        foreach($role['bullets'] as $bullet) {
+                            $html .= '<li>' . $bullet . '</li>';
+                        }
+                        $html .= '</ul>';
+                    }
+                    $html .= '</div>';
+                }
+
+                $html .= '</div>';
+                return $html;
+            }
+        ],
+        'projects' => [
+            'hasData' => !empty($projects),
+            'render' => function() use ($projects, $strings, $formatTimeline) {
+                if (empty($projects)) return '';
+
+                $html = '<div class="exec-section">';
+                $html .= '<h3 class="section-title">' . ($strings['projects'] ?? 'Projects') . '</h3>';
+
+                foreach($projects as $project) {
+                    $timeline = $formatTimeline($project['start'] ?? null, $project['end'] ?? null);
+
+                    $html .= '<div class="exec-role">';
+                    if (!empty($project['name'])) {
+                        $html .= '<p class="exec-role-title">' . $project['name'] . '</p>';
+                    }
+                    if (!empty($timeline)) {
+                        $html .= '<p class="exec-timeline">' . $timeline . '</p>';
+                    }
+                    if (!empty($project['technologies'])) {
+                        $html .= '<p class="exec-company">' . $project['technologies'] . '</p>';
+                    }
+                    if (!empty($project['url'])) {
+                        $html .= '<p class="exec-company" style="font-size: 11px; color: #6B7280;">' . $project['url'] . '</p>';
+                    }
+                    if (!empty($project['description'])) {
+                        $html .= '<p class="exec-summary">' . $project['description'] . '</p>';
+                    }
+                    if (!empty($project['bullets'])) {
+                        $html .= '<ul class="exec-bullets">';
+                        foreach($project['bullets'] as $bullet) {
+                            $html .= '<li>' . $bullet . '</li>';
+                        }
+                        $html .= '</ul>';
+                    }
+                    $html .= '</div>';
+                }
+
+                $html .= '</div>';
+                return $html;
+            }
+        ],
+        'education' => ['hasData' => false, 'render' => function() { return ''; }], // Education is in sidebar
+        'skills' => ['hasData' => false, 'render' => function() { return ''; }], // Skills is in sidebar
+        'certifications' => ['hasData' => false, 'render' => function() { return ''; }], // Certifications is in sidebar
+        'languages' => ['hasData' => false, 'render' => function() { return ''; }], // Languages is in sidebar
+        'hobbies' => ['hasData' => false, 'render' => function() { return ''; }], // Hobbies is in sidebar
+        'socialMedia' => ['hasData' => false, 'render' => function() { return ''; }], // Social media handled in contact
+    ];
+
+    // Build ordered sidebar sections respecting sectionOrder
+    $orderedSidebarSections = [];
+    foreach ($sectionOrder as $sectionKey) {
+        if (isset($availableSidebarSections[$sectionKey])) {
+            // Always include certifications, but only include others if they have data
+            if ($sectionKey === 'certifications' || $availableSidebarSections[$sectionKey]['hasData']) {
+                $orderedSidebarSections[] = [
+                    'key' => $sectionKey,
+                    'render' => $availableSidebarSections[$sectionKey]['render']
+                ];
+            }
+        }
+    }
+
+    // Build ordered main sections respecting sectionOrder
+    $orderedMainSections = [];
+    foreach ($sectionOrder as $sectionKey) {
+        if (isset($availableMainSections[$sectionKey])) {
+            // Only include sections that have data (certifications is in sidebar, not main)
+            if ($availableMainSections[$sectionKey]['hasData']) {
+                $orderedMainSections[] = [
+                    'key' => $sectionKey,
+                    'render' => $availableMainSections[$sectionKey]['render']
+                ];
+            }
+        }
+    }
+    @endphp
+
     <div class="exec-body">
         <aside class="exec-sidebar">
-            @if(!empty($contactItems))
-                <section class="exec-section">
-                    <h3>{{ $strings['contact'] ?? 'Contact' }}</h3>
-                    @foreach($contactItems as $item)
-                        <div class="exec-contact-item">
-                            <span class="exec-contact-label">{{ strtoupper($item['label']) }}</span>
-                            <span class="exec-contact-value">{{ $item['value'] }}</span>
-                        </div>
-                    @endforeach
-                </section>
-            @endif
-
-            @if(!empty($education))
-                <section class="exec-section">
-                    <h3>{{ $strings['education'] ?? 'Education' }}</h3>
-                    <ul class="exec-list">
-                        @foreach($education as $edu)
-                            <li>
-                                <strong>{{ $edu['degree'] ?? '' }}</strong>
-                                @if(!empty($edu['school'])) | {{ $edu['school'] }} @endif
-                                @if(!empty($edu['location'])) | {{ $edu['location'] }} @endif
-                                @if(!empty($edu['graduated']))
-                                    ({{ ($strings['graduated'] ?? 'Graduated') . ' ' . $edu['graduated'] }})
-                                @endif
-                            </li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
-
-            @if(!empty($skills))
-                <section class="exec-section">
-                    <h3>{{ $strings['skills'] ?? 'Skills' }}</h3>
-                    <ul class="exec-list">
-                        @foreach($skills as $skillLine)
-                            <li>{{ $skillLine }}</li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
-
-            @if(!empty($certifications))
-                <section class="exec-section">
-                    <h3>{{ $strings['certifications'] ?? 'Certifications' }}</h3>
-                    <ul class="exec-list">
-                        @foreach($certifications as $cert)
-                            <li>{{ $cert }}</li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
-
-            @if(!empty($languages))
-                <section class="exec-section">
-                    <h3>{{ $strings['languages'] ?? 'Languages' }}</h3>
-                    <ul class="exec-list">
-                        @foreach($languages as $language)
-                            <li>{{ $language }}</li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
-
-            @if(!empty($hobbies))
-                <section class="exec-section">
-                    <h3>{{ $strings['hobbies'] ?? 'Hobbies' }}</h3>
-                    <ul class="exec-list">
-                        @foreach($hobbies as $hobby)
-                            <li>{{ $hobby }}</li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
-
-            @if(!empty($interests))
-                <section class="exec-section">
-                    <h3>{{ $strings['interests'] ?? 'Interests' }}</h3>
-                    <ul class="exec-list">
-                        @foreach($interests as $interest)
-                            <li>{{ $interest }}</li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
+            @foreach($orderedSidebarSections as $section)
+                {!! $section['render']() !!}
+            @endforeach
         </aside>
 
         <section class="exec-main">
-            @if(!empty($resume['summary']))
-                <div class="exec-section">
-                    <h3 class="section-title">{{ $strings['professional_summary'] ?? 'Professional Summary' }}</h3>
-                    <p class="exec-summary">{{ $resume['summary'] }}</p>
-                </div>
-            @endif
-
-            @if(!empty($experience))
-                <div class="exec-section">
-                    <h3 class="section-title">{{ $strings['work_experience'] ?? 'Work Experience' }}</h3>
-                    @foreach($experience as $role)
-                        @php
-                        
-                            $timeline = $formatTimeline($role['start'] ?? null, $role['end'] ?? null);
-                        
-                        @endphp
-                        <div class="exec-role">
-                            @if(!empty($role['title']))
-                                <p class="exec-role-title">{{ $role['title'] }}</p>
-                            @endif
-                            @if(!empty($timeline))
-                                <p class="exec-timeline">{{ $timeline }}</p>
-                            @endif
-                            @if(!empty($role['company']) || !empty($role['location']))
-                                <p class="exec-company">
-                                    {{ $role['company'] ?? '' }}
-                                    @if(!empty($role['location']))
-                                        | {{ $role['location'] }}
-                                    @endif
-                                </p>
-                            @endif
-                            @if(!empty($role['summary']))
-                                <p class="exec-summary">{{ $role['summary'] }}</p>
-                            @endif
-                            @if(!empty($role['bullets']))
-                                <ul class="exec-bullets">
-                                    @foreach($role['bullets'] as $bullet)
-                                        <li>{{ $bullet }}</li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+            @foreach($orderedMainSections as $section)
+                {!! $section['render']() !!}
+            @endforeach
         </section>
     </div>
 </div>

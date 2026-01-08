@@ -123,6 +123,7 @@ class PDFController extends Controller
             'contact' => 'Contact',
             'present' => 'Present',
             'hobbies' => 'Hobbies',
+            'projects' => 'Projects',
         ];
 
         $map = [
@@ -139,6 +140,7 @@ class PDFController extends Controller
                 'contact' => 'Contact',
                 'present' => 'Présent',
                 'hobbies' => 'Passions',
+                'projects' => 'Projets',
             ],
         ];
 

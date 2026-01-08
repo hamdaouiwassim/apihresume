@@ -27,10 +27,10 @@ class ExperienceContoller extends Controller
         'resume_id' => 'required|exists:resumes,id',
         'company' => 'required|string|max:255',
         'startDate' => 'required|date',
-        'endDate' => 'required|date',
+        'endDate' => 'nullable|date',
         'description' => 'required|string|max:5000',
         'position' => 'required|string',
-
+        'is_present' => 'nullable|boolean',
     ]);
 
     try {
@@ -102,10 +102,10 @@ class ExperienceContoller extends Controller
     $validator = Validator::make($request->all(), [
         'company' => 'required|string|max:255',
         'startDate' => 'required|date',
-        'endDate' => 'required|date',
+        'endDate' => 'nullable|date',
         'description' => 'required|string|max:5000',
         'position' => 'required|string',
-
+        'is_present' => 'nullable|boolean',
     ]);
 
     try {

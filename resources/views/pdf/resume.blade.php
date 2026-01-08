@@ -29,6 +29,7 @@
     $certifications = $resume['certifications'] ?? [];
     $languages = $resume['languages'] ?? [];
     $hobbies = $resume['hobbies'] ?? [];
+    $projects = $resume['projects'] ?? [];
     $strings = $strings ?? [
         'professional_summary' => 'Professional Summary',
         'work_experience' => 'Work Experience',
@@ -41,6 +42,7 @@
         'contact' => 'Contact',
         'present' => 'Present',
         'hobbies' => 'Hobbies',
+        'projects' => 'Projects',
     ];
 
     $contactLine = array_filter([
@@ -48,6 +50,7 @@
         $contact['email'] ?? null,
         $contact['phone'] ?? null,
         $contact['linkedin'] ?? null,
+        $contact['github'] ?? null,
         $contact['website'] ?? null,
     ]);
 
@@ -56,6 +59,7 @@
         ['label' => 'Phone', 'value' => $contact['phone'] ?? null],
         ['label' => 'Location', 'value' => $contact['location'] ?? null],
         ['label' => 'LinkedIn', 'value' => $contact['linkedin'] ?? null],
+        ['label' => 'GitHub', 'value' => $contact['github'] ?? null],
         ['label' => 'Website', 'value' => $contact['website'] ?? null],
     ], fn($item) => !empty($item['value'] ?? null));
 
@@ -80,6 +84,7 @@
     };
 
     $templateView = $template_view ?? 'pdf.templates.classic';
+
 @endphp
 
 @include($templateView, [
@@ -94,6 +99,8 @@
     'certifications' => $certifications,
     'languages' => $languages,
     'hobbies' => $hobbies,
+    'projects' => $projects,
+    'sectionOrder' => $resume['section_order'] ?? ['personal', 'socialMedia', 'experience', 'education', 'skills', 'hobbies', 'certifications', 'languages', 'projects'],
     'formatTimeline' => $formatTimeline,
 ])
 </body>

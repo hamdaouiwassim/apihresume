@@ -5,27 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Experience extends Model
+class Project extends Model
 {
-    //
-
     protected $fillable = [
-        "company",
+        "name",
         "resume_id",
         "description",
+        "technologies",
+        "url",
         "startDate",
-        "endDate",
-        "position",
-        "is_present"
+        "endDate"
     ];
 
     /**
-     * Get the resume that owns the Experience
+     * Get the resume that owns the Project
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function resume(): BelongsTo
     {
-        return $this->belongsTo(related: Resume::class);
+        return $this->belongsTo(Resume::class);
     }
 }

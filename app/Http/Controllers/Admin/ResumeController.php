@@ -72,7 +72,7 @@ class ResumeController extends Controller
     public function show($id)
     {
         try {
-            $resume = Resume::with(['user', 'template', 'basicInfo', 'experiences', 'educations', 'skills', 'certificates', 'hobbies', 'languages'])
+            $resume = Resume::with(['user', 'template', 'basicInfo', 'experiences', 'educations', 'skills', 'certificates', 'hobbies', 'languages', 'projects'])
                 ->findOrFail($id);
 
             return response()->json([

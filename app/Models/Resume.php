@@ -13,7 +13,12 @@ class Resume extends Model
     protected $fillable = [
         'user_id',
         'template_id',
-        'name'
+        'name',
+        'section_order'
+    ];
+
+    protected $casts = [
+        'section_order' => 'array',
     ];
 
     /**
@@ -102,6 +107,16 @@ class Resume extends Model
     public function languages(): HasMany
     {
         return $this->hasMany(Language::class);
+    }
+
+    /**
+     * Get all of the projects for the Resume
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
     }
 
     /**

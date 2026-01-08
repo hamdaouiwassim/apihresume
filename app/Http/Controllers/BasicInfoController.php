@@ -33,6 +33,7 @@ class BasicInfoController extends Controller
         'location' => 'nullable|string|max:255',
         'linkedin' => 'nullable|url|max:255',
         'github' => 'nullable|url|max:255',
+        'website' => 'nullable|url|max:255',
     ]);
 
     try {

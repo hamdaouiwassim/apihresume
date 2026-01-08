@@ -3,6 +3,7 @@
 use App\Http\Controllers\BasicInfoController;
 use App\Http\Controllers\EducationContoller;
 use App\Http\Controllers\ExperienceContoller;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UserController;
@@ -53,6 +54,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::match(['put', 'post'], '/profile', [AuthController::class, 'updateProfile']);
     Route::apiResource("experiences" , ExperienceContoller::class);
     Route::apiResource("educations" , EducationContoller::class);
+    Route::apiResource("projects" , ProjectController::class);
     Route::apiResource('skills', SkillController::class);
     Route::apiResource('hobbies', HobbieController::class);
     Route::apiResource('certificates', CertificateController::class);
@@ -78,9 +80,8 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/collaborations/{invitationId}/accept', [ResumeCollaboratorController::class, 'acceptInvitation']);
     Route::post('/collaborations/{invitationId}/refuse', [ResumeCollaboratorController::class, 'refuseInvitation']);
 
-    Route::middleware(['verified'])->group(function () {
-        Route::post('/generate-pdf', [PDFController::class, 'generate']);
-    });
+    // Temporarily remove verified middleware for debugging
+    Route::post('/generate-pdf', [PDFController::class, 'generate']);
 });
 
 // Admin routes

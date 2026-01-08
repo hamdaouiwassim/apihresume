@@ -17,6 +17,7 @@ class BasicInfo extends Model
         'address',
         'linkedin',
         'github',
+        'website',
         'professional_summary',
         'location'
     ];

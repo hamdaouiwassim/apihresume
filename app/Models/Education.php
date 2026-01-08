@@ -14,8 +14,8 @@ class Education extends Model
         "description",
         "start_date",
         "end_date",
-        "degree"
-
+        "degree",
+        "is_present"
     ];
 
     /**

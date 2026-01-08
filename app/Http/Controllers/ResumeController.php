@@ -100,7 +100,7 @@ class ResumeController extends Controller
         //
 
         try {
-            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates","languages","template");
+            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates","languages","projects","template");
 
             // Check if the authenticated user can edit the resume (owner or collaborator)
             if (!$resume->canBeEditedBy(auth()->id())) {
@@ -129,7 +129,45 @@ class ResumeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $resume = Resume::findOrFail($id);
+
+            // Check if the authenticated user can edit the resume (owner or collaborator)
+            if (!$resume->canBeEditedBy(auth()->id())) {
+                return response()->json([
+                    "status" => false,
+                    "message" => "Unauthorized access"
+                ], 403);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'section_order' => 'nullable|array',
+                'name' => 'sometimes|string|max:255',
+                'template_id' => 'sometimes|exists:templates,id',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    "status" => false,
+                    "message" => "Validation error",
+                    "errors" => $validator->errors()
+                ], 422);
+            }
+
+            $resume->update($request->only(['section_order', 'name', 'template_id']));
+
+            return response()->json([
+                "status" => true,
+                "message" => "Resume updated successfully",
+                "data" => $resume
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => false,
+                "message" => "Something went wrong",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

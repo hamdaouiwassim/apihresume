@@ -28,9 +28,10 @@ class EducationContoller extends Controller
         'resume_id' => 'required|exists:resumes,id',
         'institution' => 'required|string|max:255',
         'start_date' => 'required|date',
-        'end_date' => 'required|date',
+        'end_date' => 'required_if:is_present,false|nullable|date',
         'description' => 'required|string|max:5000',
         'degree' => 'required|string',
+        'is_present' => 'boolean',
 
     ]);
 
@@ -62,12 +63,15 @@ class EducationContoller extends Controller
             ], 403);
         }
 
+        // Prepare data - if is_present is true, set end_date to null
+        $educationData = $request->all();
+        if (isset($educationData['is_present']) && $educationData['is_present']) {
+            $educationData['end_date'] = null;
+        }
+
         // Use updateOrCreate to find a BasicInfo by 'resume_id' and update it,
         // or create a new one if it doesn't exist.
-        $basicInfo = Education::create(
-
-            $request->all() // The attributes to update or create
-        );
+        $basicInfo = Education::create($educationData);
         return response()->json([
             'status' => true,
             'message' => "Education added successfully",
@@ -103,9 +107,10 @@ class EducationContoller extends Controller
     $validator = Validator::make($request->all(), [
         'institution' => 'required|string|max:255',
         'start_date' => 'required|date',
-        'end_date' => 'required|date',
+        'end_date' => 'required_if:is_present,false|nullable|date',
         'description' => 'required|string|max:5000',
         'degree' => 'required|string',
+        'is_present' => 'boolean',
 
     ]);
 
@@ -137,10 +142,14 @@ class EducationContoller extends Controller
             ], 403);
         }
 
-        // Use updateOrCreate to find a BasicInfo by 'resume_id' and update it,
-        // or create a new one if it doesn't exist.
-        $updatedEducation = $education->update($request->all() // The attributes to update or create
-);
+        // Prepare data - if is_present is true, set end_date to null
+        $educationData = $request->all();
+        if (isset($educationData['is_present']) && $educationData['is_present']) {
+            $educationData['end_date'] = null;
+        }
+
+        // Update the education
+        $updatedEducation = $education->update($educationData);
         return response()->json([
             'status' => true,
             'message' => "Education updated successfully",
