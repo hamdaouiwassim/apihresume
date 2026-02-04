@@ -163,6 +163,43 @@ class ExperienceContoller extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $experience = Experience::findOrFail($id);
+            $resume = $experience->resume;
+            $userId = auth()->id();
+
+            if (!$resume || !$resume->canBeEditedBy($userId)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized access',
+                ], 403);
+            }
+
+            if (!$resume->canEditSection($userId, 'experiences')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You do not have permission to edit the experiences section',
+                ], 403);
+            }
+
+            $experience->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Experience deleted successfully',
+                'data' => null,
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Experience not found',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
