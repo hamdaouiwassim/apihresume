@@ -153,6 +153,7 @@ class PDFController extends Controller
 
         return match ($layout) {
             'executive-split', 'executive_split', 'executive' => 'pdf.templates.executive-split',
+            'modern-professional', 'modern_professional', 'modern', 'professional' => 'pdf.templates.modern-professional',
             default => 'pdf.templates.classic',
         };
     }

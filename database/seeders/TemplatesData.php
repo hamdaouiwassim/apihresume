@@ -29,5 +29,12 @@ class TemplatesData extends Seeder
             'category' => 'Corporate',
             'preview_image_url' => 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&h=1000&fit=crop'
         ]);
+
+        Template::create([
+            'name' => 'Modern Professional',
+            'description' => 'Clean two-column layout with profile picture, perfect for freelancers and modern professionals. Features a dedicated sidebar for contact, skills, and achievements.',
+            'category' => 'Professional',
+            'preview_image_url' => 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=1000&fit=crop&q=80'
+        ]);
     }
 }

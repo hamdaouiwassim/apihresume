@@ -61,6 +61,7 @@
         ['label' => 'LinkedIn', 'value' => $contact['linkedin'] ?? null],
         ['label' => 'GitHub', 'value' => $contact['github'] ?? null],
         ['label' => 'Website', 'value' => $contact['website'] ?? null],
+        ['label' => 'ProfilePicture', 'value' => $contact['profile_picture'] ?? null],
     ], fn($item) => !empty($item['value'] ?? null));
 
     $presentLabel = $strings['present'] ?? 'Present';

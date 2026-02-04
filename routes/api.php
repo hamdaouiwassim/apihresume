@@ -39,6 +39,7 @@ Route::get('/reviews', [ReviewController::class, 'index']);
 Route::get('/blog', [BlogController::class, 'index']);
 Route::get('/blog/{slug}', [BlogController::class, 'show']);
 Route::get('/stats', [StatsController::class, 'index']);
+Route::get('/templates', [TemplateController::class, 'index']); // Public templates endpoint
 Route::post('/subscribers/subscribe', [SubscriberController::class, 'subscribe'])->middleware('throttle:10,1');
 Route::post('/subscribers/unsubscribe', [SubscriberController::class, 'unsubscribe'])->middleware('throttle:10,1');
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
@@ -59,7 +60,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::apiResource('hobbies', HobbieController::class);
     Route::apiResource('certificates', CertificateController::class);
     Route::apiResource('languages', LanguageController::class);
-    Route::apiResource('templates', TemplateController::class);
+    Route::apiResource('templates', TemplateController::class)->except(['index']); // Exclude index from auth middleware
     Route::apiResource('resumes', ResumeController::class);
     Route::apiResource('basic-info', BasicInfoController::class);
     Route::get('/my-resumes', [UserController::class, 'myResumes']);
@@ -81,7 +82,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/collaborations/{invitationId}/refuse', [ResumeCollaboratorController::class, 'refuseInvitation']);
 
     // Temporarily remove verified middleware for debugging
-    Route::post('/generate-pdf', [PDFController::class, 'generate']);
+        Route::post('/generate-pdf', [PDFController::class, 'generate']);
 });
 
 // Admin routes
