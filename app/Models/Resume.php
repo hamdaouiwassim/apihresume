@@ -14,11 +14,13 @@ class Resume extends Model
         'user_id',
         'template_id',
         'name',
-        'section_order'
+        'section_order',
+        'typography'
     ];
 
     protected $casts = [
         'section_order' => 'array',
+        'typography' => 'array',
     ];
 
     /**

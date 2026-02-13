@@ -119,10 +119,20 @@ class ShareableLinkController extends Controller
                 'template'
             );
 
+            $data = $resume->toArray();
+            $basicInfo = $data['basic_info'] ?? $data['basicInfo'] ?? null;
+            $data['basic_info'] = is_array($basicInfo) ? $basicInfo : [];
+            if (!array_key_exists('avatar', $data['basic_info'])) {
+                $data['basic_info']['avatar'] = null;
+            }
+            if (isset($data['basicInfo'])) {
+                unset($data['basicInfo']);
+            }
+
             return response()->json([
                 'status' => true,
                 'message' => 'Resume fetched successfully',
-                'data' => $resume
+                'data' => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

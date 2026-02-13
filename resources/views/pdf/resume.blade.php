@@ -1,14 +1,19 @@
+@php
+    $__typo = ($resume ?? [])['typography'] ?? [];
+    $__bodyFontFamily = !empty($__typo['font_family']) ? $__typo['font_family'] : 'sans-serif';
+    $__bodyFontSize = !empty($__typo['font_size']) ? (int) $__typo['font_size'] : 14;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <style>
-        @page { margin: 18mm 20mm; }
+        @page { margin: 8mm 10mm; }
         * { box-sizing: border-box; }
         body {
-            font-family: 'Source Sans Pro', 'Segoe UI', Arial, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
+            font-family: {!! $__bodyFontFamily !!};
+            font-size: {{ $__bodyFontSize }}px;
+            line-height: 1.5;
             color: #111827;
             margin: 0;
             padding: 0;
@@ -86,6 +91,21 @@
 
     $templateView = $template_view ?? 'pdf.templates.classic';
 
+    // Typography settings
+    $typo = $resume['typography'] ?? [];
+    $typoFontFamily = !empty($typo['font_family']) ? $typo['font_family'] : 'sans-serif';
+    // Wrap font names with spaces in quotes for valid CSS (e.g. "DejaVu Sans")
+    if (str_contains($typoFontFamily, ' ')) {
+        $typoFontFamily = "'" . addslashes($typoFontFamily) . "'";
+    }
+    // Add fallback for custom fonts (font_id set) so Dompdf has a known fallback if lookup fails
+    if (!empty($typo['font_id'])) {
+        $typoFontFamily = $typoFontFamily . ', "DejaVu Sans", sans-serif';
+    }
+    $typoFontSize = !empty($typo['font_size']) ? (int) $typo['font_size'] : 14;
+    // Scale factor: ratio between chosen size and the default 14px base
+    $typoScale = $typoFontSize / 14;
+
 @endphp
 
 @include($templateView, [
@@ -103,6 +123,9 @@
     'projects' => $projects,
     'sectionOrder' => $resume['section_order'] ?? ['personal', 'socialMedia', 'experience', 'education', 'skills', 'hobbies', 'certifications', 'languages', 'projects'],
     'formatTimeline' => $formatTimeline,
+    'typoFontFamily' => $typoFontFamily,
+    'typoFontSize' => $typoFontSize,
+    'typoScale' => $typoScale,
 ])
 </body>
 </html>

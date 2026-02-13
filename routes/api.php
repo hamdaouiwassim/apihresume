@@ -63,6 +63,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::apiResource('templates', TemplateController::class)->except(['index']); // Exclude index from auth middleware
     Route::apiResource('resumes', ResumeController::class);
     Route::apiResource('basic-info', BasicInfoController::class);
+    Route::post('resumes/{resumeId}/basic-info/avatar', [BasicInfoController::class, 'uploadAvatar']);
     Route::get('/my-resumes', [UserController::class, 'myResumes']);
     Route::get('/reviews/my-review', [ReviewController::class, 'myReview']);
     Route::post('/reviews', [ReviewController::class, 'store']);
@@ -83,6 +84,12 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
 
     // Temporarily remove verified middleware for debugging
         Route::post('/generate-pdf', [PDFController::class, 'generate']);
+
+    // Active PDF fonts for font dropdown
+    Route::get('/pdf-fonts/active', [\App\Http\Controllers\Admin\PdfFontController::class, 'activeFonts']);
+
+    // Serve custom font file for preview (blob URL fetch)
+    Route::get('/fonts/{id}/file', [\App\Http\Controllers\Admin\PdfFontController::class, 'serveFontFile']);
 });
 
 // Admin routes
@@ -94,6 +101,12 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
     Route::get('/resumes', [AdminResumeController::class, 'index']);
     Route::get('/resumes/{id}', [AdminResumeController::class, 'show']);
+
+    // PDF Font management
+    Route::get('/fonts', [\App\Http\Controllers\Admin\PdfFontController::class, 'index']);
+    Route::post('/fonts', [\App\Http\Controllers\Admin\PdfFontController::class, 'store']);
+    Route::post('/fonts/{pdfFont}/toggle', [\App\Http\Controllers\Admin\PdfFontController::class, 'toggleActive']);
+    Route::delete('/fonts/{pdfFont}', [\App\Http\Controllers\Admin\PdfFontController::class, 'destroy']);
 });
 
 // Recruiter routes

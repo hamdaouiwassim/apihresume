@@ -1,10 +1,14 @@
+@php
+    $s = $typoScale ?? 1;
+    $modernFont = $typoFontFamily ?? 'sans-serif';
+    $modernBase = $typoFontSize ?? 15;
+@endphp
 <div class="modern-template" data-cv-preview="true">
     <style>
         .modern-template {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            
+            font-family: {!! $modernFont !!};
             color: #333;
-            font-size: 13px;
+            font-size: {{ $modernBase }}px;
             line-height: 1.5;
         }
         .modern-template * {
@@ -16,19 +20,20 @@
             table-layout: fixed;
             border-collapse: collapse;
             background: #fff;
-            padding: 24px;
+            padding: 8px 10px;
             border-radius: 4px;
         }
         .modern-sidebar {
             display: table-cell;
-            width: 280px;
+            width: 33.333%;
             vertical-align: top;
-            padding-right: 20px;
+            padding-right: 10px;
         }
         .modern-main {
             display: table-cell;
+            width: 66.667%;
             vertical-align: top;
-            padding-left: 20px;
+            padding-left: 10px;
         }
         .modern-profile-picture {
             width: 120px;
@@ -43,7 +48,7 @@
             margin-bottom: 20px;
         }
         .modern-section-title {
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -54,7 +59,7 @@
         }
         .modern-contact-item {
             margin-bottom: 10px;
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
         }
         .modern-contact-label {
             font-weight: 600;
@@ -72,7 +77,7 @@
             margin: 0;
         }
         .modern-list li {
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
             margin-bottom: 6px;
             color: #333;
             padding-left: 0;
@@ -81,22 +86,22 @@
             margin-bottom: 16px;
         }
         .modern-name {
-            font-size: 28px;
+            font-size: {{ round(32 * $s) }}px;
             font-weight: 700;
             margin: 0 0 4px;
             color: #333;
         }
         .modern-title {
-            font-size: 16px;
+            font-size: {{ round(18 * $s) }}px;
             color: #666;
             margin: 0 0 8px;
         }
         .modern-location {
-            font-size: 13px;
+            font-size: {{ round(13 * $s) }}px;
             color: #666;
         }
         .modern-summary {
-            font-size: 13px;
+            font-size: {{ round(15 * $s) }}px;
             line-height: 1.6;
             color: #333;
             margin-bottom: 20px;
@@ -110,13 +115,13 @@
             margin-bottom: 4px;
         }
         .modern-item-title {
-            font-size: 14px;
+            font-size: {{ round(16 * $s) }}px;
             font-weight: 600;
             color: #333;
             display: table-cell;
         }
         .modern-item-date {
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
             color: #666;
             white-space: nowrap;
             text-align: right;
@@ -124,12 +129,12 @@
             padding-left: 10px;
         }
         .modern-item-subtitle {
-            font-size: 12px;
+            font-size: {{ round(12 * $s) }}px;
             color: #666;
             margin: 0 0 8px;
         }
         .modern-item-description {
-            font-size: 12px;
+            font-size: {{ round(12 * $s) }}px;
             color: #333;
             line-height: 1.5;
             margin: 0 0 8px;
@@ -140,7 +145,7 @@
             list-style: disc;
         }
         .modern-bullets li {
-            font-size: 12px;
+            font-size: {{ round(12 * $s) }}px;
             margin-bottom: 4px;
             color: #333;
         }
@@ -279,6 +284,40 @@
                             $html .= '<li>' . $bullet . '</li>';
                         }
                         $html .= '</ul>';
+                    }
+                    if (!empty($role['projects'])) {
+                        $html .= '<div style="margin-top: 10px; margin-left: 8px; padding-left: 12px; border-left: 2px solid #e0e0e0;">';
+                        $html .= '<h3 class="modern-section-title" style="margin-bottom: 6px;">' . ($strings['projects'] ?? 'Projects') . '</h3>';
+                        foreach ($role['projects'] as $project) {
+                            $timeline = $formatTimeline($project['start'] ?? null, $project['end'] ?? null);
+                            $html .= '<div class="modern-item" style="margin-bottom: 8px;">';
+                            $html .= '<div class="modern-item-header">';
+                            if (!empty($project['name'])) {
+                                $html .= '<strong class="modern-item-title">' . $project['name'] . '</strong>';
+                            }
+                            if (!empty($timeline)) {
+                                $html .= '<span class="modern-item-date">' . $timeline . '</span>';
+                            }
+                            $html .= '</div>';
+                            if (!empty($project['technologies'])) {
+                                $html .= '<p class="modern-item-subtitle">' . $project['technologies'] . '</p>';
+                            }
+                            if (!empty($project['url'])) {
+                                $html .= '<p style="font-size: 11px; color: #6B7280;">' . $project['url'] . '</p>';
+                            }
+                            if (!empty($project['description'])) {
+                                $html .= '<p class="modern-item-description">' . $project['description'] . '</p>';
+                            }
+                            if (!empty($project['bullets'])) {
+                                $html .= '<ul class="modern-bullets">';
+                                foreach ($project['bullets'] as $bullet) {
+                                    $html .= '<li>' . $bullet . '</li>';
+                                }
+                                $html .= '</ul>';
+                            }
+                            $html .= '</div>';
+                        }
+                        $html .= '</div>';
                     }
                     $html .= '</div>';
                 }

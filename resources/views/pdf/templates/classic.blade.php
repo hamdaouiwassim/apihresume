@@ -1,3 +1,8 @@
+@php
+    $s = $typoScale ?? 1;
+    $classicFont = $typoFontFamily ?? 'sans-serif';
+    $classicBase = $typoFontSize ?? 14;
+@endphp
 <div class="resume-container" data-cv-preview="true">
     <style>
         .resume-container {
@@ -8,12 +13,13 @@
         .resume-inner {
             max-width: 780px;
             margin: 0 auto;
-            padding: 18px 24px 24px;
-            font-family: 'Source Sans Pro', 'Segoe UI', Arial, sans-serif;
+            padding: 8px 10px 10px;
+            font-family: {!! $classicFont !!};
+            font-size: {{ $classicBase }}px;
         }
 
         h1 {
-            font-size: 32px;
+            font-size: {{ round(36 * $s) }}px;
             letter-spacing: 0.08em;
             text-align: center;
             margin-bottom: 8px;
@@ -21,7 +27,7 @@
 
         .tagline {
             text-align: center;
-            font-size: 14px;
+            font-size: {{ round(16 * $s) }}px;
             font-weight: 600;
             text-transform: uppercase;
             margin-bottom: 6px;
@@ -29,13 +35,13 @@
 
         .contact-line {
             text-align: center;
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
             color: #374151;
             margin-bottom: 20px;
         }
 
         h2 {
-            font-size: 15px;
+            font-size: {{ round(17 * $s) }}px;
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -45,13 +51,13 @@
         }
 
         h3 {
-            font-size: 14px;
+            font-size: {{ round(16 * $s) }}px;
             margin: 0;
             font-weight: 700;
         }
 
         .subheading {
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
             font-weight: 600;
             color: #374151;
             margin: 0;
@@ -77,7 +83,7 @@
             width: 30%;
             text-align: right;
             white-space: nowrap;
-            font-size: 12px;
+            font-size: {{ round(14 * $s) }}px;
             font-weight: 600;
             color: #374151;
         }
@@ -102,15 +108,34 @@
         .list-simple {
             margin-left: 14px;
         }
+
+        .classic-profile-picture-wrapper {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .classic-profile-picture {
+            display: inline-block;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 
     @php
     // Define available sections with their data and render functions
     $availableSections = [
         'personal' => [
-            'hasData' => !empty($resume['name']) || !empty($resume['tagline']) || !empty($contactLine) || !empty($resume['summary']),
+            'hasData' => !empty($resume['name']) || !empty($resume['tagline']) || !empty($contactLine) || !empty($resume['summary']) || !empty($resume['contact']['profile_picture'] ?? null),
             'render' => function() use ($resume, $contactLine, $strings) {
                 $html = '';
+
+                if (!empty($resume['contact']['profile_picture'] ?? null)) {
+                    $html .= '<div class="classic-profile-picture-wrapper">';
+                    $html .= '<img src="' . e($resume['contact']['profile_picture']) . '" alt="' . e($resume['name'] ?? 'Profile') . '" class="classic-profile-picture" />';
+                    $html .= '</div>';
+                }
 
                 if (!empty($resume['name'])) {
                     $html .= '<h1>' . strtoupper($resume['name']) . '</h1>';
@@ -170,6 +195,38 @@
                             $html .= '<li>' . $bullet . '</li>';
                         }
                         $html .= '</ul>';
+                    }
+
+                    if (!empty($role['projects'])) {
+                        $html .= '<div style="margin-top: 10px; margin-left: 8px; padding-left: 12px; border-left: 2px solid #e5e7eb;">';
+                        $html .= '<p style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 6px;">' . ($strings['projects'] ?? 'Projects') . '</p>';
+                        foreach ($role['projects'] as $project) {
+                            $html .= '<div style="margin-bottom: 8px;">';
+                            if (!empty($project['name'])) {
+                                $html .= '<h4 style="font-size: 13px; font-weight: 700; margin: 0 0 2px;">' . $project['name'] . '</h4>';
+                            }
+                            if (!empty($project['technologies'])) {
+                                $html .= '<p class="subheading" style="font-size: 11px;">' . $project['technologies'] . '</p>';
+                            }
+                            if (!empty($project['url'])) {
+                                $html .= '<p style="font-size: 11px; color: #6B7280; margin: 2px 0;">' . $project['url'] . '</p>';
+                            }
+                            if (!empty($project['start']) || !empty($project['end'])) {
+                                $html .= '<p class="subheading" style="font-size: 11px;">' . ($project['start'] ?? '') . (!empty($project['end']) ? ' – ' . $project['end'] : '') . '</p>';
+                            }
+                            if (!empty($project['description'])) {
+                                $html .= '<p style="font-size: 12px; margin: 4px 0;">' . $project['description'] . '</p>';
+                            }
+                            if (!empty($project['bullets'])) {
+                                $html .= '<ul style="margin: 4px 0 0 14px; padding: 0;">';
+                                foreach ($project['bullets'] as $bullet) {
+                                    $html .= '<li style="font-size: 11px;">' . $bullet . '</li>';
+                                }
+                                $html .= '</ul>';
+                            }
+                            $html .= '</div>';
+                        }
+                        $html .= '</div>';
                     }
 
                     $html .= '</td><td>';

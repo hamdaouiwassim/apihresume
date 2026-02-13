@@ -100,7 +100,7 @@ class ResumeController extends Controller
         //
 
         try {
-            $resume = Resume::findOrFail($id)->load('basicInfo',"experiences","educations","skills","hobbies","certificates","languages","projects","template");
+            $resume = Resume::findOrFail($id)->load('basicInfo', 'experiences.projects', 'educations', 'skills', 'hobbies', 'certificates', 'languages', 'projects', 'template');
 
             // Check if the authenticated user can edit the resume (owner or collaborator)
             if (!$resume->canBeEditedBy(auth()->id())) {
@@ -110,10 +110,22 @@ class ResumeController extends Controller
                 ], 403);
             }
 
+            $data = $resume->toArray();
+            // Ensure basic_info is always present with avatar (Laravel may use basicInfo or basic_info)
+            $basicInfo = $data['basic_info'] ?? $data['basicInfo'] ?? null;
+            $data['basic_info'] = is_array($basicInfo) ? $basicInfo : [];
+            // Ensure avatar key exists in basic_info for frontend
+            if (!array_key_exists('avatar', $data['basic_info'])) {
+                $data['basic_info']['avatar'] = null;
+            }
+            if (isset($data['basicInfo'])) {
+                unset($data['basicInfo']);
+            }
+
             return response()->json([
                 "status" => true,
                 "message" => "Resume fetched successfully",
-                "data" => $resume
+                "data" => $data
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -144,6 +156,10 @@ class ResumeController extends Controller
                 'section_order' => 'nullable|array',
                 'name' => 'sometimes|string|max:255',
                 'template_id' => 'sometimes|exists:templates,id',
+                'typography' => 'nullable|array',
+                'typography.font_family' => 'nullable|string|max:100',
+                'typography.font_size' => 'nullable|integer|min:10|max:20',
+                'typography.font_id' => 'nullable|integer|exists:pdf_fonts,id',
             ]);
 
             if ($validator->fails()) {
@@ -154,7 +170,7 @@ class ResumeController extends Controller
                 ], 422);
             }
 
-            $resume->update($request->only(['section_order', 'name', 'template_id']));
+            $resume->update($request->only(['section_order', 'name', 'template_id', 'typography']));
 
             return response()->json([
                 "status" => true,

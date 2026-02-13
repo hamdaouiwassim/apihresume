@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Experience;
 use App\Models\Project;
 use App\Models\Resume;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class ProjectController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'resume_id' => 'required|exists:resumes,id',
+            'experience_id' => 'nullable|exists:experiences,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
             'technologies' => 'nullable|string|max:500',
@@ -52,6 +54,17 @@ class ProjectController extends Controller
                 ], 403);
             }
 
+            // If experience_id provided, ensure it belongs to this resume
+            if ($request->filled('experience_id')) {
+                $experience = Experience::where('id', $request->experience_id)->where('resume_id', $resume->id)->first();
+                if (!$experience) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Experience not found or does not belong to this resume'
+                    ], 422);
+                }
+            }
+
             $project = Project::create($request->all());
             return response()->json([
                 'status' => true,
@@ -74,6 +87,7 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $validator = Validator::make($request->all(), [
+            'experience_id' => 'nullable|exists:experiences,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:5000',
             'technologies' => 'nullable|string|max:500',
@@ -108,6 +122,17 @@ class ProjectController extends Controller
                     'status' => false,
                     'message' => 'You do not have permission to edit the projects section'
                 ], 403);
+            }
+
+            // If experience_id provided, ensure it belongs to this resume
+            if ($request->filled('experience_id')) {
+                $experience = Experience::where('id', $request->experience_id)->where('resume_id', $resume->id)->first();
+                if (!$experience) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Experience not found or does not belong to this resume'
+                    ], 422);
+                }
             }
 
             $project->update($request->all());

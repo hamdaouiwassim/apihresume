@@ -19,7 +19,8 @@ class BasicInfo extends Model
         'github',
         'website',
         'professional_summary',
-        'location'
+        'location',
+        'avatar',
     ];
 
     public function resume():BelongsTo

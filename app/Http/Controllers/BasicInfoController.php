@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BasicInfo;
 use App\Models\Resume;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class BasicInfoController extends Controller
@@ -34,6 +35,7 @@ class BasicInfoController extends Controller
         'linkedin' => 'nullable|url|max:255',
         'github' => 'nullable|url|max:255',
         'website' => 'nullable|url|max:255',
+        'avatar' => 'nullable|string|max:2048',
     ]);
 
     try {
@@ -92,6 +94,83 @@ class BasicInfoController extends Controller
         ], 500);
     }
 }
+
+    /**
+     * Upload avatar for resume basic info.
+     */
+    public function uploadAvatar(Request $request, string $resumeId)
+    {
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $resume = Resume::findOrFail($resumeId);
+        $userId = auth()->id();
+
+        if (!$resume->canBeEditedBy($userId)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        if (!$resume->canEditSection($userId, 'basic_info')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You do not have permission to edit the basic info section',
+            ], 403);
+        }
+
+        try {
+            $file = $request->file('avatar');
+
+            $dir = 'resume-avatars/' . $resumeId;
+            if (!Storage::disk('public')->exists($dir)) {
+                Storage::disk('public')->makeDirectory($dir, 0755, true);
+            }
+
+            $ext = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
+            $filename = time() . '_' . uniqid() . '.' . $ext;
+            $path = $file->storeAs($dir, $filename, 'public');
+
+            if (!$path || !Storage::disk('public')->exists($path)) {
+                throw new \Exception('Failed to store avatar file.');
+            }
+
+            $scheme = $request->getScheme();
+            $host = $request->getHost();
+            $port = $request->getPort();
+            $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
+            $avatarUrl = $baseUrl . '/storage/' . $path;
+
+            // Persist avatar to basic_info so it's saved with resume data (no extra "Save" needed)
+            $basicInfo = BasicInfo::where('resume_id', $resumeId)->first();
+            if ($basicInfo) {
+                $basicInfo->avatar = $avatarUrl;
+                $basicInfo->save();
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Avatar uploaded successfully',
+                'avatar_url' => $avatarUrl,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to upload avatar',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
     /**
      * Display the specified resource.

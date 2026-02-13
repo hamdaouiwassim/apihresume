@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PdfFont;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PDFController extends Controller
@@ -51,13 +54,25 @@ class PDFController extends Controller
         try {
             $filename = $request->input('filename', 'resume.pdf');
 
+            // Use writable storage for Dompdf fonts (vendor/lib/fonts may not be writable)
+            $fontDir = storage_path('app/dompdf-fonts');
+            if (!is_dir($fontDir)) {
+                mkdir($fontDir, 0755, true);
+            }
+
             $options = new Options();
             $options->set('isRemoteEnabled', true);
             $options->set('isHtml5ParserEnabled', true);
             $options->set('defaultFont', 'Arial');
             $options->set('dpi', 120);
+            $options->set('fontDir', $fontDir);
+            $options->set('fontCache', $fontDir);
 
             $dompdf = new Dompdf($options);
+
+            // Register custom uploaded fonts before loading HTML
+            $this->registerCustomFonts($dompdf);
+
             $dompdf->setPaper('A4');
             $dompdf->loadHtml(
                 $resume
@@ -197,6 +212,83 @@ HTML;
         }
 
         return null;
+    }
+
+    /**
+     * Register all active custom fonts with the Dompdf instance.
+     */
+    private function registerCustomFonts(Dompdf $dompdf): void
+    {
+        try {
+            $fonts = PdfFont::active()->get();
+
+            if ($fonts->isEmpty()) {
+                return;
+            }
+
+            $fontMetrics = $dompdf->getFontMetrics();
+
+            foreach ($fonts as $font) {
+                $familyLower = strtolower($font->family_name);
+
+                // Dompdf expects a URI (file:// for local files). Use explicit file:// prefix for reliable loading.
+                $toUri = function (string $path) {
+                    $path = str_replace('\\', '/', $path);
+                    return 'file://' . (str_starts_with($path, '/') ? '' : '/') . $path;
+                };
+
+                // Register regular (required) - files are on 'local' disk (storage/app/private)
+                if ($font->regular_path) {
+                    $fullPath = Storage::disk('local')->path($font->regular_path);
+                    if (!file_exists($fullPath)) {
+                        Log::warning("PDF font file not found: {$fullPath} (regular_path: {$font->regular_path})");
+                    } else {
+                        $ok = $fontMetrics->registerFont(
+                            ['family' => $familyLower, 'style' => 'normal', 'weight' => 'normal'],
+                            $toUri($fullPath)
+                        );
+                        if (!$ok) {
+                            Log::warning("Dompdf registerFont failed for {$familyLower} (regular)");
+                        }
+                    }
+                }
+
+                // Register bold (optional, falls back to regular)
+                if ($font->bold_path) {
+                    $fullPath = Storage::disk('local')->path($font->bold_path);
+                    if (file_exists($fullPath)) {
+                        $fontMetrics->registerFont(
+                            ['family' => $familyLower, 'style' => 'normal', 'weight' => 'bold'],
+                            $toUri($fullPath)
+                        );
+                    }
+                }
+
+                // Register italic (optional)
+                if ($font->italic_path) {
+                    $fullPath = Storage::disk('local')->path($font->italic_path);
+                    if (file_exists($fullPath)) {
+                        $fontMetrics->registerFont(
+                            ['family' => $familyLower, 'style' => 'italic', 'weight' => 'normal'],
+                            $toUri($fullPath)
+                        );
+                    }
+                }
+
+                // Register bold italic (optional)
+                if ($font->bold_italic_path) {
+                    $fullPath = Storage::disk('local')->path($font->bold_italic_path);
+                    if (file_exists($fullPath)) {
+                        $fontMetrics->registerFont(
+                            ['family' => $familyLower, 'style' => 'italic', 'weight' => 'bold'],
+                            $toUri($fullPath)
+                        );
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to register custom fonts: ' . $e->getMessage());
+        }
     }
 
     private function sampleResumeData(): array

@@ -1,12 +1,17 @@
+@php
+    $s = $typoScale ?? 1;
+    $execFont = $typoFontFamily ?? 'sans-serif';
+    $execBase = $typoFontSize ?? 15;
+@endphp
 <div class="exec-template" data-cv-preview="true">
     <style>
         .exec-template {
-            font-family: 'Source Sans Pro', 'Segoe UI', Arial, sans-serif;
+            font-family: {!! $execFont !!};
             background: #fff;
-            padding: 24px;
+            padding: 8px 10px;
             color: #0f172a;
-            font-size: 12.5px;
-            line-height: 1.45;
+            font-size: {{ $execBase }}px;
+            line-height: 1.5;
         }
         .exec-template * {
             box-sizing: border-box;
@@ -16,7 +21,7 @@
             margin-bottom: 16px;
         }
         .exec-name {
-            font-size: 30px;
+            font-size: {{ round(34 * $s) }}px;
             letter-spacing: 0.18em;
             margin-top: 0;
             margin-bottom: 20px;
@@ -25,7 +30,7 @@
             text-align: center;
             margin-top: 6px;
             margin-bottom: 60px;
-            font-size: 14px;
+            font-size: {{ round(16 * $s) }}px;
             letter-spacing: 0.24em;
             text-transform: uppercase;
             color: #475569;
@@ -40,13 +45,13 @@
             display: table-cell;
             width: 33.333%;
             border-right: 1px solid #e2e8f0;
-            padding-right: 18px;
+            padding-right: 10px;
             vertical-align: top;
         }
         .exec-main {
             display: table-cell;
             width: 66.667%;
-            padding-left: 24px;
+            padding-left: 10px;
             vertical-align: top;
         }
         .exec-section {
@@ -54,7 +59,7 @@
         }
         .exec-section h3,
         .section-title {
-            font-size: 11px;
+            font-size: {{ round(13 * $s) }}px;
             letter-spacing: 0.24em;
             text-transform: uppercase;
             margin: 0 0 10px;
@@ -65,14 +70,14 @@
         }
         .exec-contact-label {
             font-weight: 600;
-            font-size: 14px;
+            font-size: {{ round(14 * $s) }}px;
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.16em;
             display: block;
         }
         .exec-contact-value {
-            font-size: 11px;
+            font-size: {{ round(13 * $s) }}px;
             color: #0f172a;
         }
         .exec-list {
@@ -81,12 +86,12 @@
             margin: 0;
         }
         .exec-list li {
-            font-size: 11px;
+            font-size: {{ round(13 * $s) }}px;
             margin-bottom: 5px;
             color: #0f172a;
         }
         .exec-summary {
-            font-size: 14px;
+            font-size: {{ round(16 * $s) }}px;
             line-height: 1.5;
             color: #1e293b;
             margin-bottom: 18px;
@@ -95,7 +100,7 @@
             margin-bottom: 4px;
         }
         .exec-role-title {
-            font-size: 17px;
+            font-size: {{ round(19 * $s) }}px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.03em;
@@ -103,7 +108,7 @@
             text-align: left;
         }
         .exec-timeline {
-            font-size: 14px;
+            font-size: {{ round(14 * $s) }}px;
             color: #64748b;
             margin: 0 0 6px;
             text-transform: uppercase;
@@ -111,7 +116,7 @@
             text-align: left;
         }
         .exec-company {
-            font-size: 12px;
+            font-size: {{ round(12 * $s) }}px;
             color: #475569;
             margin: 0 0 8px;
             text-align: left;
@@ -121,13 +126,20 @@
             text-align: justify;
             letter-spacing: 0;
             text-transform: lowercase;
-            font-family: Arial, sans-serif !important;
             margin: 0 0 14px 18px;
             padding: 0;
         }
         .exec-bullets li {
-            font-size: 14px;
+            font-size: {{ round(14 * $s) }}px;
             margin-bottom: 5px;
+        }
+        .exec-profile-picture {
+            display: block;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 16px;
         }
     </style>
 
@@ -151,6 +163,9 @@
                 $html = '<section class="exec-section">';
                 $html .= '<h3>' . ($strings['contact'] ?? 'Contact') . '</h3>';
                 foreach($contactItems as $item) {
+                    if (isset($item['label']) && strtolower($item['label']) === 'profilepicture') {
+                        continue;
+                    }
                     $html .= '<div class="exec-contact-item">';
                     $html .= '<span class="exec-contact-label">' . strtoupper($item['label']) . '</span>';
                     $html .= '<span class="exec-contact-value">' . $item['value'] . '</span>';
@@ -293,6 +308,38 @@
                         }
                         $html .= '</ul>';
                     }
+                    if (!empty($role['projects'])) {
+                        $html .= '<div style="margin-top: 10px; margin-left: 8px; padding-left: 12px; border-left: 2px solid #e2e8f0;">';
+                        $html .= '<p class="section-title" style="margin-bottom: 6px;">' . ($strings['projects'] ?? 'Projects') . '</p>';
+                        foreach ($role['projects'] as $project) {
+                            $timeline = $formatTimeline($project['start'] ?? null, $project['end'] ?? null);
+                            $html .= '<div class="exec-role" style="margin-bottom: 8px;">';
+                            if (!empty($project['name'])) {
+                                $html .= '<p class="exec-role-title">' . $project['name'] . '</p>';
+                            }
+                            if (!empty($timeline)) {
+                                $html .= '<p class="exec-timeline">' . $timeline . '</p>';
+                            }
+                            if (!empty($project['technologies'])) {
+                                $html .= '<p class="exec-company">' . $project['technologies'] . '</p>';
+                            }
+                            if (!empty($project['url'])) {
+                                $html .= '<p class="exec-company" style="font-size: 11px; color: #6B7280;">' . $project['url'] . '</p>';
+                            }
+                            if (!empty($project['description'])) {
+                                $html .= '<p class="exec-summary">' . $project['description'] . '</p>';
+                            }
+                            if (!empty($project['bullets'])) {
+                                $html .= '<ul class="exec-bullets">';
+                                foreach ($project['bullets'] as $bullet) {
+                                    $html .= '<li>' . $bullet . '</li>';
+                                }
+                                $html .= '</ul>';
+                            }
+                            $html .= '</div>';
+                        }
+                        $html .= '</div>';
+                    }
                     $html .= '</div>';
                 }
 
@@ -376,10 +423,23 @@
             }
         }
     }
+    // Profile picture: show in sidebar only when present (show_photo_on_cv)
+    $execProfilePicture = $resume['contact']['profile_picture'] ?? null;
+    if (empty($execProfilePicture)) {
+        foreach ($contactItems as $item) {
+            if (isset($item['label']) && strtolower($item['label']) === 'profilepicture' && !empty($item['value'] ?? null)) {
+                $execProfilePicture = $item['value'];
+                break;
+            }
+        }
+    }
     @endphp
 
     <div class="exec-body">
         <aside class="exec-sidebar">
+            @if(!empty($execProfilePicture))
+                <img src="{{ $execProfilePicture }}" alt="{{ $resume['name'] ?? 'Profile' }}" class="exec-profile-picture" />
+            @endif
             @foreach($orderedSidebarSections as $section)
                 {!! $section['render']() !!}
             @endforeach
