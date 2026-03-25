@@ -22,8 +22,11 @@ use App\Http\Controllers\Admin\TemplateController as AdminTemplateController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ResumeController as AdminResumeController;
+use App\Http\Controllers\Admin\CoverLetterTemplateController as AdminCoverLetterTemplateController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
 use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
+use App\Http\Controllers\CoverLetterController;
+use App\Http\Controllers\CoverLetterTemplateController;
 use App\Http\Controllers\SubscriberController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -53,27 +56,30 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
         ->middleware('throttle:6,1');
 
     Route::match(['put', 'post'], '/profile', [AuthController::class, 'updateProfile']);
-    Route::apiResource("experiences" , ExperienceContoller::class);
-    Route::apiResource("educations" , EducationContoller::class);
-    Route::apiResource("projects" , ProjectController::class);
+    Route::apiResource("experiences", ExperienceContoller::class);
+    Route::apiResource("educations", EducationContoller::class);
+    Route::apiResource("projects", ProjectController::class);
     Route::apiResource('skills', SkillController::class);
     Route::apiResource('hobbies', HobbieController::class);
     Route::apiResource('certificates', CertificateController::class);
     Route::apiResource('languages', LanguageController::class);
     Route::apiResource('templates', TemplateController::class)->except(['index']); // Exclude index from auth middleware
     Route::apiResource('resumes', ResumeController::class);
+    Route::apiResource('cover-letters', CoverLetterController::class);
+    Route::get('/cover-letter-templates', [CoverLetterTemplateController::class, 'index']);
+    Route::get('cover-letters/{coverLetter}/pdf', [CoverLetterController::class, 'generatePDF']);
     Route::apiResource('basic-info', BasicInfoController::class);
     Route::post('resumes/{resumeId}/basic-info/avatar', [BasicInfoController::class, 'uploadAvatar']);
     Route::get('/my-resumes', [UserController::class, 'myResumes']);
     Route::get('/reviews/my-review', [ReviewController::class, 'myReview']);
     Route::post('/reviews', [ReviewController::class, 'store']);
     Route::put('/reviews/{review}', [ReviewController::class, 'update']);
-    
+
     // Shareable links routes (protected)
     Route::post('/resumes/{resumeId}/shareable-link/generate', [ShareableLinkController::class, 'generate']);
     Route::get('/resumes/{resumeId}/shareable-link', [ShareableLinkController::class, 'getCurrentLink']);
     Route::post('/resumes/{resumeId}/shareable-link/deactivate', [ShareableLinkController::class, 'deactivate']);
-    
+
     // Resume collaboration routes (protected)
     Route::post('/resumes/{resumeId}/collaborators/invite', [ResumeCollaboratorController::class, 'invite']);
     Route::get('/resumes/{resumeId}/collaborators', [ResumeCollaboratorController::class, 'index']);
@@ -83,7 +89,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/collaborations/{invitationId}/refuse', [ResumeCollaboratorController::class, 'refuseInvitation']);
 
     // Temporarily remove verified middleware for debugging
-        Route::post('/generate-pdf', [PDFController::class, 'generate']);
+    Route::post('/generate-pdf', [PDFController::class, 'generate']);
 
     // Active PDF fonts for font dropdown
     Route::get('/pdf-fonts/active', [\App\Http\Controllers\Admin\PdfFontController::class, 'activeFonts']);
@@ -97,6 +103,7 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::apiResource('users', AdminUserController::class);
     Route::apiResource('templates', AdminTemplateController::class);
+    Route::apiResource('cover-letter-templates', AdminCoverLetterTemplateController::class);
     Route::apiResource('blog', AdminBlogController::class);
     Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
     Route::get('/resumes', [AdminResumeController::class, 'index']);
