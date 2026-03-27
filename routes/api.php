@@ -72,8 +72,11 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('resumes/{resumeId}/basic-info/avatar', [BasicInfoController::class, 'uploadAvatar']);
     Route::get('/my-resumes', [UserController::class, 'myResumes']);
     Route::get('/reviews/my-review', [ReviewController::class, 'myReview']);
-    Route::post('/reviews', [ReviewController::class, 'store']);
-    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    
+    Route::middleware(['verified'])->group(function () {
+        Route::post('/reviews', [ReviewController::class, 'store']);
+        Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    });
 
     // Shareable links routes (protected)
     Route::post('/resumes/{resumeId}/shareable-link/generate', [ShareableLinkController::class, 'generate']);
@@ -114,6 +117,11 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::post('/fonts', [\App\Http\Controllers\Admin\PdfFontController::class, 'store']);
     Route::post('/fonts/{pdfFont}/toggle', [\App\Http\Controllers\Admin\PdfFontController::class, 'toggleActive']);
     Route::delete('/fonts/{pdfFont}', [\App\Http\Controllers\Admin\PdfFontController::class, 'destroy']);
+
+    // Review management
+    Route::get('/reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index']);
+    Route::patch('/reviews/{review}/toggle-public', [\App\Http\Controllers\Admin\ReviewController::class, 'togglePublic']);
+    Route::delete('/reviews/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy']);
 });
 
 // Recruiter routes
