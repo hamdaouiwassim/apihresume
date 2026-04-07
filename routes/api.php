@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\TemplateController as AdminTemplateController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ResumeController as AdminResumeController;
+use App\Http\Controllers\Admin\CoverLetterController as AdminCoverLetterController;
 use App\Http\Controllers\Admin\CoverLetterTemplateController as AdminCoverLetterTemplateController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
 use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
@@ -111,6 +112,9 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
     Route::get('/resumes', [AdminResumeController::class, 'index']);
     Route::get('/resumes/{id}', [AdminResumeController::class, 'show']);
+    Route::get('/cover-letters', [AdminCoverLetterController::class, 'index']);
+    Route::get('/cover-letters/{id}', [AdminCoverLetterController::class, 'show']);
+    Route::delete('/cover-letters/{id}', [AdminCoverLetterController::class, 'destroy']);
 
     // PDF Font management
     Route::get('/fonts', [\App\Http\Controllers\Admin\PdfFontController::class, 'index']);
