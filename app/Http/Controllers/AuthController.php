@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Mail\RecruiterSignupPending;
+use App\Support\ApiJson;
 use App\Models\User;
 use App\Models\Recruiter;
 use App\Models\Candidate;
@@ -94,17 +95,33 @@ class AuthController extends Controller
         // Trigger email verification
         event(new Registered($user));
 
-        $token = $user->createToken("API Token")->plainTextToken;
         $user->load(['recruiter', 'candidate', 'admin']);
 
+        if ($this->isStatefulSpaRequest($request)) {
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return response()->json([
+                'status' => true,
+                'message' => $isRecruiterAccount
+                    ? 'Recruiter account submitted. Please verify your email. An admin will activate your access soon.'
+                    : 'Account created. Please verify your email to start using the platform.',
+                'user' => $user,
+                'token' => null,
+                'requires_email_verification' => true,
+            ], 201);
+        }
+
+        $token = $user->createToken('API Token')->plainTextToken;
+
         return response()->json([
-            "status" => true,
-            "message" => $isRecruiterAccount
-                ? "Recruiter account submitted. Please verify your email. An admin will activate your access soon."
-                : "Account created. Please verify your email to start using the platform.",
-            "user" => $user,
-            "token" => $token,
-            "requires_email_verification" => true,
+            'status' => true,
+            'message' => $isRecruiterAccount
+                ? 'Recruiter account submitted. Please verify your email. An admin will activate your access soon.'
+                : 'Account created. Please verify your email to start using the platform.',
+            'user' => $user,
+            'token' => $token,
+            'requires_email_verification' => true,
         ], 201);
     }
 
@@ -133,10 +150,9 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = User::with(['recruiter', 'candidate', 'admin'])->where("email", $request->email)->first();
-        $token = $user->createToken("API Token")->plainTextToken;
+        $user = User::with(['recruiter', 'candidate', 'admin'])->where('email', $request->email)->first();
 
-        $requiresVerification = !$user->hasVerifiedEmail();
+        $requiresVerification = ! $user->hasVerifiedEmail();
         if ($requiresVerification) {
             try {
                 $user->sendEmailVerificationNotification();
@@ -148,12 +164,26 @@ class AuthController extends Controller
             }
         }
 
+        if ($this->isStatefulSpaRequest($request)) {
+            $request->session()->regenerate();
+
+            return response()->json([
+                'status' => true,
+                'message' => $user->hasVerifiedEmail() ? 'Login successful' : 'Email verification required',
+                'user' => $user,
+                'token' => null,
+                'requires_email_verification' => $requiresVerification,
+            ], 200);
+        }
+
+        $token = $user->createToken('API Token')->plainTextToken;
+
         return response()->json([
-            "status" => true,
-            "message" => $user->hasVerifiedEmail() ? "Login successful" : "Email verification required",
-            "user" => $user,
-            "token" => $token,
-            "requires_email_verification" => $requiresVerification,
+            'status' => true,
+            'message' => $user->hasVerifiedEmail() ? 'Login successful' : 'Email verification required',
+            'user' => $user,
+            'token' => $token,
+            'requires_email_verification' => $requiresVerification,
         ], 200);
     }
 
@@ -162,11 +192,20 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        if ($request->attributes->get('sanctum') || Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        } else {
+            $token = $request->user()?->currentAccessToken();
+            if ($token) {
+                $token->delete();
+            }
+        }
 
         return response()->json([
-            "status" => true,
-            "message" => "Logged out successfully"
+            'status' => true,
+            'message' => 'Logged out successfully',
         ], 200);
     }
 
@@ -298,8 +337,7 @@ class AuthController extends Controller
             $user->forceFill(array_filter($updateData, fn ($value) => !is_null($value)))->save();
         }
 
-        $token = $user->createToken('API Token')->plainTextToken;
-        $requiresVerification = !$user->hasVerifiedEmail();
+        $requiresVerification = ! $user->hasVerifiedEmail();
 
         if ($requiresVerification) {
             try {
@@ -311,14 +349,19 @@ class AuthController extends Controller
                 ]);
             }
         }
+
         $user->load(['recruiter', 'candidate', 'admin']);
+
+        Auth::login($user, true);
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         if ($request->wantsJson()) {
             return response()->json([
                 'status' => true,
                 'message' => 'Login successful',
                 'user' => $user,
-                'token' => $token,
+                'token' => null,
                 'is_new_user' => $isNewUser,
                 'provider' => 'google',
                 'requires_email_verification' => $requiresVerification,
@@ -327,7 +370,6 @@ class AuthController extends Controller
 
         $redirectUrl = $this->buildSocialRedirectUrl([
             'status' => 'success',
-            'token' => $token,
             'provider' => 'google',
             'is_new_user' => $isNewUser ? '1' : '0',
             'requires_email_verification' => $requiresVerification ? '1' : '0',
@@ -345,6 +387,7 @@ class AuthController extends Controller
             "name" => "nullable|string|max:255",
             "email" => "nullable|string|email|max:255|unique:users,email," . $request->user()->id,
             "avatar" => "nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120", // 5MB max
+            "brand_avatar" => "nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120",
             "password" => "nullable|string|min:8|confirmed",
             "company_name" => "nullable|string|max:255",
             "company_size" => "nullable|string|max:255",
@@ -367,17 +410,6 @@ class AuthController extends Controller
         try {
             $user = $request->user();
             $updateData = [];
-            
-            // Debug: Log request info
-            Log::info('Profile update request', [
-                'method' => $request->method(),
-                'has_file_avatar' => $request->hasFile('avatar'),
-                'has_avatar' => $request->has('avatar'),
-                'all_files' => array_keys($request->allFiles()),
-                'all_input_keys' => array_keys($request->all()),
-                'content_type' => $request->header('Content-Type'),
-                'request_size' => $request->header('Content-Length'),
-            ]);
 
             if ($request->has('name')) {
                 $updateData['name'] = $request->name;
@@ -414,19 +446,9 @@ class AuthController extends Controller
             if ($request->hasFile('avatar')) {
                 try {
                     $file = $request->file('avatar');
-                    
-                    // Debug: Log file info
-                    Log::info('Avatar upload attempt', [
-                        'has_file' => $request->hasFile('avatar'),
-                        'file_name' => $file ? $file->getClientOriginalName() : 'null',
-                        'file_size' => $file ? $file->getSize() : 'null',
-                        'file_mime' => $file ? $file->getMimeType() : 'null',
-                        'is_valid' => $file ? $file->isValid() : false,
-                    ]);
-                    
-                    // Validate file is actually uploaded
-                    if (!$file || !$file->isValid()) {
-                        throw new \Exception('Invalid file upload: ' . ($file ? $file->getError() : 'File is null'));
+
+                    if (! $file || ! $file->isValid()) {
+                        throw new \RuntimeException('Invalid avatar upload.');
                     }
                     
                     // Delete old avatar if exists (only if it's stored locally)
@@ -464,32 +486,19 @@ class AuthController extends Controller
                         $port = $request->getPort();
                         $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
                         $updateData['avatar'] = $baseUrl . '/storage/' . $avatarPath;
-                        Log::info('Avatar URL generated', [
-                            'url' => $updateData['avatar'], 
-                            'path' => $avatarPath,
-                            'scheme' => $scheme,
-                            'host' => $host,
-                            'port' => $port,
-                            'base_url' => $baseUrl,
-                            'storage_path' => 'storage/' . $avatarPath
-                        ]);
                     } else {
-                        throw new \Exception('Failed to store avatar file. Storage returned path: ' . ($avatarPath ?? 'null'));
+                        throw new \RuntimeException('Failed to store avatar file.');
                     }
                 } catch (\Exception $e) {
-                    Log::error('Avatar upload error: ' . $e->getMessage(), [
+                    Log::error('Avatar upload error', [
                         'user_id' => $user->id,
-                        'file_info' => $request->hasFile('avatar') ? [
-                            'original_name' => $request->file('avatar')->getClientOriginalName(),
-                            'size' => $request->file('avatar')->getSize(),
-                            'mime' => $request->file('avatar')->getMimeType(),
-                        ] : null,
+                        'exception' => $e->getMessage(),
                     ]);
-                    return response()->json([
-                        "status" => false,
-                        "message" => "Failed to upload avatar",
-                        "error" => $e->getMessage()
-                    ], 500);
+
+                    return response()->json(array_merge([
+                        'status' => false,
+                        'message' => 'Failed to upload avatar',
+                    ], ApiJson::debugError($e)), 500);
                 }
             }
 
@@ -498,8 +507,8 @@ class AuthController extends Controller
                 try {
                     $file = $request->file('brand_avatar');
 
-                    if (!$file || !$file->isValid()) {
-                        throw new \Exception('Invalid brand avatar upload: ' . ($file ? $file->getError() : 'File is null'));
+                    if (! $file || ! $file->isValid()) {
+                        throw new \RuntimeException('Invalid company logo upload.');
                     }
 
                     if ($user->recruiter->brand_avatar) {
@@ -529,17 +538,18 @@ class AuthController extends Controller
                         $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
                         $user->recruiter->update(['brand_avatar' => $baseUrl . '/storage/' . $brandPath]);
                     } else {
-                        throw new \Exception('Failed to store brand avatar file.');
+                        throw new \RuntimeException('Failed to store company logo file.');
                     }
                 } catch (\Exception $e) {
-                    Log::error('Brand avatar upload error: ' . $e->getMessage(), [
+                    Log::error('Brand avatar upload error', [
                         'user_id' => $user->id,
+                        'exception' => $e->getMessage(),
                     ]);
-                    return response()->json([
-                        "status" => false,
-                        "message" => "Failed to upload company logo",
-                        "error" => $e->getMessage()
-                    ], 500);
+
+                    return response()->json(array_merge([
+                        'status' => false,
+                        'message' => 'Failed to upload company logo',
+                    ], ApiJson::debugError($e)), 500);
                 }
             }
             
@@ -560,12 +570,21 @@ class AuthController extends Controller
                 "user" => $user->fresh(['recruiter', 'candidate', 'admin'])
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
-                "status" => false,
-                "message" => "Something went wrong",
-                "error" => $e->getMessage()
-            ], 500);
+            Log::error('Profile update error', [
+                'user_id' => $request->user()?->id,
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json(array_merge([
+                'status' => false,
+                'message' => 'Something went wrong',
+            ], ApiJson::debugError($e)), 500);
         }
+    }
+
+    private function isStatefulSpaRequest(Request $request): bool
+    {
+        return (bool) $request->attributes->get('sanctum');
     }
 
     private function isGoogleAuthEnabled(): bool

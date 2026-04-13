@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
+use App\Support\ApiJson;
+use App\Support\BlogHtmlSanitizer;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
@@ -30,17 +32,22 @@ class BlogController extends Controller
 
             $posts = $query->paginate($perPage);
 
+            $posts->getCollection()->transform(function (BlogPost $post) {
+                $post->setAttribute('content', BlogHtmlSanitizer::clean($post->content));
+
+                return $post;
+            });
+
             return response()->json([
                 'status' => true,
                 'message' => 'Blog posts fetched successfully',
                 'data' => $posts
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to fetch blog posts',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -58,17 +65,18 @@ class BlogController extends Controller
             // Increment views
             $post->incrementViews();
 
+            $post->setAttribute('content', BlogHtmlSanitizer::clean($post->content));
+
             return response()->json([
                 'status' => true,
                 'message' => 'Blog post fetched successfully',
                 'data' => $post
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Blog post not found',
-                'error' => $e->getMessage()
-            ], 404);
+            ], ApiJson::debugError($e)), 404);
         }
     }
 }

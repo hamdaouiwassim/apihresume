@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Jobs\SendBlogPostNotifications;
+use App\Support\ApiJson;
+use App\Support\BlogHtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -44,11 +46,10 @@ class BlogController extends Controller
                 'data' => $posts
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to fetch blog posts',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -66,11 +67,10 @@ class BlogController extends Controller
                 'data' => $post
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Blog post not found',
-                'error' => $e->getMessage()
-            ], 404);
+            ], ApiJson::debugError($e)), 404);
         }
     }
 
@@ -137,7 +137,7 @@ class BlogController extends Controller
                 'title' => $request->title,
                 'slug' => $slug,
                 'excerpt' => $request->excerpt,
-                'content' => $request->content,
+                'content' => BlogHtmlSanitizer::clean($request->content),
                 'featured_image' => $featuredImageUrl,
                 'status' => $request->status,
                 'published_at' => $request->status === 'published' 
@@ -158,11 +158,10 @@ class BlogController extends Controller
                 'data' => $post
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to create blog post',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -199,6 +198,10 @@ class BlogController extends Controller
                 'featured_image',
                 'status',
             ]);
+
+            if (array_key_exists('content', $updateData)) {
+                $updateData['content'] = BlogHtmlSanitizer::clean($updateData['content']);
+            }
 
             // Handle featured image upload
             if ($request->hasFile('featured_image_file')) {
@@ -283,11 +286,10 @@ class BlogController extends Controller
                 'data' => $post
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to update blog post',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -305,11 +307,10 @@ class BlogController extends Controller
                 'message' => 'Blog post deleted successfully'
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to delete blog post',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 }

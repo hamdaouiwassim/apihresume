@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Template;
+use App\Support\ApiJson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -41,11 +43,12 @@ class TemplateController extends Controller
                 'data' => $templates
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Admin templates index failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to fetch templates',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -59,7 +62,7 @@ class TemplateController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string|max:5000',
                 'category' => 'required|in:Corporate,Creative,Simple',
-                'preview_image' => 'required|image|max:2048',
+                'preview_image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -85,11 +88,12 @@ class TemplateController extends Controller
                 'data' => $template
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Admin template create failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to create template',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -103,7 +107,7 @@ class TemplateController extends Controller
                 'name' => 'sometimes|string|max:255',
                 'description' => 'nullable|string|max:5000',
                 'category' => 'sometimes|in:Corporate,Creative,Simple',
-                'preview_image' => 'nullable|image|max:2048',
+                'preview_image' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -132,11 +136,12 @@ class TemplateController extends Controller
                 'data' => $template
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Admin template update failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to update template',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -164,11 +169,12 @@ class TemplateController extends Controller
                 'message' => 'Template deleted successfully'
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Admin template delete failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to delete template',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 

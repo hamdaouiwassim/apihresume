@@ -31,30 +31,54 @@ use App\Http\Controllers\CoverLetterTemplateController;
 use App\Http\Controllers\SubscriberController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CsrfTokenController;
 use App\Http\Controllers\EmailVerificationController;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Session\Middleware\StartSession;
 
-Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
-Route::get('/auth/google/url', [AuthController::class, 'getGoogleAuthUrl']);
-Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
-Route::get('/share/{token}', [ShareableLinkController::class, 'view']);
-Route::post('/collaborate/accept/{token}', [ResumeCollaboratorController::class, 'accept']);
-Route::get('/reviews', [ReviewController::class, 'index']);
-Route::get('/blog', [BlogController::class, 'index']);
-Route::get('/blog/{slug}', [BlogController::class, 'show']);
-Route::get('/stats', [StatsController::class, 'index']);
-Route::get('/templates', [TemplateController::class, 'index']); // Public templates endpoint
-Route::post('/subscribers/subscribe', [SubscriberController::class, 'subscribe'])->middleware('throttle:10,1');
-Route::post('/subscribers/unsubscribe', [SubscriberController::class, 'unsubscribe'])->middleware('throttle:10,1');
+Route::middleware([
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+])->group(function () {
+    Route::get('/csrf-token', [CsrfTokenController::class, 'show'])
+        ->middleware('throttle:csrf-token');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
+        ->middleware('throttle:oauth-callback');
+});
+
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth-register');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth-login');
+Route::get('/auth/google/url', [AuthController::class, 'getGoogleAuthUrl'])
+    ->middleware('throttle:oauth-google-url');
+Route::get('/share/{token}', [ShareableLinkController::class, 'view'])
+    ->middleware('throttle:public-read');
+Route::post('/collaborate/accept/{token}', [ResumeCollaboratorController::class, 'accept'])
+    ->middleware('throttle:collaborate-accept');
+Route::get('/reviews', [ReviewController::class, 'index'])
+    ->middleware('throttle:public-read');
+Route::get('/blog', [BlogController::class, 'index'])
+    ->middleware('throttle:public-read');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])
+    ->middleware('throttle:public-read');
+Route::get('/stats', [StatsController::class, 'index'])
+    ->middleware('throttle:public-read');
+Route::get('/templates', [TemplateController::class, 'index'])
+    ->middleware('throttle:public-read');
+Route::post('/subscribers/subscribe', [SubscriberController::class, 'subscribe'])
+    ->middleware('throttle:subscribers');
+Route::post('/subscribers/unsubscribe', [SubscriberController::class, 'unsubscribe'])
+    ->middleware('throttle:subscribers');
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-    ->middleware(['signed'])
+    ->middleware(['signed', 'throttle:email-verify'])
     ->name('verification.verify');
 
-Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(function () {
+Route::middleware(['auth:sanctum', 'track.activity', 'throttle:api-authenticated'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
-        ->middleware('throttle:6,1');
+        ->middleware('throttle:verification-resend');
 
     Route::match(['put', 'post'], '/profile', [AuthController::class, 'updateProfile']);
     Route::apiResource("experiences", ExperienceContoller::class);
@@ -93,7 +117,8 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
     Route::post('/collaborations/{invitationId}/refuse', [ResumeCollaboratorController::class, 'refuseInvitation']);
 
     // Temporarily remove verified middleware for debugging
-    Route::post('/generate-pdf', [PDFController::class, 'generate']);
+    Route::post('/generate-pdf', [PDFController::class, 'generate'])
+        ->middleware('throttle:pdf-generate');
 
     // Active PDF fonts for font dropdown
     Route::get('/pdf-fonts/active', [\App\Http\Controllers\Admin\PdfFontController::class, 'activeFonts']);
@@ -103,7 +128,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:120,1'])->group(f
 });
 
 // Admin routes
-Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throttle:120,1'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throttle:api-authenticated'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::apiResource('users', AdminUserController::class);
     Route::apiResource('templates', AdminTemplateController::class);
@@ -129,7 +154,7 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
 });
 
 // Recruiter routes
-Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'recruiter', 'throttle:120,1'])->prefix('recruiter')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'recruiter', 'throttle:api-authenticated'])->prefix('recruiter')->group(function () {
     Route::get('/resumes', [RecruiterResumeController::class, 'index']);
     Route::get('/resumes/{resume}', [RecruiterResumeController::class, 'show']);
     Route::get('/templates/proposals', [RecruiterTemplateProposalController::class, 'index']);

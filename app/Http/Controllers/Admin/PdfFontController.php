@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PdfFont;
+use App\Support\ApiJson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -25,11 +27,12 @@ class PdfFontController extends Controller
                 'data' => $fonts,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Admin fonts index failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -98,11 +101,12 @@ class PdfFontController extends Controller
                 'data' => $font,
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Font upload failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to upload font',
-                'error' => $e->getMessage(),
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -120,11 +124,12 @@ class PdfFontController extends Controller
                 'data' => $pdfFont,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Font toggle failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -158,11 +163,12 @@ class PdfFontController extends Controller
                 'message' => 'Font deleted successfully',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Font delete failed', ['exception' => $e->getMessage()]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'Failed to delete font',
-                'error' => $e->getMessage(),
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 

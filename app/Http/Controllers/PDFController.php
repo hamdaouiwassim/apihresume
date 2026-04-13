@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PdfFont;
+use App\Support\ApiJson;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
@@ -18,13 +19,12 @@ class PDFController extends Controller
     public function generate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'resume' => 'nullable|array',
+            'resume' => 'required',
             'resume.experience' => 'nullable|array',
             'resume.education' => 'nullable|array',
             'resume.skills' => 'nullable|array',
             'resume.certifications' => 'nullable|array',
             'resume.languages' => 'nullable|array',
-            'html' => 'nullable|string',
             'filename' => 'nullable|string|max:255',
             'locale' => 'nullable|in:en,fr',
         ]);
@@ -42,12 +42,11 @@ class PDFController extends Controller
             $locale = 'en';
         }
         $resume = $this->normalizeResumeInput($request->input('resume'));
-        $htmlInput = $request->input('html');
 
-        if (!$resume && empty($htmlInput)) {
+        if (! $resume) {
             return response()->json([
                 'status' => false,
-                'message' => 'Either resume data or raw HTML must be provided.',
+                'message' => 'Valid resume data is required.',
             ], 422);
         }
 
@@ -68,17 +67,21 @@ class PDFController extends Controller
             $options->set('fontDir', $fontDir);
             $options->set('fontCache', $fontDir);
 
+            $chrootRoots = array_values(array_filter([
+                realpath(base_path()),
+                realpath(storage_path('app')),
+            ]));
+            if ($chrootRoots !== []) {
+                $options->set('chroot', count($chrootRoots) === 1 ? $chrootRoots[0] : $chrootRoots);
+            }
+
             $dompdf = new Dompdf($options);
 
             // Register custom uploaded fonts before loading HTML
             $this->registerCustomFonts($dompdf);
 
             $dompdf->setPaper('A4');
-            $dompdf->loadHtml(
-                $resume
-                    ? $this->renderResumeTemplate($resume, $locale)
-                    : $this->wrapRawHtml($htmlInput)
-            );
+            $dompdf->loadHtml($this->renderResumeTemplate($resume, $locale));
             $dompdf->render();
 
             $pdf = $dompdf->output();
@@ -88,11 +91,15 @@ class PDFController extends Controller
                 ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
 
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('PDF generation failed', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json(array_merge([
                 'status' => false,
                 'message' => 'PDF generation failed',
-                'error' => $e->getMessage()
-            ], 500);
+            ], ApiJson::debugError($e)), 500);
         }
     }
 
@@ -171,31 +178,6 @@ class PDFController extends Controller
             'modern-professional', 'modern_professional', 'modern', 'professional' => 'pdf.templates.modern-professional',
             default => 'pdf.templates.classic',
         };
-    }
-
-    private function wrapRawHtml(?string $html): string
-    {
-        $html = $html ?: '';
-
-        if (str_contains($html, '<html')) {
-            return $html;
-        }
-
-        return <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        @page { margin: 20mm; }
-        body { font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 20px; }
-    </style>
-</head>
-<body>
-{$html}
-</body>
-</html>
-HTML;
     }
 
     private function normalizeResumeInput($input): ?array
