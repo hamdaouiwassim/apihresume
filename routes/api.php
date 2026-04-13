@@ -33,20 +33,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CsrfTokenController;
 use App\Http\Controllers\EmailVerificationController;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Session\Middleware\StartSession;
-
-Route::middleware([
-    EncryptCookies::class,
-    AddQueuedCookiesToResponse::class,
-    StartSession::class,
-])->group(function () {
-    Route::get('/csrf-token', [CsrfTokenController::class, 'show'])
-        ->middleware('throttle:csrf-token');
-    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
-        ->middleware('throttle:oauth-callback');
-});
+Route::get('/csrf-token', [CsrfTokenController::class, 'show'])
+    ->middleware('throttle:csrf-token');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
+    ->middleware('throttle:oauth-callback');
 
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth-register');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth-login');
@@ -90,7 +80,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:api-authenticated
     Route::apiResource('languages', LanguageController::class);
     Route::apiResource('templates', TemplateController::class)->except(['index']); // Exclude index from auth middleware
     Route::apiResource('resumes', ResumeController::class);
-    Route::apiResource('cover-letters', CoverLetterController::class);
+    Route::apiResource('cover-letters', CoverLetterController::class)->except(['store']);
     Route::get('/cover-letter-templates', [CoverLetterTemplateController::class, 'index']);
     Route::get('cover-letters/{coverLetter}/pdf', [CoverLetterController::class, 'generatePDF']);
     Route::apiResource('basic-info', BasicInfoController::class);
@@ -101,6 +91,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:api-authenticated
     Route::middleware(['verified'])->group(function () {
         Route::post('/reviews', [ReviewController::class, 'store']);
         Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+        Route::post('/cover-letters', [CoverLetterController::class, 'store']);
     });
 
     // Shareable links routes (protected)
