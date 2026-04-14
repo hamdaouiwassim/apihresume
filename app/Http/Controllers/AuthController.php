@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -353,7 +354,11 @@ class AuthController extends Controller
         $user->load(['recruiter', 'candidate', 'admin']);
 
         $token = null;
-        if ($this->isStatefulSpaRequest($request) && $request->hasSession()) {
+        $shouldUseSessionLogin = $request->wantsJson()
+            && $this->isStatefulSpaRequest($request)
+            && $request->hasSession();
+
+        if ($shouldUseSessionLogin) {
             Auth::login($user, true);
             $request->session()->regenerate();
             $request->session()->regenerateToken();
@@ -373,15 +378,91 @@ class AuthController extends Controller
             ]);
         }
 
+        $code = null;
+        if ($token) {
+            $code = Str::random(64);
+            Cache::put($this->socialAuthCodeCacheKey($code), [
+                'token' => $token,
+                'user' => $user->toArray(),
+                'is_new_user' => $isNewUser,
+                'provider' => 'google',
+                'requires_email_verification' => $requiresVerification,
+            ], now()->addMinutes(2));
+            Log::info('Social login code issued', [
+                'provider' => 'google',
+                'user_id' => $user->id,
+                'is_new_user' => $isNewUser,
+                'code_prefix' => substr($code, 0, 10),
+            ]);
+        }
+
         $redirectUrl = $this->buildSocialRedirectUrl([
             'status' => 'success',
             'provider' => 'google',
             'is_new_user' => $isNewUser ? '1' : '0',
             'requires_email_verification' => $requiresVerification ? '1' : '0',
-            'token' => $token,
+            'code' => $code,
         ]);
 
         return redirect()->away($redirectUrl);
+    }
+
+    /**
+     * Exchange one-time social auth code for login payload
+     */
+    public function exchangeSocialAuthCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|string|min:32|max:128',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid social authentication code.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $code = $request->input('code');
+        $activeCacheKey = $this->socialAuthCodeCacheKey($code);
+        $usedCacheKey = $this->socialAuthCodeUsedCacheKey($code);
+
+        $payload = Cache::pull($activeCacheKey);
+        if ($payload) {
+            // Allow safe idempotent retries (duplicate requests) for a short window.
+            Cache::put($usedCacheKey, $payload, now()->addMinutes(2));
+        } else {
+            $payload = Cache::get($usedCacheKey);
+        }
+
+        if (!$payload) {
+            Log::warning('Social login code exchange failed', [
+                'provider' => 'google',
+                'reason' => 'missing_or_expired_code',
+                'code_prefix' => substr($code, 0, 10),
+            ]);
+            return response()->json([
+                'status' => false,
+                'message' => 'This social login code is invalid or has expired. Please sign in again.',
+            ], 410);
+        }
+
+        Log::info('Social login code exchanged', [
+            'provider' => 'google',
+            'user_id' => data_get($payload, 'user.id'),
+            'code_prefix' => substr($code, 0, 10),
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Login successful',
+            'token' => $payload['token'] ?? null,
+            'user' => $payload['user'] ?? null,
+            'is_new_user' => $payload['is_new_user'] ?? false,
+            'provider' => $payload['provider'] ?? 'google',
+            'requires_email_verification' => $payload['requires_email_verification'] ?? false,
+        ]);
     }
 
     /**
@@ -624,5 +705,15 @@ class AuthController extends Controller
         ]);
 
         return redirect()->away($redirectUrl);
+    }
+
+    private function socialAuthCodeCacheKey(string $code): string
+    {
+        return 'social-auth-code:' . $code;
+    }
+
+    private function socialAuthCodeUsedCacheKey(string $code): string
+    {
+        return 'social-auth-code-used:' . $code;
     }
 }
