@@ -36,7 +36,7 @@ use App\Http\Controllers\EmailVerificationController;
 Route::get('/csrf-token', [CsrfTokenController::class, 'show'])
     ->middleware('throttle:csrf-token');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
-    ->middleware('throttle:oauth-callback');
+    ->middleware(['web', 'throttle:oauth-callback']);
 
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth-register');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth-login');

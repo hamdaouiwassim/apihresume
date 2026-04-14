@@ -352,16 +352,21 @@ class AuthController extends Controller
 
         $user->load(['recruiter', 'candidate', 'admin']);
 
-        Auth::login($user, true);
-        $request->session()->regenerate();
-        $request->session()->regenerateToken();
+        $token = null;
+        if ($this->isStatefulSpaRequest($request) && $request->hasSession()) {
+            Auth::login($user, true);
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
+        } else {
+            $token = $user->createToken('API Token')->plainTextToken;
+        }
 
         if ($request->wantsJson()) {
             return response()->json([
                 'status' => true,
                 'message' => 'Login successful',
                 'user' => $user,
-                'token' => null,
+                'token' => $token,
                 'is_new_user' => $isNewUser,
                 'provider' => 'google',
                 'requires_email_verification' => $requiresVerification,
@@ -373,6 +378,7 @@ class AuthController extends Controller
             'provider' => 'google',
             'is_new_user' => $isNewUser ? '1' : '0',
             'requires_email_verification' => $requiresVerification ? '1' : '0',
+            'token' => $token,
         ]);
 
         return redirect()->away($redirectUrl);
