@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Mail\RecruiterSignupPending;
-use App\Support\ApiJson;
-use App\Models\User;
-use App\Models\Recruiter;
 use App\Models\Candidate;
-use Illuminate\Http\Request;
+use App\Models\Recruiter;
+use App\Models\User;
+use App\Support\ApiJson;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -31,49 +30,50 @@ class AuthController extends Controller
         $isRecruiterSignup = ($payload['account_type'] ?? 'candidate') === 'recruiter';
 
         $validator = Validator::make($payload, [
-            "name" => "required|string|max:255",
-            "email" => "required|string|email|max:255|unique:users",
-            "password" => "required|string|min:8|confirmed",
-            "account_type" => "nullable|in:candidate,recruiter",
-            "company_name" => "required_if:account_type,recruiter|string|max:255",
-            "company_size" => "nullable|string|max:255",
-            "industry_focus" => "required_if:account_type,recruiter|string|max:255",
-            "hiring_focus" => "nullable|string|max:255",
-            "recruiter_role" => "nullable|string|max:255",
-            "recruiter_phone" => "nullable|string|max:30",
-            "recruiter_linkedin" => "nullable|url|max:255",
-            "compliance_accepted" => $isRecruiterSignup ? "accepted" : "nullable",
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'account_type' => 'nullable|in:candidate,recruiter',
+            'company_name' => 'required_if:account_type,recruiter|string|max:255',
+            'company_size' => 'nullable|string|max:255',
+            'industry_focus' => 'required_if:account_type,recruiter|string|max:255',
+            'hiring_focus' => 'nullable|string|max:255',
+            'recruiter_role' => 'nullable|string|max:255',
+            'recruiter_phone' => 'nullable|string|max:30',
+            'recruiter_linkedin' => 'nullable|url|max:255',
+            'compliance_accepted' => $isRecruiterSignup ? 'accepted' : 'nullable',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                "status" => false,
-                "message" => "Validation error",
-                "errors" => $validator->errors()
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $isRecruiterAccount = $request->input('account_type') === 'recruiter';
 
         $user = User::create([
-            "name" => $request->name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "is_recruiter" => $isRecruiterAccount,
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'is_recruiter' => $isRecruiterAccount,
+            'is_pro' => false,
         ]);
 
         if ($isRecruiterAccount) {
             $recruiter = Recruiter::create([
-                "user_id" => $user->id,
-                "status" => 'pending',
-                "company_name" => $request->company_name,
-                "company_size" => $request->company_size,
-                "industry_focus" => $request->industry_focus,
-                "hiring_focus" => $request->hiring_focus,
-                "recruiter_role" => $request->recruiter_role,
-                "recruiter_phone" => $request->recruiter_phone,
-                "recruiter_linkedin" => $request->recruiter_linkedin,
-                "compliance_accepted" => (bool)$request->input('compliance_accepted', false),
+                'user_id' => $user->id,
+                'status' => 'pending',
+                'company_name' => $request->company_name,
+                'company_size' => $request->company_size,
+                'industry_focus' => $request->industry_focus,
+                'hiring_focus' => $request->hiring_focus,
+                'recruiter_role' => $request->recruiter_role,
+                'recruiter_phone' => $request->recruiter_phone,
+                'recruiter_linkedin' => $request->recruiter_linkedin,
+                'compliance_accepted' => (bool) $request->input('compliance_accepted', false),
             ]);
 
             try {
@@ -89,7 +89,7 @@ class AuthController extends Controller
         } else {
             // Create candidate record for regular users
             Candidate::create([
-                "user_id" => $user->id,
+                'user_id' => $user->id,
             ]);
         }
 
@@ -132,22 +132,22 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "email" => "required|email",
-            "password" => "required|min:8"
+            'email' => 'required|email',
+            'password' => 'required|min:8',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                "status" => false,
-                "message" => "Validation error",
-                "errors" => $validator->errors()
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
-        if (!Auth::attempt($request->only("email", "password"))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                "status" => false,
-                "message" => "Invalid email or password"
+                'status' => false,
+                'message' => 'Invalid email or password',
             ], 401);
         }
 
@@ -216,9 +216,10 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         $user = $request->user()->load(['recruiter', 'candidate', 'admin']);
+
         return response()->json([
-            "status" => true,
-            "user" => $user
+            'status' => true,
+            'user' => $user,
         ], 200);
     }
 
@@ -227,7 +228,7 @@ class AuthController extends Controller
      */
     public function getGoogleAuthUrl()
     {
-        if (!$this->isGoogleAuthEnabled()) {
+        if (! $this->isGoogleAuthEnabled()) {
             return response()->json([
                 'status' => false,
                 'message' => 'Google sign-in is not configured.',
@@ -256,12 +257,45 @@ class AuthController extends Controller
     }
 
     /**
+     * Get LinkedIn (OpenID Connect) OAuth URL
+     */
+    public function getLinkedInAuthUrl()
+    {
+        if (! $this->isLinkedInAuthEnabled()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'LinkedIn sign-in is not configured.',
+            ], 503);
+        }
+
+        try {
+            $redirectUrl = $this->linkedinOpenIdDriver()
+                ->redirect()
+                ->getTargetUrl();
+
+            return response()->json([
+                'status' => true,
+                'url' => $redirectUrl,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error('Failed to generate LinkedIn OAuth URL', [
+                'error' => $th->getMessage(),
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Unable to initiate LinkedIn authentication at the moment.',
+            ], 500);
+        }
+    }
+
+    /**
      * Handle Google OAuth callback
      */
     public function handleGoogleCallback(Request $request)
     {
-        if (!$this->isGoogleAuthEnabled()) {
-            return $this->socialErrorRedirect('Google authentication is disabled.');
+        if (! $this->isGoogleAuthEnabled()) {
+            return $this->socialErrorRedirect('Google authentication is disabled.', 'google');
         }
 
         try {
@@ -276,16 +310,16 @@ class AuthController extends Controller
                     'status' => false,
                     'message' => 'Failed to authenticate with Google.',
                 ], 400)
-                : $this->socialErrorRedirect('Failed to authenticate with Google.');
+                : $this->socialErrorRedirect('Failed to authenticate with Google.', 'google');
         }
 
-        if (!$googleUser->getEmail()) {
+        if (! $googleUser->getEmail()) {
             return $request->wantsJson()
                 ? response()->json([
                     'status' => false,
                     'message' => 'We could not retrieve your Google email address.',
                 ], 422)
-                : $this->socialErrorRedirect('We could not retrieve your Google email address.');
+                : $this->socialErrorRedirect('We could not retrieve your Google email address.', 'google');
         }
 
         $user = User::where('email', $googleUser->getEmail())
@@ -294,7 +328,7 @@ class AuthController extends Controller
 
         $isNewUser = false;
 
-        if (!$user) {
+        if (! $user) {
             $isNewUser = true;
             $user = User::create([
                 'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Candidate',
@@ -308,6 +342,7 @@ class AuthController extends Controller
                 'google_token' => $googleUser->token ?? null,
                 'google_refresh_token' => $googleUser->refreshToken ?? null,
                 'is_recruiter' => false,
+                'is_pro' => false,
             ]);
 
             // Create candidate record for new Google users
@@ -335,7 +370,7 @@ class AuthController extends Controller
                 $updateData['email_verified_at'] = now();
             }
 
-            $user->forceFill(array_filter($updateData, fn ($value) => !is_null($value)))->save();
+            $user->forceFill(array_filter($updateData, fn ($value) => ! is_null($value)))->save();
         }
 
         $requiresVerification = ! $user->hasVerifiedEmail();
@@ -408,6 +443,158 @@ class AuthController extends Controller
     }
 
     /**
+     * Handle LinkedIn (OpenID Connect) OAuth callback
+     */
+    public function handleLinkedInCallback(Request $request)
+    {
+        if (! $this->isLinkedInAuthEnabled()) {
+            return $this->socialErrorRedirect('LinkedIn authentication is disabled.', 'linkedin');
+        }
+
+        try {
+            $linkedinUser = $this->linkedinOpenIdDriver()->user();
+        } catch (\Throwable $th) {
+            Log::error('LinkedIn OAuth callback failed', [
+                'error' => $th->getMessage(),
+            ]);
+
+            return $request->wantsJson()
+                ? response()->json([
+                    'status' => false,
+                    'message' => 'Failed to authenticate with LinkedIn.',
+                ], 400)
+                : $this->socialErrorRedirect('Failed to authenticate with LinkedIn.', 'linkedin');
+        }
+
+        if (! $linkedinUser->getEmail()) {
+            return $request->wantsJson()
+                ? response()->json([
+                    'status' => false,
+                    'message' => 'We could not retrieve your LinkedIn email address.',
+                ], 422)
+                : $this->socialErrorRedirect('We could not retrieve your LinkedIn email address.', 'linkedin');
+        }
+
+        $user = User::where('email', $linkedinUser->getEmail())
+            ->orWhere('linkedin_id', $linkedinUser->getId())
+            ->first();
+
+        $isNewUser = false;
+
+        if (! $user) {
+            $isNewUser = true;
+            $user = User::create([
+                'name' => $linkedinUser->getName() ?: $linkedinUser->getNickname() ?: 'Candidate',
+                'email' => $linkedinUser->getEmail(),
+                'password' => Hash::make(Str::random(40)),
+                'email_verified_at' => now(),
+                'avatar' => $linkedinUser->getAvatar(),
+                'linkedin_avatar' => $linkedinUser->getAvatar(),
+                'oauth_provider' => 'linkedin',
+                'linkedin_id' => $linkedinUser->getId(),
+                'linkedin_token' => $linkedinUser->token ?? null,
+                'linkedin_refresh_token' => $linkedinUser->refreshToken ?? null,
+                'is_recruiter' => false,
+                'is_pro' => false,
+            ]);
+
+            Candidate::create([
+                'user_id' => $user->id,
+            ]);
+        } else {
+            $updateData = [
+                'oauth_provider' => 'linkedin',
+                'linkedin_id' => $linkedinUser->getId(),
+                'linkedin_avatar' => $linkedinUser->getAvatar(),
+                'linkedin_token' => $linkedinUser->token ?? null,
+                'linkedin_refresh_token' => $linkedinUser->refreshToken ?? null,
+            ];
+
+            if (blank($user->avatar) && $linkedinUser->getAvatar()) {
+                $updateData['avatar'] = $linkedinUser->getAvatar();
+            }
+
+            if (blank($user->name) && $linkedinUser->getName()) {
+                $updateData['name'] = $linkedinUser->getName();
+            }
+
+            if (is_null($user->email_verified_at)) {
+                $updateData['email_verified_at'] = now();
+            }
+
+            $user->forceFill(array_filter($updateData, fn ($value) => ! is_null($value)))->save();
+        }
+
+        $requiresVerification = ! $user->hasVerifiedEmail();
+
+        if ($requiresVerification) {
+            try {
+                $user->sendEmailVerificationNotification();
+            } catch (\Throwable $e) {
+                Log::warning('Failed to send verification email after social login', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $user->load(['recruiter', 'candidate', 'admin']);
+
+        $token = null;
+        $shouldUseSessionLogin = $request->wantsJson()
+            && $this->isStatefulSpaRequest($request)
+            && $request->hasSession();
+
+        if ($shouldUseSessionLogin) {
+            Auth::login($user, true);
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
+        } else {
+            $token = $user->createToken('API Token')->plainTextToken;
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Login successful',
+                'user' => $user,
+                'token' => $token,
+                'is_new_user' => $isNewUser,
+                'provider' => 'linkedin',
+                'requires_email_verification' => $requiresVerification,
+            ]);
+        }
+
+        $code = null;
+        if ($token) {
+            $code = Str::random(64);
+            Cache::put($this->socialAuthCodeCacheKey($code), [
+                'token' => $token,
+                'user' => $user->toArray(),
+                'is_new_user' => $isNewUser,
+                'provider' => 'linkedin',
+                'requires_email_verification' => $requiresVerification,
+            ], now()->addMinutes(2));
+            Log::info('Social login code issued', [
+                'provider' => 'linkedin',
+                'user_id' => $user->id,
+                'is_new_user' => $isNewUser,
+                'code_prefix' => substr($code, 0, 10),
+            ]);
+        }
+
+        $redirectUrl = $this->buildSocialRedirectUrl([
+            'status' => 'success',
+            'provider' => 'linkedin',
+            'is_new_user' => $isNewUser ? '1' : '0',
+            'requires_email_verification' => $requiresVerification ? '1' : '0',
+            'code' => $code,
+        ]);
+
+        return redirect()->away($redirectUrl);
+    }
+
+    /**
      * Exchange one-time social auth code for login payload
      */
     public function exchangeSocialAuthCode(Request $request)
@@ -436,12 +623,12 @@ class AuthController extends Controller
             $payload = Cache::get($usedCacheKey);
         }
 
-        if (!$payload) {
+        if (! $payload) {
             Log::warning('Social login code exchange failed', [
-                'provider' => 'google',
                 'reason' => 'missing_or_expired_code',
                 'code_prefix' => substr($code, 0, 10),
             ]);
+
             return response()->json([
                 'status' => false,
                 'message' => 'This social login code is invalid or has expired. Please sign in again.',
@@ -449,7 +636,7 @@ class AuthController extends Controller
         }
 
         Log::info('Social login code exchanged', [
-            'provider' => 'google',
+            'provider' => data_get($payload, 'provider', 'unknown'),
             'user_id' => data_get($payload, 'user.id'),
             'code_prefix' => substr($code, 0, 10),
         ]);
@@ -471,26 +658,26 @@ class AuthController extends Controller
     public function updateProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "name" => "nullable|string|max:255",
-            "email" => "nullable|string|email|max:255|unique:users,email," . $request->user()->id,
-            "avatar" => "nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120", // 5MB max
-            "brand_avatar" => "nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120",
-            "password" => "nullable|string|min:8|confirmed",
-            "company_name" => "nullable|string|max:255",
-            "company_size" => "nullable|string|max:255",
-            "industry_focus" => "nullable|string|max:255",
-            "hiring_focus" => "nullable|string|max:255",
-            "recruiter_role" => "nullable|string|max:255",
-            "recruiter_phone" => "nullable|string|max:30",
-            "recruiter_linkedin" => "nullable|url|max:255",
-            "compliance_accepted" => "nullable|boolean",
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:users,email,'.$request->user()->id,
+            'avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120', // 5MB max
+            'brand_avatar' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+            'password' => 'nullable|string|min:8|confirmed',
+            'company_name' => 'nullable|string|max:255',
+            'company_size' => 'nullable|string|max:255',
+            'industry_focus' => 'nullable|string|max:255',
+            'hiring_focus' => 'nullable|string|max:255',
+            'recruiter_role' => 'nullable|string|max:255',
+            'recruiter_phone' => 'nullable|string|max:30',
+            'recruiter_linkedin' => 'nullable|url|max:255',
+            'compliance_accepted' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                "status" => false,
-                "message" => "Validation error",
-                "errors" => $validator->errors()
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -524,11 +711,11 @@ class AuthController extends Controller
                 if ($request->has('compliance_accepted')) {
                     $recruiterUpdateData['compliance_accepted'] = (bool) $request->compliance_accepted;
                 }
-                if (!empty($recruiterUpdateData)) {
+                if (! empty($recruiterUpdateData)) {
                     $user->recruiter->update($recruiterUpdateData);
                 }
             }
-            
+
             // Handle avatar file upload
             if ($request->hasFile('avatar')) {
                 try {
@@ -537,7 +724,7 @@ class AuthController extends Controller
                     if (! $file || ! $file->isValid()) {
                         throw new \RuntimeException('Invalid avatar upload.');
                     }
-                    
+
                     // Delete old avatar if exists (only if it's stored locally)
                     if ($user->avatar) {
                         // Extract the path from the URL if it's a local storage URL
@@ -546,24 +733,24 @@ class AuthController extends Controller
                             $oldAvatarPath = str_replace($storageUrl, '', $user->avatar);
                             // Remove leading slash if present
                             $oldAvatarPath = ltrim($oldAvatarPath, '/');
-                            if (!empty($oldAvatarPath) && Storage::disk('public')->exists($oldAvatarPath)) {
+                            if (! empty($oldAvatarPath) && Storage::disk('public')->exists($oldAvatarPath)) {
                                 Storage::disk('public')->delete($oldAvatarPath);
                             }
                         }
                     }
-                    
+
                     // Ensure avatars directory exists and is writable
                     $avatarsDir = Storage::disk('public')->path('avatars');
-                    if (!is_dir($avatarsDir)) {
+                    if (! is_dir($avatarsDir)) {
                         Storage::disk('public')->makeDirectory('avatars', 0755, true);
                     }
-                    
+
                     // Store new avatar with a unique name
                     // Generate a unique filename: timestamp + uniqid + extension
                     $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
-                    $filename = time() . '_' . uniqid() . '.' . $extension;
+                    $filename = time().'_'.uniqid().'.'.$extension;
                     $avatarPath = $file->storeAs('avatars', $filename, 'public');
-                    
+
                     // Verify file was actually stored
                     if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
                         // Generate full URL using the request's scheme and host (includes port if present)
@@ -571,8 +758,8 @@ class AuthController extends Controller
                         $scheme = $request->getScheme();
                         $host = $request->getHost();
                         $port = $request->getPort();
-                        $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
-                        $updateData['avatar'] = $baseUrl . '/storage/' . $avatarPath;
+                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
+                        $updateData['avatar'] = $baseUrl.'/storage/'.$avatarPath;
                     } else {
                         throw new \RuntimeException('Failed to store avatar file.');
                     }
@@ -603,27 +790,27 @@ class AuthController extends Controller
                         if (str_contains($user->recruiter->brand_avatar, $storageUrl)) {
                             $oldPath = str_replace($storageUrl, '', $user->recruiter->brand_avatar);
                             $oldPath = ltrim($oldPath, '/');
-                            if (!empty($oldPath) && Storage::disk('public')->exists($oldPath)) {
+                            if (! empty($oldPath) && Storage::disk('public')->exists($oldPath)) {
                                 Storage::disk('public')->delete($oldPath);
                             }
                         }
                     }
 
                     $brandDir = Storage::disk('public')->path('brand-avatars');
-                    if (!is_dir($brandDir)) {
+                    if (! is_dir($brandDir)) {
                         Storage::disk('public')->makeDirectory('brand-avatars', 0755, true);
                     }
 
                     $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'png';
-                    $filename = time() . '_' . uniqid() . '.' . $extension;
+                    $filename = time().'_'.uniqid().'.'.$extension;
                     $brandPath = $file->storeAs('brand-avatars', $filename, 'public');
 
                     if ($brandPath && Storage::disk('public')->exists($brandPath)) {
                         $scheme = $request->getScheme();
                         $host = $request->getHost();
                         $port = $request->getPort();
-                        $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
-                        $user->recruiter->update(['brand_avatar' => $baseUrl . '/storage/' . $brandPath]);
+                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
+                        $user->recruiter->update(['brand_avatar' => $baseUrl.'/storage/'.$brandPath]);
                     } else {
                         throw new \RuntimeException('Failed to store company logo file.');
                     }
@@ -639,12 +826,12 @@ class AuthController extends Controller
                     ], ApiJson::debugError($e)), 500);
                 }
             }
-            
+
             if ($request->has('password') && $request->password) {
                 $updateData['password'] = Hash::make($request->password);
             }
 
-            if (!empty($updateData)) {
+            if (! empty($updateData)) {
                 $user->update($updateData);
             }
 
@@ -652,9 +839,9 @@ class AuthController extends Controller
             $user->load(['recruiter', 'candidate', 'admin']);
 
             return response()->json([
-                "status" => true,
-                "message" => "Profile updated successfully",
-                "user" => $user->fresh(['recruiter', 'candidate', 'admin'])
+                'status' => true,
+                'message' => 'Profile updated successfully',
+                'user' => $user->fresh(['recruiter', 'candidate', 'admin']),
             ], 200);
         } catch (\Exception $e) {
             Log::error('Profile update error', [
@@ -687,21 +874,34 @@ class AuthController extends Controller
             ->with(['prompt' => 'select_account']);
     }
 
+    private function isLinkedInAuthEnabled(): bool
+    {
+        return filled(config('services.linkedin-openid.client_id'))
+            && filled(config('services.linkedin-openid.client_secret'));
+    }
+
+    private function linkedinOpenIdDriver()
+    {
+        return Socialite::driver('linkedin-openid')
+            ->stateless()
+            ->scopes(['openid', 'profile', 'email']);
+    }
+
     private function buildSocialRedirectUrl(array $params): string
     {
         $baseUrl = rtrim(config('app.frontend_url', config('app.url')), '/');
         $path = '/auth/social-callback';
         $query = http_build_query($params);
 
-        return $baseUrl . $path . '?' . $query;
+        return $baseUrl.$path.'?'.$query;
     }
 
-    private function socialErrorRedirect(string $message)
+    private function socialErrorRedirect(string $message, string $provider = 'google')
     {
         $redirectUrl = $this->buildSocialRedirectUrl([
             'status' => 'error',
             'message' => $message,
-            'provider' => 'google',
+            'provider' => $provider,
         ]);
 
         return redirect()->away($redirectUrl);
@@ -709,11 +909,11 @@ class AuthController extends Controller
 
     private function socialAuthCodeCacheKey(string $code): string
     {
-        return 'social-auth-code:' . $code;
+        return 'social-auth-code:'.$code;
     }
 
     private function socialAuthCodeUsedCacheKey(string $code): string
     {
-        return 'social-auth-code-used:' . $code;
+        return 'social-auth-code-used:'.$code;
     }
 }

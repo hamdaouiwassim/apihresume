@@ -48,6 +48,26 @@ class AppServiceProvider extends ServiceProvider
                 ->by($request->ip());
         });
 
+        RateLimiter::for('oauth-linkedin-url', function (Request $request) {
+            return Limit::perMinute(config('rate-limit.oauth_linkedin_url_per_minute', 20))
+                ->by($request->ip());
+        });
+
+        RateLimiter::for('oauth-github-import-url', function (Request $request) {
+            return Limit::perMinute(config('rate-limit.oauth_github_import_url_per_minute', 20))
+                ->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('linkedin-import', function (Request $request) {
+            return Limit::perMinute(config('rate-limit.linkedin_import_per_minute', 10))
+                ->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('github-import', function (Request $request) {
+            return Limit::perMinute(config('rate-limit.github_import_per_minute', 20))
+                ->by($request->user()?->id ?: $request->ip());
+        });
+
         RateLimiter::for('sanctum-csrf-cookie', function (Request $request) {
             return Limit::perMinute(config('rate-limit.sanctum_csrf_cookie_per_minute', 120))
                 ->by($request->ip());
@@ -95,6 +115,13 @@ class AppServiceProvider extends ServiceProvider
             $key = $user ? 'user:'.$user->id : 'ip:'.$request->ip();
 
             return Limit::perMinute(config('rate-limit.pdf_generate_per_minute', 15))->by($key);
+        });
+
+        RateLimiter::for('ai-tailor', function (Request $request) {
+            $user = $request->user();
+            $key = $user ? 'user:'.$user->id : 'ip:'.$request->ip();
+
+            return Limit::perMinute(config('rate-limit.ai_tailor_per_minute', 10))->by($key);
         });
 
         RateLimiter::for('verification-resend', function (Request $request) {

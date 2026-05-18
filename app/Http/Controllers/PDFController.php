@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PdfFont;
+use App\Models\Resume;
+use App\Services\ResumePdfPayloadBuilder;
 use App\Support\ApiJson;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -33,12 +35,12 @@ class PDFController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $locale = $request->input('locale', 'en');
-        if (!in_array($locale, ['en', 'fr'], true)) {
+        if (! in_array($locale, ['en', 'fr'], true)) {
             $locale = 'en';
         }
         $resume = $this->normalizeResumeInput($request->input('resume'));
@@ -52,43 +54,11 @@ class PDFController extends Controller
 
         try {
             $filename = $request->input('filename', 'resume.pdf');
-
-            // Use writable storage for Dompdf fonts (vendor/lib/fonts may not be writable)
-            $fontDir = storage_path('app/dompdf-fonts');
-            if (!is_dir($fontDir)) {
-                mkdir($fontDir, 0755, true);
-            }
-
-            $options = new Options();
-            $options->set('isRemoteEnabled', true);
-            $options->set('isHtml5ParserEnabled', true);
-            $options->set('defaultFont', 'Arial');
-            $options->set('dpi', 120);
-            $options->set('fontDir', $fontDir);
-            $options->set('fontCache', $fontDir);
-
-            $chrootRoots = array_values(array_filter([
-                realpath(base_path()),
-                realpath(storage_path('app')),
-            ]));
-            if ($chrootRoots !== []) {
-                $options->set('chroot', count($chrootRoots) === 1 ? $chrootRoots[0] : $chrootRoots);
-            }
-
-            $dompdf = new Dompdf($options);
-
-            // Register custom uploaded fonts before loading HTML
-            $this->registerCustomFonts($dompdf);
-
-            $dompdf->setPaper('A4');
-            $dompdf->loadHtml($this->renderResumeTemplate($resume, $locale));
-            $dompdf->render();
-
-            $pdf = $dompdf->output();
+            $pdf = $this->renderPdfBinary($resume, $locale);
 
             return response($pdf, 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
 
         } catch (\Exception $e) {
             Log::error('PDF generation failed', [
@@ -104,12 +74,92 @@ class PDFController extends Controller
     }
 
     /**
+     * Public PDF download for an enabled public profile (no auth).
+     */
+    public function publicProfilePdf(Request $request, string $slug)
+    {
+        $locale = $request->query('locale', 'en');
+        if (! in_array($locale, ['en', 'fr'], true)) {
+            $locale = 'en';
+        }
+
+        $slugNorm = strtolower(trim($slug));
+        $resume = Resume::query()
+            ->where('public_profile_enabled', true)
+            ->where('public_profile_slug', $slugNorm)
+            ->first();
+
+        if (! $resume) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Public profile not found',
+            ], 404);
+        }
+
+        try {
+            $payload = app(ResumePdfPayloadBuilder::class)->fromResume($resume, $locale);
+            $base = preg_replace('/[^a-zA-Z0-9_-]+/', '-', $resume->name ?: 'cv') ?: 'cv';
+            $filename = $base.'.pdf';
+            $pdf = $this->renderPdfBinary($payload, $locale);
+
+            return response($pdf, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+        } catch (\Exception $e) {
+            Log::error('Public profile PDF failed', [
+                'slug' => $slugNorm,
+                'exception' => $e->getMessage(),
+            ]);
+
+            return response()->json(array_merge([
+                'status' => false,
+                'message' => 'PDF generation failed',
+            ], ApiJson::debugError($e)), 500);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $resume
+     */
+    private function renderPdfBinary(array $resume, string $locale): string
+    {
+        $fontDir = storage_path('app/dompdf-fonts');
+        if (! is_dir($fontDir)) {
+            mkdir($fontDir, 0755, true);
+        }
+
+        $options = new Options;
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('defaultFont', 'Arial');
+        $options->set('dpi', 120);
+        $options->set('fontDir', $fontDir);
+        $options->set('fontCache', $fontDir);
+
+        $chrootRoots = array_values(array_filter([
+            realpath(base_path()),
+            realpath(storage_path('app')),
+        ]));
+        if ($chrootRoots !== []) {
+            $options->set('chroot', count($chrootRoots) === 1 ? $chrootRoots[0] : $chrootRoots);
+        }
+
+        $dompdf = new Dompdf($options);
+        $this->registerCustomFonts($dompdf);
+        $dompdf->setPaper('A4');
+        $dompdf->loadHtml($this->renderResumeTemplate($resume, $locale));
+        $dompdf->render();
+
+        return $dompdf->output();
+    }
+
+    /**
      * Preview the resume template in the browser.
      */
     public function preview(Request $request)
     {
         $locale = $request->input('locale', 'en');
-        if (!in_array($locale, ['en', 'fr'], true)) {
+        if (! in_array($locale, ['en', 'fr'], true)) {
             $locale = 'en';
         }
         $resume = $this->normalizeResumeInput($request->input('resume')) ?: $this->sampleResumeData();
@@ -216,20 +266,21 @@ class PDFController extends Controller
                 // Dompdf expects a URI (file:// for local files). Use explicit file:// prefix for reliable loading.
                 $toUri = function (string $path) {
                     $path = str_replace('\\', '/', $path);
-                    return 'file://' . (str_starts_with($path, '/') ? '' : '/') . $path;
+
+                    return 'file://'.(str_starts_with($path, '/') ? '' : '/').$path;
                 };
 
                 // Register regular (required) - files are on 'local' disk (storage/app/private)
                 if ($font->regular_path) {
                     $fullPath = Storage::disk('local')->path($font->regular_path);
-                    if (!file_exists($fullPath)) {
+                    if (! file_exists($fullPath)) {
                         Log::warning("PDF font file not found: {$fullPath} (regular_path: {$font->regular_path})");
                     } else {
                         $ok = $fontMetrics->registerFont(
                             ['family' => $familyLower, 'style' => 'normal', 'weight' => 'normal'],
                             $toUri($fullPath)
                         );
-                        if (!$ok) {
+                        if (! $ok) {
                             Log::warning("Dompdf registerFont failed for {$familyLower} (regular)");
                         }
                     }
@@ -269,7 +320,7 @@ class PDFController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            Log::warning('Failed to register custom fonts: ' . $e->getMessage());
+            Log::warning('Failed to register custom fonts: '.$e->getMessage());
         }
     }
 

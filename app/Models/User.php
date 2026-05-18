@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\AiQuotaService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -13,7 +15,16 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * Default attribute values for new models (before save).
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_pro' => false,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +45,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_id',
         'google_token',
         'google_refresh_token',
+        'linkedin_id',
+        'linkedin_avatar',
+        'linkedin_token',
+        'linkedin_refresh_token',
+        'github_import_token',
+        'github_import_login',
+        'github_import_connected_at',
+        'is_pro',
+        'stripe_customer_id',
+        'stripe_subscription_id',
     ];
 
     /**
@@ -46,6 +67,20 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         'google_token',
         'google_refresh_token',
+        'linkedin_token',
+        'linkedin_refresh_token',
+        'github_import_token',
+        'stripe_customer_id',
+        'stripe_subscription_id',
+        'ai_usage_month',
+        'ai_enhance_used',
+        'ai_tailor_used',
+        'ai_ats_used',
+    ];
+
+    protected $appends = [
+        'ai_quota',
+        'github_import_connected',
     ];
 
     /**
@@ -60,14 +95,50 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'is_recruiter' => 'boolean',
+            'ai_enhance_used' => 'integer',
+            'ai_tailor_used' => 'integer',
+            'ai_ats_used' => 'integer',
             'last_activity' => 'datetime',
+            'github_import_token' => 'encrypted',
+            'github_import_connected_at' => 'datetime',
         ];
+    }
+
+    protected function githubImportConnected(): Attribute
+    {
+        return Attribute::get(fn (): bool => filled($this->github_import_token));
+    }
+
+    /**
+     * Pro subscription flag — requires a verified email to be active.
+     */
+    protected function isPro(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): bool => $this->hasProAccess(),
+            set: fn ($value) => ['is_pro' => filter_var($value, FILTER_VALIDATE_BOOLEAN)],
+        );
+    }
+
+    /**
+     * Whether the user has an active Pro subscription (granted and email verified).
+     */
+    public function hasProAccess(): bool
+    {
+        return (bool) ($this->attributes['is_pro'] ?? false) && $this->hasVerifiedEmail();
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if ($user->isDirty('email_verified_at') && ! $user->hasVerifiedEmail()) {
+                $user->attributes['is_pro'] = false;
+            }
+        });
     }
 
     /**
      * Get all of the resumes for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function resumes(): HasMany
     {
@@ -76,8 +147,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the recruiter profile for the user
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function recruiter(): HasOne
     {
@@ -86,8 +155,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the candidate profile for the user
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function candidate(): HasOne
     {
@@ -96,8 +163,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the admin profile for the user
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function admin(): HasOne
     {
@@ -118,6 +183,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function coverLetters(): HasMany
     {
         return $this->hasMany(CoverLetter::class);
+    }
+
+    /**
+     * Employment / work certificates (standalone PDF letters).
+     */
+    public function workCertificates(): HasMany
+    {
+        return $this->hasMany(WorkCertificate::class);
     }
 
     /**
@@ -206,5 +279,19 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getRecruiterAdminNotesAttribute()
     {
         return $this->recruiter?->admin_notes;
+    }
+
+    /**
+     * Monthly AI usage vs limits for non-Pro users (exposed to the app for paywalls).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getAiQuotaAttribute(): ?array
+    {
+        if (! array_key_exists('ai_usage_month', $this->attributes)) {
+            return null;
+        }
+
+        return app(AiQuotaService::class)->snapshot($this);
     }
 }

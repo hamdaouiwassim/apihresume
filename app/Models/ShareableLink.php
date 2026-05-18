@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class ShareableLink extends Model
 {
     protected $fillable = [
         'resume_id',
         'token',
+        'slug',
         'expires_at',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [

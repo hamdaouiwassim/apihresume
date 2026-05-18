@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Recruiter;
 use App\Models\Admin;
+use App\Models\Recruiter;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -47,6 +47,9 @@ class UserController extends Controller
             } elseif ($role === 'candidate') {
                 $query->where('is_admin', false)
                     ->where('is_recruiter', false);
+            } elseif ($role === 'pro') {
+                $query->where('is_pro', true)
+                    ->whereNotNull('email_verified_at');
             }
 
             // Filter by email verification status
@@ -61,13 +64,13 @@ class UserController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Users fetched successfully',
-                'data' => $users
+                'data' => $users,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to fetch users',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -87,13 +90,13 @@ class UserController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'User fetched successfully',
-                'data' => $user
+                'data' => $user,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'User not found',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 404);
         }
     }
@@ -106,8 +109,9 @@ class UserController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:users,email,' . $id,
+                'email' => 'sometimes|email|unique:users,email,'.$id,
                 'is_admin' => 'sometimes|boolean',
+                'is_pro' => 'sometimes|boolean',
                 'is_recruiter' => 'sometimes|boolean',
                 'recruiter_status' => 'sometimes|in:pending,approved,revoked',
                 'recruiter_admin_notes' => 'sometimes|nullable|string',
@@ -117,24 +121,35 @@ class UserController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Validation error',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
             $user = User::with(['recruiter', 'admin'])->findOrFail($id);
+
+            if ($request->has('is_pro') && filter_var($request->input('is_pro'), FILTER_VALIDATE_BOOLEAN)) {
+                if (! $user->hasVerifiedEmail()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Only verified users can be granted Pro access.',
+                    ], 422);
+                }
+            }
+
             $userPayload = $request->only([
                 'name',
                 'email',
                 'is_admin',
+                'is_pro',
                 'is_recruiter',
             ]);
 
             // Handle admin creation/deletion
             if ($request->has('is_admin')) {
                 $isAdmin = filter_var($request->input('is_admin'), FILTER_VALIDATE_BOOLEAN);
-                if ($isAdmin && !$user->admin) {
+                if ($isAdmin && ! $user->admin) {
                     Admin::create(['user_id' => $user->id, 'role' => 'admin']);
-                } elseif (!$isAdmin && $user->admin) {
+                } elseif (! $isAdmin && $user->admin) {
                     $user->admin->delete();
                 }
             }
@@ -143,7 +158,7 @@ class UserController extends Controller
             if ($request->has('recruiter_status') && $user->recruiter) {
                 $status = $request->input('recruiter_status');
                 $user->recruiter->update(['status' => $status]);
-                
+
                 if ($request->has('recruiter_admin_notes')) {
                     $user->recruiter->update(['admin_notes' => $request->input('recruiter_admin_notes')]);
                 }
@@ -155,7 +170,7 @@ class UserController extends Controller
                 }
             }
 
-            if (!empty($userPayload)) {
+            if (! empty($userPayload)) {
                 $user->update($userPayload);
             }
 
@@ -164,13 +179,13 @@ class UserController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'User updated successfully',
-                'data' => $user
+                'data' => $user,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to update user',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -182,12 +197,12 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            
+
             // Prevent deleting yourself
             if ($user->id === auth()->id()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'You cannot delete your own account'
+                    'message' => 'You cannot delete your own account',
                 ], 403);
             }
 
@@ -195,15 +210,14 @@ class UserController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User deleted successfully'
+                'message' => 'User deleted successfully',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to delete user',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 }
-

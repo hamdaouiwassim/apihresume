@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Template;
-use App\Models\Resume;
 use App\Models\CoverLetter;
-use Illuminate\Http\Request;
+use App\Models\Resume;
+use App\Models\Template;
+use App\Models\User;
+use App\Models\WorkCertificate;
 
 class DashboardController extends Controller
 {
@@ -23,7 +23,9 @@ class DashboardController extends Controller
                 'total_templates' => Template::count(),
                 'total_resumes' => Resume::count(),
                 'total_cover_letters' => CoverLetter::count(),
+                'total_work_certificates' => WorkCertificate::count(),
                 'cover_letters_this_month' => CoverLetter::where('created_at', '>=', now()->startOfMonth())->count(),
+                'work_certificates_this_month' => WorkCertificate::where('created_at', '>=', now()->startOfMonth())->count(),
                 'total_recruiters' => User::where('is_recruiter', true)->count(),
                 'active_users_24h' => User::where('last_activity', '>=', now()->subDay())->count(),
                 'active_users_7d' => User::where('last_activity', '>=', now()->subDays(7))->count(),
@@ -33,18 +35,22 @@ class DashboardController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->limit(5)
                     ->get(['id', 'user_id', 'title', 'style', 'created_at']),
+                'recent_work_certificates' => WorkCertificate::with('user:id,name')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+                    ->get(['id', 'user_id', 'title', 'company_name', 'employee_name', 'created_at']),
             ];
 
             return response()->json([
                 'status' => true,
                 'message' => 'Dashboard stats fetched successfully',
-                'data' => $stats
+                'data' => $stats,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to fetch dashboard stats',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

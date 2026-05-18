@@ -18,6 +18,12 @@ return [
     /** OAuth: start Google sign-in */
     'oauth_google_url_per_minute' => (int) env('THROTTLE_OAUTH_GOOGLE_URL_PER_MINUTE', 20),
 
+    /** OAuth: start LinkedIn sign-in */
+    'oauth_linkedin_url_per_minute' => (int) env('THROTTLE_OAUTH_LINKEDIN_URL_PER_MINUTE', 20),
+
+    /** OAuth: start GitHub import (per-user token) */
+    'oauth_github_import_url_per_minute' => (int) env('THROTTLE_OAUTH_GITHUB_IMPORT_URL_PER_MINUTE', 20),
+
     /** GET /sanctum/csrf-cookie (Sanctum web route) */
     'sanctum_csrf_cookie_per_minute' => (int) env('THROTTLE_SANCTUM_CSRF_COOKIE_PER_MINUTE', 120),
 
@@ -26,6 +32,12 @@ return [
 
     /** GET /api/auth/google/callback */
     'oauth_callback_per_minute' => (int) env('THROTTLE_OAUTH_CALLBACK_PER_MINUTE', 60),
+
+    /** POST import from LinkedIn (basic info + optional headline-based experiences) */
+    'linkedin_import_per_minute' => (int) env('THROTTLE_LINKEDIN_IMPORT_PER_MINUTE', 10),
+
+    /** POST GitHub repo → project draft preview (per user) */
+    'github_import_per_minute' => (int) env('THROTTLE_GITHUB_IMPORT_PER_MINUTE', 20),
 
     /** Public read endpoints (blog, templates, etc.) */
     'public_read_per_minute' => (int) env('THROTTLE_PUBLIC_READ_PER_MINUTE', 120),
@@ -44,6 +56,9 @@ return [
 
     /** Expensive PDF generation */
     'pdf_generate_per_minute' => (int) env('THROTTLE_PDF_GENERATE_PER_MINUTE', 15),
+
+    /** AI tailor endpoint */
+    'ai_tailor_per_minute' => (int) env('THROTTLE_AI_TAILOR_PER_MINUTE', 10),
 
     /** Resend verification email */
     'verification_resend_per_minute' => (int) env('THROTTLE_VERIFICATION_RESEND_PER_MINUTE', 6),

@@ -15,12 +15,17 @@ class Resume extends Model
         'template_id',
         'name',
         'section_order',
-        'typography'
+        'typography',
+        'public_profile_enabled',
+        'public_profile_slug',
+        'public_profile_meta_title',
+        'public_profile_meta_description',
     ];
 
     protected $casts = [
         'section_order' => 'array',
         'typography' => 'array',
+        'public_profile_enabled' => 'boolean',
     ];
 
     /**
@@ -43,28 +48,22 @@ class Resume extends Model
 
     /**
      * Get the basicInfo associated with the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function basicInfo(): HasOne
     {
-        return $this->hasOne(BasicInfo::class );
+        return $this->hasOne(BasicInfo::class);
     }
 
     /**
      * Get all of the experiences for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function experiences(): HasMany
     {
         return $this->hasMany(Experience::class);
     }
 
-     /**
+    /**
      * Get all of the educations for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function educations(): HasMany
     {
@@ -73,8 +72,6 @@ class Resume extends Model
 
     /**
      * Get all of the skills for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function skills(): HasMany
     {
@@ -83,8 +80,6 @@ class Resume extends Model
 
     /**
      * Get all of the hobbies for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function hobbies(): HasMany
     {
@@ -93,8 +88,6 @@ class Resume extends Model
 
     /**
      * Get all of the certificates for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function certificates(): HasMany
     {
@@ -103,8 +96,6 @@ class Resume extends Model
 
     /**
      * Get all of the languages for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function languages(): HasMany
     {
@@ -113,8 +104,6 @@ class Resume extends Model
 
     /**
      * Get all of the projects for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function projects(): HasMany
     {
@@ -123,8 +112,6 @@ class Resume extends Model
 
     /**
      * Get all collaborators for the Resume
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function collaborators(): HasMany
     {
@@ -136,7 +123,7 @@ class Resume extends Model
      */
     public function canBeEditedBy(?int $userId): bool
     {
-        if (!$userId) {
+        if (! $userId) {
             return false;
         }
 
@@ -155,14 +142,12 @@ class Resume extends Model
 
     /**
      * Check if a user can edit a specific section of this resume
-     * 
-     * @param int|null $userId
-     * @param string $section Section name (e.g., 'basic_info', 'experiences', etc.)
-     * @return bool
+     *
+     * @param  string  $section  Section name (e.g., 'basic_info', 'experiences', etc.)
      */
     public function canEditSection(?int $userId, string $section): bool
     {
-        if (!$userId) {
+        if (! $userId) {
             return false;
         }
 
@@ -178,7 +163,7 @@ class Resume extends Model
             ->whereNotNull('accepted_at')
             ->first();
 
-        if (!$collaborator) {
+        if (! $collaborator) {
             return false;
         }
 
@@ -187,13 +172,10 @@ class Resume extends Model
 
     /**
      * Get the collaborator record for a user
-     * 
-     * @param int|null $userId
-     * @return ResumeCollaborator|null
      */
     public function getCollaboratorForUser(?int $userId): ?ResumeCollaborator
     {
-        if (!$userId || $this->user_id === $userId) {
+        if (! $userId || $this->user_id === $userId) {
             return null; // Owner doesn't need collaborator record
         }
 
