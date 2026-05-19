@@ -22,7 +22,6 @@ class SitemapTest extends TestCase
         config([
             'sitemap.base_url' => 'https://hresume.pro',
             'sitemap.cache_ttl' => 3600,
-            'sitemap.write_paths' => [],
         ]);
         Cache::forget(SitemapService::CACHE_KEY);
     }
@@ -116,6 +115,7 @@ class SitemapTest extends TestCase
             'published_at' => now(),
         ]);
 
-        $this->assertFalse(Cache::has(SitemapService::CACHE_KEY));
+        $this->assertTrue(Cache::has(SitemapService::CACHE_KEY));
+        $this->assertStringContainsString('new-post', Cache::get(SitemapService::CACHE_KEY));
     }
 }

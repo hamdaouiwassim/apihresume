@@ -7,8 +7,6 @@ use App\Models\Resume;
 use App\Models\Template;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class SitemapService
 {
@@ -86,28 +84,11 @@ class SitemapService
         Cache::forget(self::CACHE_KEY);
     }
 
-    public function regenerateFiles(): void
+    /** Clear cache and rebuild so the next /sitemap.xml request is fresh. */
+    public function refresh(): void
     {
         $this->bustCache();
-        $xml = $this->buildXml($this->entries());
-
-        foreach (config('sitemap.write_paths', []) as $path) {
-            if (! is_string($path) || $path === '') {
-                continue;
-            }
-            try {
-                $dir = dirname($path);
-                if (! is_dir($dir)) {
-                    continue;
-                }
-                File::put($path, $xml);
-            } catch (\Throwable $e) {
-                Log::warning('Failed to write sitemap file', [
-                    'path' => $path,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
+        $this->xml();
     }
 
     /**

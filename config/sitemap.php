@@ -20,16 +20,6 @@ return [
 
   /*
   |--------------------------------------------------------------------------
-  | Optional paths to write sitemap.xml when content changes
-  |--------------------------------------------------------------------------
-  */
-  'write_paths' => array_values(array_filter([
-    env('SITEMAP_WRITE_PATH'),
-    base_path('../frontend/public/sitemap.xml'),
-  ])),
-
-  /*
-  |--------------------------------------------------------------------------
   | Static marketing / auth pages (path => [changefreq, priority])
   |--------------------------------------------------------------------------
   */

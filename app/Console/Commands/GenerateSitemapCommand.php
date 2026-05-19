@@ -9,19 +9,13 @@ class GenerateSitemapCommand extends Command
 {
     protected $signature = 'sitemap:generate';
 
-    protected $description = 'Regenerate sitemap.xml (cache + optional public file paths)';
+    protected $description = 'Refresh cached sitemap (served at GET /sitemap.xml)';
 
     public function handle(SitemapService $sitemap): int
     {
-        $sitemap->regenerateFiles();
+        $sitemap->refresh();
         $count = count($sitemap->entries());
-        $this->info("Sitemap generated with {$count} URLs.");
-
-        foreach (config('sitemap.write_paths', []) as $path) {
-            if (is_string($path) && $path !== '' && is_file($path)) {
-                $this->line("  → {$path}");
-            }
-        }
+        $this->info("Sitemap cache refreshed ({$count} URLs). Served at /sitemap.xml on this app.");
 
         return self::SUCCESS;
     }

@@ -8,6 +8,6 @@ trait RegeneratesSitemap
 {
     protected function regenerateSitemap(): void
     {
-        app(SitemapService::class)->regenerateFiles();
+        app(SitemapService::class)->refresh();
     }
 }

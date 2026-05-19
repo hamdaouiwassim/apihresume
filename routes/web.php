@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\BlogSocialPreviewController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Mail;
@@ -8,6 +9,10 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Pulse\Facades\Pulse;
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+
+/** Open Graph HTML for social crawlers (proxy from frontend /blog/{slug} for bots). */
+Route::get('/blog/{slug}/social', [BlogSocialPreviewController::class, 'show'])
+    ->name('blog.social-preview');
 
 Route::get('/', function () {
     return view('welcome');
