@@ -46,13 +46,18 @@ class GitHubImportOAuthTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/auth/github/import/url?return_to=/profile');
 
         $response->assertOk()
-            ->assertJsonPath('status', true);
+            ->assertJsonPath('status', true)
+            ->assertJsonPath('oauth_callback_url', 'http://localhost/api/auth/github/import/callback');
 
         $url = $response->json('url');
         $this->assertIsString($url);
         $this->assertStringContainsString('https://github.com/login/oauth/authorize?', $url);
         $this->assertStringContainsString('client_id=test-client-id', $url);
         $this->assertStringContainsString('scope=repo', $url);
+        $this->assertStringContainsString(
+            'redirect_uri='.urlencode('http://localhost/api/auth/github/import/callback'),
+            $url
+        );
     }
 
     public function test_callback_exchanges_code_and_redirects_with_success(): void

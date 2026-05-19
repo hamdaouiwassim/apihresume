@@ -66,9 +66,11 @@ class GitHubImportOAuthController extends Controller
         ];
         $state = Crypt::encryptString(json_encode($payload));
 
+        $redirectUri = (string) config('services.github.redirect_uri');
+
         $query = http_build_query([
             'client_id' => config('services.github.client_id'),
-            'redirect_uri' => config('services.github.redirect_uri'),
+            'redirect_uri' => $redirectUri,
             'scope' => 'repo',
             'state' => $state,
         ]);
@@ -78,6 +80,8 @@ class GitHubImportOAuthController extends Controller
         return response()->json([
             'status' => true,
             'url' => $authorizeUrl,
+            /** Echo for operators: must match GitHub OAuth App "Authorization callback URL" exactly. */
+            'oauth_callback_url' => $redirectUri,
         ]);
     }
 

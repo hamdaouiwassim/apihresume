@@ -68,7 +68,10 @@ return [
         'token' => env('GITHUB_TOKEN'),
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect_uri' => env('GITHUB_REDIRECT_URL', env('APP_URL').'/api/auth/github/import/callback'),
+        // GitHub requires an exact callback URL match; trim avoids subtle .env whitespace mismatches.
+        'redirect_uri' => (($githubRedirect = trim((string) env('GITHUB_REDIRECT_URL', ''))) !== '')
+            ? $githubRedirect
+            : rtrim(trim((string) env('APP_URL', 'http://localhost')), '/').'/api/auth/github/import/callback',
     ],
 
     'groq' => [

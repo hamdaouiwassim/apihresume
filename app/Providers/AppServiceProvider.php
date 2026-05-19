@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\BlogPost;
+use App\Models\Resume;
+use App\Models\Template;
 use App\Models\User;
+use App\Observers\BlogPostObserver;
+use App\Observers\ResumeSitemapObserver;
+use App\Observers\TemplateObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -27,6 +33,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('viewPulse', function (?User $user) {
             return (bool) ($user?->is_admin);
         });
+
+        BlogPost::observe(BlogPostObserver::class);
+        Resume::observe(ResumeSitemapObserver::class);
+        Template::observe(TemplateObserver::class);
 
         $this->configureRateLimiting();
     }
