@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AiUsageLog;
 use App\Models\CoverLetter;
 use App\Models\Resume;
 use App\Models\Template;
@@ -17,6 +18,9 @@ class DashboardController extends Controller
     public function index()
     {
         try {
+            $aiSince = now()->subDays(30)->startOfDay();
+            $aiBase = AiUsageLog::query()->where('created_at', '>=', $aiSince);
+
             $stats = [
                 'total_users' => User::count(),
                 'total_admins' => User::where('is_admin', true)->count(),
@@ -29,6 +33,10 @@ class DashboardController extends Controller
                 'total_recruiters' => User::where('is_recruiter', true)->count(),
                 'active_users_24h' => User::where('last_activity', '>=', now()->subDay())->count(),
                 'active_users_7d' => User::where('last_activity', '>=', now()->subDays(7))->count(),
+                'ai_usage_30d' => [
+                    'calls' => (clone $aiBase)->count(),
+                    'total_tokens' => (int) (clone $aiBase)->sum('total_tokens'),
+                ],
                 'recent_users' => User::orderBy('created_at', 'desc')->limit(5)->get(['id', 'name', 'email', 'avatar', 'created_at']),
                 'recent_templates' => Template::orderBy('created_at', 'desc')->limit(5)->get(['id', 'name', 'category', 'created_at']),
                 'recent_cover_letters' => CoverLetter::with('user:id,name')

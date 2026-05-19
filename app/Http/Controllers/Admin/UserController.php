@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\AiUsageLog;
 use App\Models\Recruiter;
 use App\Models\User;
+use App\Services\AiTokenLimitService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -82,15 +85,68 @@ class UserController extends Controller
     {
         try {
             $user = User::withCount('resumes')
-                ->with(['resumes' => function ($query) {
-                    $query->with('template')->latest()->limit(5);
-                }])
+                ->with([
+                    'resumes' => function ($query) {
+                        $query->with('template:id,name')->latest('updated_at');
+                    },
+                    'recruiter',
+                    'admin',
+                    'candidate',
+                ])
                 ->findOrFail($id);
+
+            $monthStart = now()->copy()->startOfMonth();
+            $monthEnd = now()->copy()->endOfMonth();
+
+            $usageBase = AiUsageLog::query()
+                ->where('user_id', $user->id)
+                ->whereBetween('created_at', [$monthStart, $monthEnd]);
+
+            $aiUsage = [
+                'month' => now()->format('Y-m'),
+                'totals' => [
+                    'calls' => (clone $usageBase)->count(),
+                    'prompt_tokens' => (int) (clone $usageBase)->sum('prompt_tokens'),
+                    'completion_tokens' => (int) (clone $usageBase)->sum('completion_tokens'),
+                    'total_tokens' => (int) (clone $usageBase)->sum('total_tokens'),
+                ],
+                'by_kind' => (clone $usageBase)
+                    ->select([
+                        'kind',
+                        DB::raw('COUNT(*) as calls'),
+                        DB::raw('COALESCE(SUM(total_tokens), 0) as total_tokens'),
+                    ])
+                    ->groupBy('kind')
+                    ->orderBy('kind')
+                    ->get(),
+            ];
+
+            $recentAiLogs = AiUsageLog::query()
+                ->where('user_id', $user->id)
+                ->orderByDesc('created_at')
+                ->limit(15)
+                ->get([
+                    'id',
+                    'kind',
+                    'resume_id',
+                    'provider',
+                    'model',
+                    'prompt_tokens',
+                    'completion_tokens',
+                    'total_tokens',
+                    'created_at',
+                ]);
+
+            $tokenService = app(AiTokenLimitService::class);
+            $payload = $user->toArray();
+            $payload['ai_tokens'] = $tokenService->snapshot($user);
+            $payload['ai_usage'] = $aiUsage;
+            $payload['recent_ai_logs'] = $recentAiLogs;
 
             return response()->json([
                 'status' => true,
                 'message' => 'User fetched successfully',
-                'data' => $user,
+                'data' => $payload,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -115,6 +171,7 @@ class UserController extends Controller
                 'is_recruiter' => 'sometimes|boolean',
                 'recruiter_status' => 'sometimes|in:pending,approved,revoked',
                 'recruiter_admin_notes' => 'sometimes|nullable|string',
+                'ai_monthly_token_limit' => 'sometimes|nullable|integer|min:0|max:100000000',
             ]);
 
             if ($validator->fails()) {
@@ -142,6 +199,7 @@ class UserController extends Controller
                 'is_admin',
                 'is_pro',
                 'is_recruiter',
+                'ai_monthly_token_limit',
             ]);
 
             // Handle admin creation/deletion

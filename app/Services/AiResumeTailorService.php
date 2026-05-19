@@ -7,10 +7,13 @@ use RuntimeException;
 
 class AiResumeTailorService
 {
+    /**
+     * @return array{data: array<string, mixed>, usage: array{prompt_tokens: int, completion_tokens: int, total_tokens: int}|null}
+     */
     public function tailorResume(array $payload): array
     {
         [$baseUrl, $apiKey, $model] = $this->resolveProviderConfig();
-        $content = $this->requestChatCompletion(
+        $completion = $this->requestChatCompletion(
             $baseUrl,
             $apiKey,
             $model,
@@ -25,16 +28,22 @@ class AiResumeTailorService
                 ],
             ]
         );
-        $decoded = json_decode($this->extractJson($content), true);
+        $decoded = json_decode($this->extractJson($completion['content']), true);
 
         if (! is_array($decoded)) {
             throw new RuntimeException('AI returned an invalid response format.');
         }
 
-        return $this->normalize($decoded);
+        return [
+            'data' => $this->normalize($decoded),
+            'usage' => $completion['usage'],
+        ];
     }
 
-    public function enhanceText(string $text, ?string $context = null): string
+    /**
+     * @return array{text: string, usage: array{prompt_tokens: int, completion_tokens: int, total_tokens: int}|null}
+     */
+    public function enhanceText(string $text, ?string $context = null): array
     {
         [$baseUrl, $apiKey, $model] = $this->resolveProviderConfig();
 
@@ -49,7 +58,7 @@ class AiResumeTailorService
             $text,
         ]);
 
-        $content = $this->requestChatCompletion(
+        $completion = $this->requestChatCompletion(
             $baseUrl,
             $apiKey,
             $model,
@@ -65,12 +74,15 @@ class AiResumeTailorService
             ]
         );
 
-        $enhanced = trim($content);
+        $enhanced = trim($completion['content']);
         if ($enhanced === '') {
             throw new RuntimeException('AI returned empty enhanced text.');
         }
 
-        return $enhanced;
+        return [
+            'text' => $enhanced,
+            'usage' => $completion['usage'],
+        ];
     }
 
     protected function buildPrompt(array $payload): string
@@ -179,7 +191,10 @@ class AiResumeTailorService
         return [$baseUrl, $apiKey, $model];
     }
 
-    protected function requestChatCompletion(string $baseUrl, string $apiKey, string $model, array $messages): string
+    /**
+     * @return array{content: string, usage: array{prompt_tokens: int, completion_tokens: int, total_tokens: int}|null}
+     */
+    protected function requestChatCompletion(string $baseUrl, string $apiKey, string $model, array $messages): array
     {
         $response = Http::timeout(30)
             ->withToken($apiKey)
@@ -193,6 +208,38 @@ class AiResumeTailorService
             throw new RuntimeException('AI request failed.');
         }
 
-        return (string) data_get($response->json(), 'choices.0.message.content', '');
+        $json = $response->json();
+
+        return [
+            'content' => (string) data_get($json, 'choices.0.message.content', ''),
+            'usage' => $this->parseUsage(data_get($json, 'usage')),
+        ];
+    }
+
+    /**
+     * @return array{prompt_tokens: int, completion_tokens: int, total_tokens: int}|null
+     */
+    protected function parseUsage(mixed $usage): ?array
+    {
+        if (! is_array($usage)) {
+            return null;
+        }
+
+        $prompt = (int) ($usage['prompt_tokens'] ?? 0);
+        $completion = (int) ($usage['completion_tokens'] ?? 0);
+        $total = (int) ($usage['total_tokens'] ?? 0);
+        if ($total <= 0 && ($prompt > 0 || $completion > 0)) {
+            $total = $prompt + $completion;
+        }
+
+        if ($prompt === 0 && $completion === 0 && $total === 0) {
+            return null;
+        }
+
+        return [
+            'prompt_tokens' => $prompt,
+            'completion_tokens' => $completion,
+            'total_tokens' => $total,
+        ];
     }
 }

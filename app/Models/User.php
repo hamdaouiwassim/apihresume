@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\AiQuotaService;
+use App\Services\AiTokenLimitService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,6 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'stripe_subscription_id',
         'paddle_customer_id',
         'paddle_subscription_id',
+        'ai_monthly_token_limit',
     ];
 
     /**
@@ -84,6 +86,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $appends = [
         'ai_quota',
+        'ai_tokens',
         'github_import_connected',
     ];
 
@@ -102,6 +105,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'ai_enhance_used' => 'integer',
             'ai_tailor_used' => 'integer',
             'ai_ats_used' => 'integer',
+            'ai_monthly_token_limit' => 'integer',
             'last_activity' => 'datetime',
             'github_import_token' => 'encrypted',
             'github_import_connected_at' => 'datetime',
@@ -147,6 +151,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resumes(): HasMany
     {
         return $this->hasMany(Resume::class);
+    }
+
+    /**
+     * AI tool call logs (tokens / kind) for admin analytics.
+     */
+    public function aiUsageLogs(): HasMany
+    {
+        return $this->hasMany(AiUsageLog::class);
     }
 
     /**
@@ -297,5 +309,20 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return app(AiQuotaService::class)->snapshot($this);
+    }
+
+    /**
+     * Monthly AI token credits (used / remaining) for free-tier budgeting.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getAiTokensAttribute(): ?array
+    {
+        if (! array_key_exists('ai_monthly_token_limit', $this->getAttributes())
+            && ! array_key_exists('ai_usage_month', $this->getAttributes())) {
+            return null;
+        }
+
+        return app(AiTokenLimitService::class)->snapshot($this);
     }
 }

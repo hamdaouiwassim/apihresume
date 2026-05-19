@@ -88,5 +88,27 @@ class ResumeController extends Controller
             ], 404);
         }
     }
+
+    /**
+     * Delete a resume (admin).
+     */
+    public function destroy($id)
+    {
+        try {
+            $resume = Resume::findOrFail($id);
+            $resume->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Resume deleted successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to delete resume',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
 

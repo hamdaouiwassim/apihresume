@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Resume;
+use App\Models\User;
 use App\Services\AiQuotaService;
 use App\Services\AiResumeTailorService;
+use App\Services\AiTokenLimitService;
+use App\Services\AiUsageLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,6 +18,8 @@ class AiResumeController extends Controller
 {
     public function __construct(
         private readonly AiQuotaService $aiQuota,
+        private readonly AiUsageLogger $aiUsageLogger,
+        private readonly AiTokenLimitService $aiTokenLimit,
     ) {}
 
     public function tailor(Request $request, AiResumeTailorService $service): JsonResponse
@@ -57,8 +62,12 @@ class AiResumeController extends Controller
             return $this->quotaExceededResponse($user);
         }
 
+        if ($denied = $this->tokenLimitDeniedResponse($user)) {
+            return $denied;
+        }
+
         try {
-            $data = $service->tailorResume([
+            $tailored = $service->tailorResume([
                 'job_description' => (string) $request->job_description,
                 'target_role' => $request->target_role,
                 'seniority' => $request->seniority,
@@ -75,13 +84,15 @@ class AiResumeController extends Controller
             ]);
 
             $this->aiQuota->increment($user, 'tailor_resume');
+            $this->aiUsageLogger->log($user, 'tailor_resume', $resume->id, $tailored['usage'] ?? null);
             $user->refresh();
 
             return response()->json([
                 'status' => true,
                 'message' => 'AI suggestions generated successfully',
-                'data' => $data,
+                'data' => $tailored['data'],
                 'ai_quota' => $this->aiQuota->snapshot($user),
+                'ai_tokens' => $this->aiTokenLimit->snapshot($user),
             ]);
         } catch (Throwable $e) {
             return response()->json([
@@ -112,6 +123,10 @@ class AiResumeController extends Controller
             return $this->quotaExceededResponse($user);
         }
 
+        if ($denied = $this->tokenLimitDeniedResponse($user)) {
+            return $denied;
+        }
+
         try {
             $enhanced = $service->enhanceText(
                 (string) $request->text,
@@ -119,15 +134,17 @@ class AiResumeController extends Controller
             );
 
             $this->aiQuota->increment($user, 'enhance_text');
+            $this->aiUsageLogger->log($user, 'enhance_text', null, $enhanced['usage'] ?? null);
             $user->refresh();
 
             return response()->json([
                 'status' => true,
                 'message' => 'Text enhanced successfully',
                 'data' => [
-                    'enhanced_text' => $enhanced,
+                    'enhanced_text' => $enhanced['text'],
                 ],
                 'ai_quota' => $this->aiQuota->snapshot($user),
+                'ai_tokens' => $this->aiTokenLimit->snapshot($user),
             ]);
         } catch (Throwable $e) {
             return response()->json([
@@ -173,6 +190,10 @@ class AiResumeController extends Controller
 
         if (! $this->aiQuota->hasRemaining($user, 'ats_score')) {
             return $this->quotaExceededResponse($user);
+        }
+
+        if ($denied = $this->tokenLimitDeniedResponse($user)) {
+            return $denied;
         }
 
         $basicInfo = $resume->basicInfo;
@@ -323,6 +344,7 @@ class AiResumeController extends Controller
         $data['insights_tier'] = $unlimited ? 'full' : 'lite';
 
         $this->aiQuota->increment($user, 'ats_score');
+        $this->aiUsageLogger->log($user, 'ats_score', $resume->id, null);
         $user->refresh();
 
         return response()->json([
@@ -330,6 +352,7 @@ class AiResumeController extends Controller
             'message' => 'ATS score generated successfully',
             'data' => $data,
             'ai_quota' => $this->aiQuota->snapshot($user),
+            'ai_tokens' => $this->aiTokenLimit->snapshot($user),
         ]);
     }
 
@@ -356,12 +379,30 @@ class AiResumeController extends Controller
         return $data;
     }
 
-    private function quotaExceededResponse($user): JsonResponse
+    private function quotaExceededResponse(User $user): JsonResponse
     {
         return response()->json([
             'status' => false,
             'code' => 'AI_QUOTA_EXCEEDED',
             'message' => 'You have used all free AI credits for this feature this month. Upgrade to Pro for unlimited AI, full ATS keyword insights, and more.',
+            'ai_quota' => $this->aiQuota->snapshot($user),
+            'ai_tokens' => $this->aiTokenLimit->snapshot($user),
+        ], 403);
+    }
+
+    private function tokenLimitDeniedResponse(User $user): ?JsonResponse
+    {
+        if ($this->aiTokenLimit->hasTokenBudget($user)) {
+            return null;
+        }
+
+        $snap = $this->aiTokenLimit->snapshot($user);
+
+        return response()->json([
+            'status' => false,
+            'code' => 'AI_TOKEN_LIMIT_EXCEEDED',
+            'message' => 'You have reached your monthly AI token limit. Contact support or upgrade to Pro for more capacity.',
+            'ai_tokens' => $snap,
             'ai_quota' => $this->aiQuota->snapshot($user),
         ], 403);
     }

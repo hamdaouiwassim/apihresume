@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AiUsageController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\CoverLetterController as AdminCoverLetterController;
 use App\Http\Controllers\Admin\CoverLetterTemplateController as AdminCoverLetterTemplateController;
@@ -181,6 +182,7 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
     Route::get('/resumes', [AdminResumeController::class, 'index']);
     Route::get('/resumes/{id}', [AdminResumeController::class, 'show']);
+    Route::delete('/resumes/{id}', [AdminResumeController::class, 'destroy']);
     Route::get('/cover-letters', [AdminCoverLetterController::class, 'index']);
     Route::get('/cover-letters/{id}', [AdminCoverLetterController::class, 'show']);
     Route::delete('/cover-letters/{id}', [AdminCoverLetterController::class, 'destroy']);
@@ -199,6 +201,11 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::get('/reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index']);
     Route::patch('/reviews/{review}/toggle-public', [\App\Http\Controllers\Admin\ReviewController::class, 'togglePublic']);
     Route::delete('/reviews/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy']);
+
+    Route::get('/ai-usage/logs', [AiUsageController::class, 'logs']);
+    Route::get('/ai-usage/summary', [AiUsageController::class, 'summary']);
+    Route::get('/ai-usage/user-limits', [AiUsageController::class, 'userLimits']);
+    Route::patch('/ai-usage/users/{user}/token-limit', [AiUsageController::class, 'updateUserTokenLimit']);
 });
 
 // Recruiter routes
