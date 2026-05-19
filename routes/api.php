@@ -77,7 +77,9 @@ Route::get('/stats', [StatsController::class, 'index'])
     ->middleware('throttle:public-read');
 Route::get('/pricing-region', [PricingRegionController::class, 'show'])
     ->middleware('throttle:public-read');
-Route::post('/billing/webhook', [BillingController::class, 'webhook'])
+Route::post('/billing/paddle/webhook', [BillingController::class, 'paddleWebhook'])
+    ->middleware('throttle:public-read');
+Route::post('/billing/stripe/webhook', [BillingController::class, 'stripeWebhook'])
     ->middleware('throttle:public-read');
 Route::get('/templates', [TemplateController::class, 'index'])
     ->middleware('throttle:public-read');
@@ -98,6 +100,7 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:api-authenticated
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
         ->middleware('throttle:verification-resend');
 
+    Route::get('/billing/config', [BillingController::class, 'config']);
     Route::post('/billing/checkout', [BillingController::class, 'checkout']);
     Route::post('/billing/checkout/confirm', [BillingController::class, 'confirmSession']);
 

@@ -55,6 +55,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_pro',
         'stripe_customer_id',
         'stripe_subscription_id',
+        'paddle_customer_id',
+        'paddle_subscription_id',
     ];
 
     /**
@@ -72,6 +74,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'github_import_token',
         'stripe_customer_id',
         'stripe_subscription_id',
+        'paddle_customer_id',
+        'paddle_subscription_id',
         'ai_usage_month',
         'ai_enhance_used',
         'ai_tailor_used',

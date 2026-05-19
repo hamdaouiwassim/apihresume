@@ -57,4 +57,58 @@ class ProSubscriptionService
 
         $user->forceFill(['is_pro' => $active])->save();
     }
+
+    public function activateFromPaddle(User $user, string $customerId, string $subscriptionId): void
+    {
+        $user->forceFill([
+            'paddle_customer_id' => $customerId,
+            'paddle_subscription_id' => $subscriptionId,
+            'is_pro' => true,
+        ])->save();
+    }
+
+    public function deactivateFromPaddleSubscription(string $subscriptionId): void
+    {
+        $user = User::query()
+            ->where('paddle_subscription_id', $subscriptionId)
+            ->first();
+
+        if (! $user) {
+            return;
+        }
+
+        $user->forceFill([
+            'is_pro' => false,
+            'paddle_subscription_id' => null,
+        ])->save();
+    }
+
+    public function findByPaddleSubscription(string $subscriptionId): ?User
+    {
+        return User::query()
+            ->where('paddle_subscription_id', $subscriptionId)
+            ->first();
+    }
+
+    public function syncPaddleSubscriptionStatus(string $subscriptionId, string $status): void
+    {
+        $user = $this->findByPaddleSubscription($subscriptionId);
+
+        if (! $user) {
+            return;
+        }
+
+        $active = in_array($status, ['active', 'trialing'], true);
+
+        $user->forceFill(['is_pro' => $active])->save();
+    }
+
+    public function findByBillingUserId(mixed $userId): ?User
+    {
+        if ($userId === null || $userId === '') {
+            return null;
+        }
+
+        return User::find($userId);
+    }
 }
