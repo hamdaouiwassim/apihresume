@@ -22,12 +22,16 @@ class Resume extends Model
         'public_profile_slug',
         'public_profile_meta_title',
         'public_profile_meta_description',
+        'open_to_recruiters',
+        'recruiter_visible_at',
     ];
 
     protected $casts = [
         'section_order' => 'array',
         'typography' => 'array',
         'public_profile_enabled' => 'boolean',
+        'open_to_recruiters' => 'boolean',
+        'recruiter_visible_at' => 'datetime',
     ];
 
     /**

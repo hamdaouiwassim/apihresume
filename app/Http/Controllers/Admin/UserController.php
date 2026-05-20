@@ -26,6 +26,7 @@ class UserController extends Controller
             $perPage = AdminPagination::resolve($request);
             $search = $request->input('search');
             $role = $request->input('role');
+            $recruiterStatus = $request->input('recruiter_status'); // pending | approved | revoked
             $verificationStatus = $request->input('verification_status'); // 'verified' or 'unverified'
             $trashed = $request->input('trashed'); // only | with
 
@@ -48,16 +49,19 @@ class UserController extends Controller
             if ($role === 'admin') {
                 $query->where('is_admin', true);
             } elseif ($role === 'recruiter') {
-                $query->where('is_recruiter', true)
-                    ->whereHas('recruiter', function ($q) {
-                        $q->where('status', 'approved');
-                    });
+                $query->whereHas('recruiter');
             } elseif ($role === 'candidate') {
                 $query->where('is_admin', false)
                     ->where('is_recruiter', false);
             } elseif ($role === 'pro') {
                 $query->where('is_pro', true)
                     ->whereNotNull('email_verified_at');
+            }
+
+            if ($recruiterStatus && in_array($recruiterStatus, ['pending', 'approved', 'revoked'], true)) {
+                $query->whereHas('recruiter', function ($q) use ($recruiterStatus) {
+                    $q->where('status', $recruiterStatus);
+                });
             }
 
             // Filter by email verification status

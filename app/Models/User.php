@@ -61,6 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'paddle_customer_id',
         'paddle_subscription_id',
         'ai_monthly_token_limit',
+        'default_open_to_recruiters',
         'banned_at',
         'banned_until',
         'banned_permanently',
@@ -95,6 +96,17 @@ class User extends Authenticatable implements MustVerifyEmail
         'ai_quota',
         'ai_tokens',
         'github_import_connected',
+        'recruiter_status',
+        'company_name',
+        'company_size',
+        'industry_focus',
+        'hiring_focus',
+        'recruiter_role',
+        'recruiter_phone',
+        'recruiter_linkedin',
+        'brand_avatar',
+        'compliance_accepted',
+        'recruiter_admin_notes',
     ];
 
     /**
@@ -119,6 +131,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'banned_at' => 'datetime',
             'banned_until' => 'datetime',
             'banned_permanently' => 'boolean',
+            'default_open_to_recruiters' => 'boolean',
         ];
     }
 

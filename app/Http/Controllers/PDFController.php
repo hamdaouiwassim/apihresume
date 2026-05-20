@@ -118,6 +118,17 @@ class PDFController extends Controller
         }
     }
 
+    public function binaryFromResume(Resume $resume, string $locale = 'en'): string
+    {
+        if (! in_array($locale, ['en', 'fr'], true)) {
+            $locale = 'en';
+        }
+
+        $payload = app(ResumePdfPayloadBuilder::class)->fromResume($resume, $locale);
+
+        return $this->renderPdfBinary($payload, $locale);
+    }
+
     /**
      * @param  array<string, mixed>  $resume
      */

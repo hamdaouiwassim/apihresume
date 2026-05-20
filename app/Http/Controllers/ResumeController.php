@@ -87,9 +87,13 @@ class ResumeController extends Controller
                 ], 403);
             }
 
+            $openToRecruiters = (bool) $user->default_open_to_recruiters;
+
             $resume = $user->resumes()->create([
                 'template_id' => $request->template_id,
                 'name' => $request->name,
+                'open_to_recruiters' => $openToRecruiters,
+                'recruiter_visible_at' => $openToRecruiters ? now() : null,
             ]);
 
             return response()->json([
@@ -289,6 +293,51 @@ class ResumeController extends Controller
                 'message' => 'Public profile updated successfully',
                 'data' => $resumeModel,
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function updateRecruiterVisibility(Request $request, string $resume)
+    {
+        try {
+            $resumeModel = Resume::findOrFail($resume);
+
+            if ($resumeModel->user_id !== auth()->id()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Only the resume owner can change recruiter visibility.',
+                ], 403);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'open_to_recruiters' => 'required|boolean',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            $open = (bool) $request->boolean('open_to_recruiters');
+            $resumeModel->open_to_recruiters = $open;
+            $resumeModel->recruiter_visible_at = $open ? now() : null;
+            $resumeModel->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => $open
+                    ? 'Resume is now visible to approved recruiters.'
+                    : 'Resume removed from recruiter talent pool.',
+                'data' => $resumeModel->only(['id', 'open_to_recruiters', 'recruiter_visible_at']),
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,

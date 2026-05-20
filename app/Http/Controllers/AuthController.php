@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\UserBanService;
 use App\Support\ApiJson;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -873,6 +874,42 @@ class AuthController extends Controller
                 'message' => 'Something went wrong',
             ], ApiJson::debugError($e)), 500);
         }
+    }
+
+    public function updateRecruiterPreferences(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'default_open_to_recruiters' => 'required|boolean',
+            'apply_to_existing_resumes' => 'sometimes|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = $request->user();
+        $default = (bool) $request->boolean('default_open_to_recruiters');
+        $user->default_open_to_recruiters = $default;
+        $user->save();
+
+        if ($request->boolean('apply_to_existing_resumes')) {
+            $user->resumes()->update([
+                'open_to_recruiters' => $default,
+                'recruiter_visible_at' => $default ? now() : null,
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Recruiter visibility preferences updated.',
+            'data' => [
+                'default_open_to_recruiters' => $user->default_open_to_recruiters,
+            ],
+        ]);
     }
 
     private function isStatefulSpaRequest(Request $request): bool

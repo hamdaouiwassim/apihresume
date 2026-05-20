@@ -30,7 +30,16 @@ use App\Http\Controllers\LinkedInResumeImportController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PricingRegionController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\Admin\TemplateProposalController as AdminTemplateProposalController;
+use App\Http\Controllers\PublicHmViewController;
+use App\Http\Controllers\PublicJobController;
+use App\Http\Controllers\Recruiter\ApplicationController as RecruiterApplicationController;
+use App\Http\Controllers\Recruiter\DashboardController as RecruiterDashboardController;
+use App\Http\Controllers\Recruiter\HmShareController as RecruiterHmShareController;
+use App\Http\Controllers\Recruiter\JobController as RecruiterJobController;
+use App\Http\Controllers\Recruiter\OrganizationController as RecruiterOrganizationController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
+use App\Http\Controllers\Recruiter\ShortlistController as RecruiterShortlistController;
 use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
 use App\Http\Controllers\ResumeCollaboratorController;
 use App\Http\Controllers\ResumeController;
@@ -74,6 +83,12 @@ Route::get('/reviews', [ReviewController::class, 'index'])
 Route::get('/blog', [BlogController::class, 'index'])
     ->middleware('throttle:public-read');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])
+    ->middleware('throttle:public-read');
+Route::get('/jobs', [PublicJobController::class, 'index'])
+    ->middleware('throttle:public-read');
+Route::get('/jobs/{slug}', [PublicJobController::class, 'show'])
+    ->middleware('throttle:public-read');
+Route::get('/recruiter/hm-view/{token}', [PublicHmViewController::class, 'show'])
     ->middleware('throttle:public-read');
 Route::get('/stats', [StatsController::class, 'index'])
     ->middleware('throttle:public-read');
@@ -121,6 +136,9 @@ Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api
     Route::post('/resumes/{resume}/github-repo-preview', GitHubProjectImportController::class)
         ->middleware('throttle:github-import');
     Route::patch('/resumes/{resume}/public-profile', [ResumeController::class, 'updatePublicProfile']);
+    Route::patch('/resumes/{resume}/recruiter-visibility', [ResumeController::class, 'updateRecruiterVisibility']);
+    Route::patch('/me/recruiter-preferences', [AuthController::class, 'updateRecruiterPreferences']);
+    Route::post('/jobs/{slug}/apply', [PublicJobController::class, 'apply']);
     Route::apiResource('cover-letters', CoverLetterController::class)->except(['store']);
     Route::get('/cover-letter-templates', [CoverLetterTemplateController::class, 'index']);
     Route::get('cover-letters/{coverLetter}/pdf', [CoverLetterController::class, 'generatePDF']);
@@ -220,12 +238,35 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::get('/ai-usage/summary', [AiUsageController::class, 'summary']);
     Route::get('/ai-usage/user-limits', [AiUsageController::class, 'userLimits']);
     Route::patch('/ai-usage/users/{user}/token-limit', [AiUsageController::class, 'updateUserTokenLimit']);
+
+    Route::get('/template-proposals', [AdminTemplateProposalController::class, 'index']);
+    Route::patch('/template-proposals/{id}', [AdminTemplateProposalController::class, 'update']);
+    Route::post('/template-proposals/{id}/publish', [AdminTemplateProposalController::class, 'publish']);
 });
 
 // Recruiter routes
 Route::middleware(['auth:sanctum', 'not.banned', 'verified', 'track.activity', 'recruiter', 'throttle:api-authenticated'])->prefix('recruiter')->group(function () {
+    Route::get('/dashboard', RecruiterDashboardController::class);
     Route::get('/resumes', [RecruiterResumeController::class, 'index']);
     Route::get('/resumes/{resume}', [RecruiterResumeController::class, 'show']);
+    Route::get('/resumes/{resume}/pdf', [RecruiterResumeController::class, 'exportPdf']);
+    Route::get('/shortlists', [RecruiterShortlistController::class, 'index']);
+    Route::post('/shortlists', [RecruiterShortlistController::class, 'store']);
+    Route::get('/shortlists/{id}', [RecruiterShortlistController::class, 'show']);
+    Route::delete('/shortlists/{id}', [RecruiterShortlistController::class, 'destroy']);
+    Route::post('/shortlists/{id}/items', [RecruiterShortlistController::class, 'addItem']);
+    Route::delete('/shortlists/{id}/items/{itemId}', [RecruiterShortlistController::class, 'removeItem']);
+    Route::get('/jobs', [RecruiterJobController::class, 'index']);
+    Route::post('/jobs', [RecruiterJobController::class, 'store']);
+    Route::get('/jobs/{id}', [RecruiterJobController::class, 'show']);
+    Route::put('/jobs/{id}', [RecruiterJobController::class, 'update']);
+    Route::delete('/jobs/{id}', [RecruiterJobController::class, 'destroy']);
+    Route::get('/jobs/{id}/applications', [RecruiterJobController::class, 'applications']);
+    Route::patch('/applications/{id}', [RecruiterApplicationController::class, 'update']);
+    Route::post('/resumes/{resumeId}/share-hm', [RecruiterHmShareController::class, 'store']);
+    Route::get('/organization', [RecruiterOrganizationController::class, 'show']);
+    Route::post('/organization', [RecruiterOrganizationController::class, 'store']);
+    Route::post('/organization/members', [RecruiterOrganizationController::class, 'addMember']);
     Route::get('/templates/proposals', [RecruiterTemplateProposalController::class, 'index']);
     Route::post('/templates/proposals', [RecruiterTemplateProposalController::class, 'store']);
 });

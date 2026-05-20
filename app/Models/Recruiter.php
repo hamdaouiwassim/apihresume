@@ -23,6 +23,7 @@ class Recruiter extends Model
         'compliance_accepted',
         'brand_avatar',
         'admin_notes',
+        'organization_id',
     ];
 
     protected function casts(): array
