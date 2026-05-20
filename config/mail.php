@@ -116,4 +116,9 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    | Minutes in "queued" before an outbound email is flagged as stale (worker may be down).
+    */
+    'outbound_stale_minutes' => (int) env('OUTBOUND_EMAIL_STALE_MINUTES', 30),
+
 ];

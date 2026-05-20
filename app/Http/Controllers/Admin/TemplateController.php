@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Template;
+use App\Support\AdminPagination;
 use App\Support\ApiJson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,7 @@ class TemplateController extends Controller
     public function index(Request $request)
     {
         try {
-            $perPage = $request->input('per_page', 15);
+            $perPage = AdminPagination::resolve($request);
             $search = $request->input('search');
             $category = $request->input('category');
 
@@ -40,7 +41,7 @@ class TemplateController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Templates fetched successfully',
-                'data' => $templates
+                'data' => $templates,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Admin templates index failed', ['exception' => $e->getMessage()]);
@@ -69,7 +70,7 @@ class TemplateController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Validation error',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -85,7 +86,7 @@ class TemplateController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Template created successfully',
-                'data' => $template
+                'data' => $template,
             ], 201);
         } catch (\Exception $e) {
             Log::error('Admin template create failed', ['exception' => $e->getMessage()]);
@@ -114,7 +115,7 @@ class TemplateController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Validation error',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -133,7 +134,7 @@ class TemplateController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Template updated successfully',
-                'data' => $template
+                'data' => $template,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Admin template update failed', ['exception' => $e->getMessage()]);
@@ -152,12 +153,12 @@ class TemplateController extends Controller
     {
         try {
             $template = Template::findOrFail($id);
-            
+
             // Check if template is being used
             if ($template->resumes()->count() > 0) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Cannot delete template that is being used by resumes'
+                    'message' => 'Cannot delete template that is being used by resumes',
                 ], 403);
             }
 
@@ -166,7 +167,7 @@ class TemplateController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Template deleted successfully'
+                'message' => 'Template deleted successfully',
             ], 200);
         } catch (\Exception $e) {
             Log::error('Admin template delete failed', ['exception' => $e->getMessage()]);
@@ -180,12 +181,12 @@ class TemplateController extends Controller
 
     protected function deletePreviewImage(?string $url): void
     {
-        if (!$url) {
+        if (! $url) {
             return;
         }
 
         $path = parse_url($url, PHP_URL_PATH);
-        if (!$path) {
+        if (! $path) {
             return;
         }
 

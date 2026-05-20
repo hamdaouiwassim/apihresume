@@ -6,6 +6,7 @@ use App\Mail\RecruiterSignupPending;
 use App\Models\Candidate;
 use App\Models\Recruiter;
 use App\Models\User;
+use App\Services\UserBanService;
 use App\Support\ApiJson;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -152,6 +153,16 @@ class AuthController extends Controller
         }
 
         $user = User::with(['recruiter', 'candidate', 'admin'])->where('email', $request->email)->first();
+
+        if ($banResponse = $this->blockIfUserBanned($user, $request)) {
+            Auth::logout();
+            if ($request->hasSession()) {
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+
+            return $banResponse;
+        }
 
         $requiresVerification = ! $user->hasVerifiedEmail();
         if ($requiresVerification) {
@@ -388,6 +399,10 @@ class AuthController extends Controller
 
         $user->load(['recruiter', 'candidate', 'admin']);
 
+        if ($banResponse = $this->blockIfUserBanned($user, $request, 'google')) {
+            return $banResponse;
+        }
+
         $token = null;
         $shouldUseSessionLogin = $request->wantsJson()
             && $this->isStatefulSpaRequest($request)
@@ -539,6 +554,10 @@ class AuthController extends Controller
         }
 
         $user->load(['recruiter', 'candidate', 'admin']);
+
+        if ($banResponse = $this->blockIfUserBanned($user, $request, 'linkedin')) {
+            return $banResponse;
+        }
 
         $token = null;
         $shouldUseSessionLogin = $request->wantsJson()
@@ -915,5 +934,37 @@ class AuthController extends Controller
     private function socialAuthCodeUsedCacheKey(string $code): string
     {
         return 'social-auth-code-used:'.$code;
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|null
+     */
+    private function blockIfUserBanned(User $user, Request $request, string $provider = 'google')
+    {
+        $banService = app(UserBanService::class);
+        $user = $banService->clearExpiredBanIfNeeded($user);
+
+        if (! $banService->isBanned($user)) {
+            return null;
+        }
+
+        $user->tokens()->delete();
+
+        $message = $user->banned_permanently
+            ? 'Your account has been permanently suspended.'
+            : 'Your account is suspended until '.$user->banned_until
+                ->timezone(config('app.timezone'))
+                ->format('F j, Y g:i A').'.';
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status' => false,
+                'message' => $message,
+                'code' => 'account_banned',
+                'ban' => $banService->banStatusPayload($user),
+            ], 403);
+        }
+
+        return $this->socialErrorRedirect($message, $provider);
     }
 }

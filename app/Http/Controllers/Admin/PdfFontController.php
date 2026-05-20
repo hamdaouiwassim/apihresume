@@ -53,11 +53,11 @@ class PdfFontController extends Controller
         foreach (['regular', 'bold', 'italic', 'bold_italic'] as $variant) {
             if ($request->hasFile($variant)) {
                 $ext = strtolower($request->file($variant)->getClientOriginalExtension());
-                if (!in_array($ext, ['ttf', 'otf'])) {
+                if (! in_array($ext, ['ttf', 'otf'])) {
                     return response()->json([
                         'status' => false,
                         'message' => "The {$variant} file must be a TTF or OTF font file.",
-                        'errors' => [$variant => ["Only .ttf and .otf files are accepted."]],
+                        'errors' => [$variant => ['Only .ttf and .otf files are accepted.']],
                     ], 422);
                 }
             }
@@ -73,16 +73,16 @@ class PdfFontController extends Controller
 
         try {
             $slug = Str::slug($request->family_name, '_');
-            $dir = 'fonts/' . $slug;
+            $dir = 'fonts/'.$slug;
 
             // Store each variant
             $paths = [];
             foreach (['regular', 'bold', 'italic', 'bold_italic'] as $variant) {
                 if ($request->hasFile($variant)) {
                     $file = $request->file($variant);
-                    $filename = $slug . '_' . $variant . '.' . $file->getClientOriginalExtension();
+                    $filename = $slug.'_'.$variant.'.'.$file->getClientOriginalExtension();
                     $file->storeAs($dir, $filename, 'local');
-                    $paths[$variant . '_path'] = $dir . '/' . $filename;
+                    $paths[$variant.'_path'] = $dir.'/'.$filename;
                 }
             }
 
@@ -116,7 +116,7 @@ class PdfFontController extends Controller
     public function toggleActive(PdfFont $pdfFont)
     {
         try {
-            $pdfFont->update(['is_active' => !$pdfFont->is_active]);
+            $pdfFont->update(['is_active' => ! $pdfFont->is_active]);
 
             return response()->json([
                 'status' => true,
@@ -148,7 +148,7 @@ class PdfFontController extends Controller
 
             // Delete the directory if empty
             $slug = Str::slug($pdfFont->family_name, '_');
-            $dir = 'fonts/' . $slug;
+            $dir = 'fonts/'.$slug;
             if (Storage::disk('local')->exists($dir)) {
                 $remaining = Storage::disk('local')->files($dir);
                 if (empty($remaining)) {
@@ -181,6 +181,7 @@ class PdfFontController extends Controller
 
         $data = $fonts->map(function ($font) {
             $ext = $font->regular_path ? strtolower(pathinfo($font->regular_path, PATHINFO_EXTENSION)) : 'ttf';
+
             return [
                 'id' => $font->id,
                 'family_name' => $font->family_name,
@@ -201,14 +202,14 @@ class PdfFontController extends Controller
     {
         $font = PdfFont::active()->findOrFail($id);
 
-        if (!$font->regular_path) {
+        if (! $font->regular_path) {
             abort(404);
         }
 
         // Files are stored on 'local' disk (root = storage/app/private)
         $path = Storage::disk('local')->path($font->regular_path);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             abort(404);
         }
 

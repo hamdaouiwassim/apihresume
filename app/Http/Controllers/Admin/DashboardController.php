@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AiUsageLog;
 use App\Models\CoverLetter;
+use App\Models\OutboundEmail;
 use App\Models\Resume;
 use App\Models\Template;
 use App\Models\User;
 use App\Models\WorkCertificate;
+use App\Services\OutboundEmailService;
 
 class DashboardController extends Controller
 {
@@ -47,6 +49,12 @@ class DashboardController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->limit(5)
                     ->get(['id', 'user_id', 'title', 'company_name', 'employee_name', 'created_at']),
+                'outbound_emails' => app(OutboundEmailService::class)->dashboardSummary(),
+                'recent_outbound_emails' => OutboundEmail::query()
+                    ->with(['user:id,name,email', 'triggeredBy:id,name,email'])
+                    ->orderByDesc('created_at')
+                    ->limit(10)
+                    ->get(),
             ];
 
             return response()->json([

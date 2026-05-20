@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost;
 use App\Jobs\SendBlogPostNotifications;
+use App\Models\BlogPost;
+use App\Support\AdminPagination;
 use App\Support\ApiJson;
 use App\Support\BlogHtmlSanitizer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
@@ -20,7 +21,7 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         try {
-            $perPage = $request->input('per_page', 15);
+            $perPage = AdminPagination::resolve($request);
             $search = $request->input('search');
             $status = $request->input('status');
 
@@ -43,7 +44,7 @@ class BlogController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Blog posts fetched successfully',
-                'data' => $posts
+                'data' => $posts,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(array_merge([
@@ -64,7 +65,7 @@ class BlogController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Blog post fetched successfully',
-                'data' => $post
+                'data' => $post,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(array_merge([
@@ -94,7 +95,7 @@ class BlogController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Validation error',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -102,7 +103,7 @@ class BlogController extends Controller
             $originalSlug = $slug;
             $count = 1;
             while (BlogPost::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count;
+                $slug = $originalSlug.'-'.$count;
                 $count++;
             }
 
@@ -113,21 +114,21 @@ class BlogController extends Controller
                 if ($file->isValid()) {
                     // Ensure blog-images directory exists
                     $blogImagesDir = Storage::disk('public')->path('blog-images');
-                    if (!is_dir($blogImagesDir)) {
+                    if (! is_dir($blogImagesDir)) {
                         Storage::disk('public')->makeDirectory('blog-images', 0755, true);
                     }
-                    
+
                     // Store image with unique name
                     $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
-                    $filename = time() . '_' . uniqid() . '.' . $extension;
+                    $filename = time().'_'.uniqid().'.'.$extension;
                     $imagePath = $file->storeAs('blog-images', $filename, 'public');
-                    
+
                     if ($imagePath && Storage::disk('public')->exists($imagePath)) {
                         $scheme = $request->getScheme();
                         $host = $request->getHost();
                         $port = $request->getPort();
-                        $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
-                        $featuredImageUrl = $baseUrl . '/storage/' . $imagePath;
+                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
+                        $featuredImageUrl = $baseUrl.'/storage/'.$imagePath;
                     }
                 }
             }
@@ -140,8 +141,8 @@ class BlogController extends Controller
                 'content' => BlogHtmlSanitizer::clean($request->content),
                 'featured_image' => $featuredImageUrl,
                 'status' => $request->status,
-                'published_at' => $request->status === 'published' 
-                    ? ($request->published_at ?? now()) 
+                'published_at' => $request->status === 'published'
+                    ? ($request->published_at ?? now())
                     : null,
             ]);
 
@@ -155,7 +156,7 @@ class BlogController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Blog post created successfully',
-                'data' => $post
+                'data' => $post,
             ], 201);
         } catch (\Exception $e) {
             return response()->json(array_merge([
@@ -185,7 +186,7 @@ class BlogController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => 'Validation error',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -213,29 +214,29 @@ class BlogController extends Controller
                         if (str_contains($post->featured_image, $storageUrl)) {
                             $oldImagePath = str_replace($storageUrl, '', $post->featured_image);
                             $oldImagePath = ltrim($oldImagePath, '/');
-                            if (!empty($oldImagePath) && Storage::disk('public')->exists($oldImagePath)) {
+                            if (! empty($oldImagePath) && Storage::disk('public')->exists($oldImagePath)) {
                                 Storage::disk('public')->delete($oldImagePath);
                             }
                         }
                     }
-                    
+
                     // Ensure blog-images directory exists
                     $blogImagesDir = Storage::disk('public')->path('blog-images');
-                    if (!is_dir($blogImagesDir)) {
+                    if (! is_dir($blogImagesDir)) {
                         Storage::disk('public')->makeDirectory('blog-images', 0755, true);
                     }
-                    
+
                     // Store new image
                     $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
-                    $filename = time() . '_' . uniqid() . '.' . $extension;
+                    $filename = time().'_'.uniqid().'.'.$extension;
                     $imagePath = $file->storeAs('blog-images', $filename, 'public');
-                    
+
                     if ($imagePath && Storage::disk('public')->exists($imagePath)) {
                         $scheme = $request->getScheme();
                         $host = $request->getHost();
                         $port = $request->getPort();
-                        $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
-                        $updateData['featured_image'] = $baseUrl . '/storage/' . $imagePath;
+                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
+                        $updateData['featured_image'] = $baseUrl.'/storage/'.$imagePath;
                     }
                 }
             }
@@ -246,7 +247,7 @@ class BlogController extends Controller
                 $originalSlug = $slug;
                 $count = 1;
                 while (BlogPost::where('slug', $slug)->where('id', '!=', $id)->exists()) {
-                    $slug = $originalSlug . '-' . $count;
+                    $slug = $originalSlug.'-'.$count;
                     $count++;
                 }
                 $updateData['slug'] = $slug;
@@ -256,9 +257,9 @@ class BlogController extends Controller
             $wasDraft = $post->status === 'draft';
             $wasAlreadyPublished = $post->status === 'published' && $post->published_at !== null;
             $isNowPublished = false;
-            
+
             if ($request->has('status')) {
-                if ($request->status === 'published' && !$post->published_at) {
+                if ($request->status === 'published' && ! $post->published_at) {
                     // Only set published_at if it wasn't already published
                     $updateData['published_at'] = $request->published_at ?? now();
                     $isNowPublished = true;
@@ -276,14 +277,14 @@ class BlogController extends Controller
 
             // Queue email notification only when post transitions from draft to published (first time only)
             // Don't send if post was already published before this update
-            if ($isNowPublished && $wasDraft && !$wasAlreadyPublished) {
+            if ($isNowPublished && $wasDraft && ! $wasAlreadyPublished) {
                 SendBlogPostNotifications::dispatch($post);
             }
 
             return response()->json([
                 'status' => true,
                 'message' => 'Blog post updated successfully',
-                'data' => $post
+                'data' => $post,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(array_merge([
@@ -304,7 +305,7 @@ class BlogController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Blog post deleted successfully'
+                'message' => 'Blog post deleted successfully',
             ], 200);
         } catch (\Exception $e) {
             return response()->json(array_merge([

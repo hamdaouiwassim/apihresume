@@ -1,11 +1,10 @@
 <?php
 
-use App\Models\User;
-use App\Models\Recruiter;
-use App\Models\Candidate;
 use App\Models\Admin;
+use App\Models\Candidate;
+use App\Models\Recruiter;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -15,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         // Migrate recruiter data
-        $recruiters = User::where('is_recruiter', true)->get();
+        $recruiters = User::withoutGlobalScopes()->where('is_recruiter', true)->get();
         foreach ($recruiters as $user) {
             Recruiter::create([
                 'user_id' => $user->id,
@@ -34,7 +33,7 @@ return new class extends Migration
         }
 
         // Migrate admin data
-        $admins = User::where('is_admin', true)->get();
+        $admins = User::withoutGlobalScopes()->where('is_admin', true)->get();
         foreach ($admins as $user) {
             Admin::create([
                 'user_id' => $user->id,
@@ -44,7 +43,8 @@ return new class extends Migration
         }
 
         // Migrate candidate data (all non-recruiter, non-admin users)
-        $candidates = User::where('is_admin', false)
+        $candidates = User::withoutGlobalScopes()
+            ->where('is_admin', false)
             ->where('is_recruiter', false)
             ->get();
         foreach ($candidates as $user) {

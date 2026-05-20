@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class BlogPost extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -45,12 +46,12 @@ class BlogPost extends Model
         static::creating(function ($post) {
             if (empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
-                
+
                 // Ensure uniqueness
                 $originalSlug = $post->slug;
                 $count = 1;
                 while (static::where('slug', $post->slug)->exists()) {
-                    $post->slug = $originalSlug . '-' . $count;
+                    $post->slug = $originalSlug.'-'.$count;
                     $count++;
                 }
             }
@@ -59,12 +60,12 @@ class BlogPost extends Model
         static::updating(function ($post) {
             if ($post->isDirty('title') && empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
-                
+
                 // Ensure uniqueness
                 $originalSlug = $post->slug;
                 $count = 1;
                 while (static::where('slug', $post->slug)->where('id', '!=', $post->id)->exists()) {
-                    $post->slug = $originalSlug . '-' . $count;
+                    $post->slug = $originalSlug.'-'.$count;
                     $count++;
                 }
             }

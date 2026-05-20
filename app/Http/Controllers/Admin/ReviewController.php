@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Support\AdminPagination;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class ReviewController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->get('per_page', 10);
+        $perPage = AdminPagination::resolve($request);
         $search = $request->get('search');
 
         $query = Review::with('user:id,name,email,avatar');
@@ -22,9 +23,9 @@ class ReviewController extends Controller
         if ($search) {
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             })->orWhere('title', 'like', "%{$search}%")
-              ->orWhere('comment', 'like', "%{$search}%");
+                ->orWhere('comment', 'like', "%{$search}%");
         }
 
         $reviews = $query->latest()->paginate($perPage);
@@ -40,7 +41,7 @@ class ReviewController extends Controller
      */
     public function togglePublic(Review $review): JsonResponse
     {
-        $review->is_public = !$review->is_public;
+        $review->is_public = ! $review->is_public;
         $review->save();
 
         return response()->json([

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\CascadesSoftDeletesToOwnedContent;
 use App\Services\AiQuotaService;
 use App\Services\AiTokenLimitService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use CascadesSoftDeletesToOwnedContent, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Default attribute values for new models (before save).
@@ -59,6 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'paddle_customer_id',
         'paddle_subscription_id',
         'ai_monthly_token_limit',
+        'banned_at',
+        'banned_until',
+        'banned_permanently',
+        'ban_reason',
+        'banned_by_user_id',
     ];
 
     /**
@@ -109,7 +116,15 @@ class User extends Authenticatable implements MustVerifyEmail
             'last_activity' => 'datetime',
             'github_import_token' => 'encrypted',
             'github_import_connected_at' => 'datetime',
+            'banned_at' => 'datetime',
+            'banned_until' => 'datetime',
+            'banned_permanently' => 'boolean',
         ];
+    }
+
+    public function bannedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'banned_by_user_id');
     }
 
     protected function githubImportConnected(): Attribute

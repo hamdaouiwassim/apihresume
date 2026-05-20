@@ -112,4 +112,16 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Unverified account deletion grace period
+    |--------------------------------------------------------------------------
+    |
+    | Shown in verification reminder emails: accounts that stay unverified
+    | beyond this many days from registration may be removed automatically.
+    |
+    */
+
+    'unverified_account_deletion_days' => (int) env('UNVERIFIED_ACCOUNT_DELETION_DAYS', 30),
+
 ];

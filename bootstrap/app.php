@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'recruiter' => \App\Http\Middleware\RecruiterMiddleware::class,
             'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
+            'not.banned' => \App\Http\Middleware\EnsureUserNotBanned::class,
         ]);
 
         $middleware->appendToGroup('api', \App\Http\Middleware\SecurityHeaders::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CoverLetterTemplate;
+use App\Support\AdminPagination;
 use Illuminate\Http\Request;
 
 class CoverLetterTemplateController extends Controller
@@ -27,11 +28,11 @@ class CoverLetterTemplateController extends Controller
             $query->where('language', $request->language);
         }
 
-        $templates = $query->latest()->paginate($request->input('per_page', 10));
+        $templates = $query->latest()->paginate(AdminPagination::resolve($request));
 
         return response()->json([
             'status' => true,
-            'data' => $templates
+            'data' => $templates,
         ]);
     }
 
@@ -46,7 +47,7 @@ class CoverLetterTemplateController extends Controller
             'language' => 'required|string|size:2',
             'subject' => 'required|string|max:255',
             'content' => 'required|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $template = CoverLetterTemplate::create($validated);
@@ -54,7 +55,7 @@ class CoverLetterTemplateController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Template created successfully',
-            'data' => $template
+            'data' => $template,
         ], 201);
     }
 
@@ -65,7 +66,7 @@ class CoverLetterTemplateController extends Controller
     {
         return response()->json([
             'status' => true,
-            'data' => $coverLetterTemplate
+            'data' => $coverLetterTemplate,
         ]);
     }
 
@@ -82,7 +83,7 @@ class CoverLetterTemplateController extends Controller
             'language' => 'sometimes|required|string|size:2',
             'subject' => 'sometimes|required|string|max:255',
             'content' => 'sometimes|required|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $template->update($validated);
@@ -90,7 +91,7 @@ class CoverLetterTemplateController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Template updated successfully',
-            'data' => $template
+            'data' => $template,
         ]);
     }
 
@@ -104,7 +105,7 @@ class CoverLetterTemplateController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Template deleted successfully'
+            'message' => 'Template deleted successfully',
         ]);
     }
 }

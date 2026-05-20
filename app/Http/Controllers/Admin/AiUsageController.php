@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AiUsageLog;
 use App\Models\User;
 use App\Services\AiTokenLimitService;
+use App\Support\AdminPagination;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,10 +29,10 @@ class AiUsageController extends Controller
             'kind' => ['nullable', 'string', 'in:'.implode(',', self::KINDS)],
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date', 'after_or_equal:from'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:'.AdminPagination::MAX],
         ]);
 
-        $perPage = (int) ($validated['per_page'] ?? 25);
+        $perPage = AdminPagination::resolve($request);
 
         $query = AiUsageLog::query()
             ->with(['user:id,name,email,is_pro,is_admin,ai_monthly_token_limit'])
@@ -151,10 +152,10 @@ class AiUsageController extends Controller
     {
         $validated = $request->validate([
             'search' => ['nullable', 'string', 'max:120'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:'.AdminPagination::MAX],
         ]);
 
-        $perPage = (int) ($validated['per_page'] ?? 20);
+        $perPage = AdminPagination::resolve($request);
         $search = $validated['search'] ?? null;
 
         $query = User::query()

@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\AiUsageLog;
+use App\Models\OutboundEmail;
 use App\Models\Recruiter;
 use App\Models\User;
 use App\Services\AiTokenLimitService;
+use App\Services\UserBanService;
+use App\Support\AdminPagination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -20,12 +23,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $perPage = $request->input('per_page', 15);
+            $perPage = AdminPagination::resolve($request);
             $search = $request->input('search');
             $role = $request->input('role');
             $verificationStatus = $request->input('verification_status'); // 'verified' or 'unverified'
+            $trashed = $request->input('trashed'); // only | with
 
-            $query = User::with(['recruiter', 'admin', 'candidate'])
+            $query = $this->usersQueryForTrashed($trashed)
+                ->with(['recruiter', 'admin', 'candidate'])
                 ->withCount('resumes')
                 ->orderBy('created_at', 'desc');
 
@@ -84,10 +89,14 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::withCount('resumes')
+            $user = User::withTrashed()
+                ->withCount('resumes')
+                ->with(['bannedBy:id,name,email'])
                 ->with([
                     'resumes' => function ($query) {
-                        $query->with('template:id,name')->latest('updated_at');
+                        $query->withTrashed()
+                            ->with('template:id,name')
+                            ->latest('updated_at');
                     },
                     'recruiter',
                     'admin',
@@ -142,6 +151,13 @@ class UserController extends Controller
             $payload['ai_tokens'] = $tokenService->snapshot($user);
             $payload['ai_usage'] = $aiUsage;
             $payload['recent_ai_logs'] = $recentAiLogs;
+            $payload['recent_outbound_emails'] = OutboundEmail::query()
+                ->where('user_id', $user->id)
+                ->with(['triggeredBy:id,name,email', 'resume:id,name'])
+                ->orderByDesc('created_at')
+                ->limit(15)
+                ->get();
+            $payload['ban'] = app(UserBanService::class)->banStatusPayload($user);
 
             return response()->json([
                 'status' => true,
@@ -268,7 +284,7 @@ class UserController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User deleted successfully',
+                'message' => 'User moved to trash. You can restore them anytime from deleted users.',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -277,5 +293,64 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function restore($user)
+    {
+        try {
+            $user = User::onlyTrashed()->findOrFail($user);
+            $user->restore();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User restored successfully.',
+                'data' => $user->fresh()->load(['recruiter', 'admin', 'candidate']),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to restore user',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function forceDestroy($user)
+    {
+        try {
+            $user = User::withTrashed()->findOrFail($user);
+
+            if ($user->id === auth()->id()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'You cannot permanently delete your own account',
+                ], 403);
+            }
+
+            $user->forceDelete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User permanently deleted.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to permanently delete user',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder<User>
+     */
+    private function usersQueryForTrashed(?string $trashed)
+    {
+        return match ($trashed) {
+            'only' => User::onlyTrashed(),
+            'with' => User::withTrashed(),
+            default => User::query(),
+        };
     }
 }

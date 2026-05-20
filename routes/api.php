@@ -5,14 +5,15 @@ use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\CoverLetterController as AdminCoverLetterController;
 use App\Http\Controllers\Admin\CoverLetterTemplateController as AdminCoverLetterTemplateController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OutboundEmailController;
 use App\Http\Controllers\Admin\ResumeController as AdminResumeController;
 use App\Http\Controllers\Admin\TemplateController as AdminTemplateController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\WorkCertificateController as AdminWorkCertificateController;
 use App\Http\Controllers\AiResumeController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BillingController;
 use App\Http\Controllers\BasicInfoController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CoverLetterController;
@@ -92,7 +93,7 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware(['signed', 'throttle:email-verify'])
     ->name('verification.verify');
 
-Route::middleware(['auth:sanctum', 'track.activity', 'throttle:api-authenticated'])->group(function () {
+Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api-authenticated'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/auth/github/import/url', [GitHubImportOAuthController::class, 'url'])
@@ -175,14 +176,27 @@ Route::middleware(['auth:sanctum', 'track.activity', 'throttle:api-authenticated
 // Admin routes
 Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throttle:api-authenticated'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::post('users/{user}/restore', [AdminUserController::class, 'restore']);
+    Route::delete('users/{user}/force', [AdminUserController::class, 'forceDestroy']);
+    Route::post('users/{user}/ban', [\App\Http\Controllers\Admin\UserBanController::class, 'ban']);
+    Route::post('users/{user}/unban', [\App\Http\Controllers\Admin\UserBanController::class, 'unban']);
     Route::apiResource('users', AdminUserController::class);
     Route::apiResource('templates', AdminTemplateController::class);
     Route::apiResource('cover-letter-templates', AdminCoverLetterTemplateController::class);
     Route::apiResource('blog', AdminBlogController::class);
     Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
+    Route::post('users/{user}/emails/resume-reminder', [OutboundEmailController::class, 'sendResumeReminder']);
+    Route::post('users/{user}/emails/verification-reminder', [OutboundEmailController::class, 'sendVerificationReminder']);
+    Route::post('users/{user}/emails/new-features', [OutboundEmailController::class, 'sendNewFeaturesToUser']);
+    Route::get('/outbound-emails/summary', [OutboundEmailController::class, 'summary']);
+    Route::get('/outbound-emails', [OutboundEmailController::class, 'index']);
+    Route::post('/outbound-emails/bulk', [OutboundEmailController::class, 'bulk']);
+    Route::post('/outbound-emails/new-features', [OutboundEmailController::class, 'sendNewFeaturesBulk']);
     Route::get('/resumes', [AdminResumeController::class, 'index']);
     Route::get('/resumes/{id}', [AdminResumeController::class, 'show']);
     Route::delete('/resumes/{id}', [AdminResumeController::class, 'destroy']);
+    Route::post('/resumes/{id}/restore', [AdminResumeController::class, 'restore']);
+    Route::delete('/resumes/{id}/force', [AdminResumeController::class, 'forceDestroy']);
     Route::get('/cover-letters', [AdminCoverLetterController::class, 'index']);
     Route::get('/cover-letters/{id}', [AdminCoverLetterController::class, 'show']);
     Route::delete('/cover-letters/{id}', [AdminCoverLetterController::class, 'destroy']);
@@ -209,7 +223,7 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
 });
 
 // Recruiter routes
-Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'recruiter', 'throttle:api-authenticated'])->prefix('recruiter')->group(function () {
+Route::middleware(['auth:sanctum', 'not.banned', 'verified', 'track.activity', 'recruiter', 'throttle:api-authenticated'])->prefix('recruiter')->group(function () {
     Route::get('/resumes', [RecruiterResumeController::class, 'index']);
     Route::get('/resumes/{resume}', [RecruiterResumeController::class, 'show']);
     Route::get('/templates/proposals', [RecruiterTemplateProposalController::class, 'index']);

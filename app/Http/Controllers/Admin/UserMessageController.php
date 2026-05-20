@@ -3,31 +3,30 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\AdminUserMessage;
 use App\Models\User;
+use App\Services\OutboundEmailService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class UserMessageController extends Controller
 {
-    public function __invoke(Request $request, User $user)
+    public function __invoke(Request $request, User $user, OutboundEmailService $outboundEmailService)
     {
         $data = $request->validate([
             'subject' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string'],
         ]);
 
-        Mail::to($user->email)->queue(new AdminUserMessage(
+        $outbound = $outboundEmailService->queueAdminCustom(
             admin: $request->user(),
-            user: $user,
-            subjectLine: $data['subject'],
-            bodyMessage: $data['message'],
-        ));
+            recipient: $user,
+            subject: $data['subject'],
+            body: $data['message'],
+        );
 
         return response()->json([
             'status' => true,
             'message' => 'Email queued successfully.',
+            'data' => $outbound->load(['user:id,name,email', 'triggeredBy:id,name,email']),
         ]);
     }
 }
-

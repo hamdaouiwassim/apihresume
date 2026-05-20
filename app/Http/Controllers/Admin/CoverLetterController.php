@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CoverLetter;
+use App\Support\AdminPagination;
 use Illuminate\Http\Request;
 
 class CoverLetterController extends Controller
@@ -25,7 +26,7 @@ class CoverLetterController extends Controller
             });
         }
 
-        $letters = $query->paginate((int) $request->input('per_page', 15));
+        $letters = $query->paginate(AdminPagination::resolve($request));
 
         return response()->json([
             'status' => true,
@@ -54,4 +55,3 @@ class CoverLetterController extends Controller
         ]);
     }
 }
-

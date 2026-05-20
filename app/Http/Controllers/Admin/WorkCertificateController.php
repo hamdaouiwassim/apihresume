@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkCertificate;
+use App\Support\AdminPagination;
 use Illuminate\Http\Request;
 
 class WorkCertificateController extends Controller
@@ -25,7 +26,7 @@ class WorkCertificateController extends Controller
             });
         }
 
-        $certificates = $query->paginate((int) $request->input('per_page', 15));
+        $certificates = $query->paginate(AdminPagination::resolve($request));
 
         return response()->json([
             'status' => true,
