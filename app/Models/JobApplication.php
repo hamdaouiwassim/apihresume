@@ -13,6 +13,7 @@ class JobApplication extends Model
         'user_id',
         'status',
         'cover_note',
+        'cover_letter_id',
         'internal_notes',
         'match_score',
         'applied_at',
@@ -38,5 +39,10 @@ class JobApplication extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function coverLetter(): BelongsTo
+    {
+        return $this->belongsTo(CoverLetter::class);
     }
 }

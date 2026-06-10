@@ -36,6 +36,7 @@ use App\Http\Controllers\PublicJobController;
 use App\Http\Controllers\Recruiter\ApplicationController as RecruiterApplicationController;
 use App\Http\Controllers\Recruiter\DashboardController as RecruiterDashboardController;
 use App\Http\Controllers\Recruiter\HmShareController as RecruiterHmShareController;
+use App\Http\Controllers\Recruiter\JobCompareController;
 use App\Http\Controllers\Recruiter\JobController as RecruiterJobController;
 use App\Http\Controllers\Recruiter\OrganizationController as RecruiterOrganizationController;
 use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
@@ -138,6 +139,7 @@ Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api
     Route::patch('/resumes/{resume}/public-profile', [ResumeController::class, 'updatePublicProfile']);
     Route::patch('/resumes/{resume}/recruiter-visibility', [ResumeController::class, 'updateRecruiterVisibility']);
     Route::patch('/me/recruiter-preferences', [AuthController::class, 'updateRecruiterPreferences']);
+    Route::get('/jobs/{slug}/application-status', [PublicJobController::class, 'myApplicationStatus']);
     Route::post('/jobs/{slug}/apply', [PublicJobController::class, 'apply']);
     Route::apiResource('cover-letters', CoverLetterController::class)->except(['store']);
     Route::get('/cover-letter-templates', [CoverLetterTemplateController::class, 'index']);
@@ -186,6 +188,8 @@ Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api
 
     // Active PDF fonts for font dropdown
     Route::get('/pdf-fonts/active', [\App\Http\Controllers\Admin\PdfFontController::class, 'activeFonts']);
+    Route::get('/job-catalog/skills', [\App\Http\Controllers\JobCatalogController::class, 'skills']);
+    Route::get('/job-catalog/education', [\App\Http\Controllers\JobCatalogController::class, 'education']);
 
     // Serve custom font file for preview (blob URL fetch)
     Route::get('/fonts/{id}/file', [\App\Http\Controllers\Admin\PdfFontController::class, 'serveFontFile']);
@@ -229,12 +233,23 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::post('/fonts/{pdfFont}/toggle', [\App\Http\Controllers\Admin\PdfFontController::class, 'toggleActive']);
     Route::delete('/fonts/{pdfFont}', [\App\Http\Controllers\Admin\PdfFontController::class, 'destroy']);
 
+    Route::get('/job-catalog/skills', [\App\Http\Controllers\Admin\JobSkillCatalogController::class, 'index']);
+    Route::post('/job-catalog/skills', [\App\Http\Controllers\Admin\JobSkillCatalogController::class, 'store']);
+    Route::patch('/job-catalog/skills/{jobSkillCatalog}', [\App\Http\Controllers\Admin\JobSkillCatalogController::class, 'update']);
+    Route::delete('/job-catalog/skills/{jobSkillCatalog}', [\App\Http\Controllers\Admin\JobSkillCatalogController::class, 'destroy']);
+
+    Route::get('/job-catalog/education', [\App\Http\Controllers\Admin\JobEducationCatalogController::class, 'index']);
+    Route::post('/job-catalog/education', [\App\Http\Controllers\Admin\JobEducationCatalogController::class, 'store']);
+    Route::patch('/job-catalog/education/{jobEducationCatalog}', [\App\Http\Controllers\Admin\JobEducationCatalogController::class, 'update']);
+    Route::delete('/job-catalog/education/{jobEducationCatalog}', [\App\Http\Controllers\Admin\JobEducationCatalogController::class, 'destroy']);
+
     // Review management
     Route::get('/reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index']);
     Route::patch('/reviews/{review}/toggle-public', [\App\Http\Controllers\Admin\ReviewController::class, 'togglePublic']);
     Route::delete('/reviews/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy']);
 
     Route::get('/ai-usage/logs', [AiUsageController::class, 'logs']);
+    Route::get('/ai-usage/logs/{log}', [AiUsageController::class, 'show']);
     Route::get('/ai-usage/summary', [AiUsageController::class, 'summary']);
     Route::get('/ai-usage/user-limits', [AiUsageController::class, 'userLimits']);
     Route::patch('/ai-usage/users/{user}/token-limit', [AiUsageController::class, 'updateUserTokenLimit']);
@@ -259,8 +274,12 @@ Route::middleware(['auth:sanctum', 'not.banned', 'verified', 'track.activity', '
     Route::get('/jobs', [RecruiterJobController::class, 'index']);
     Route::post('/jobs', [RecruiterJobController::class, 'store']);
     Route::get('/jobs/{id}', [RecruiterJobController::class, 'show']);
-    Route::put('/jobs/{id}', [RecruiterJobController::class, 'update']);
+    Route::match(['put', 'post'], '/jobs/{id}', [RecruiterJobController::class, 'update']);
     Route::delete('/jobs/{id}', [RecruiterJobController::class, 'destroy']);
+    Route::get('/jobs/{id}/compare/runs', [JobCompareController::class, 'indexRuns']);
+    Route::get('/jobs/{id}/compare/runs/{runId}', [JobCompareController::class, 'showRun']);
+    Route::post('/jobs/{id}/compare', [JobCompareController::class, 'compare']);
+    Route::post('/jobs/{id}/compare/deep', [JobCompareController::class, 'compareDeep']);
     Route::get('/jobs/{id}/applications', [RecruiterJobController::class, 'applications']);
     Route::patch('/applications/{id}', [RecruiterApplicationController::class, 'update']);
     Route::post('/resumes/{resumeId}/share-hm', [RecruiterHmShareController::class, 'store']);

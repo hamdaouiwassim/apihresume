@@ -13,3 +13,8 @@ Schedule::command('accounts:prune-unverified')
     ->withoutOverlapping()
     ->onOneServer()
     ->description('Remove unverified accounts past the email verification grace period');
+
+Schedule::command('jobs:close-expired')
+    ->hourly()
+    ->withoutOverlapping()
+    ->description('Close recruiter job postings past their application deadline');

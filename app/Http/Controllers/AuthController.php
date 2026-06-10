@@ -29,7 +29,6 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $payload = $request->all();
-        $isRecruiterSignup = ($payload['account_type'] ?? 'candidate') === 'recruiter';
 
         $validator = Validator::make($payload, [
             'name' => 'required|string|max:255',
@@ -37,13 +36,13 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'account_type' => 'nullable|in:candidate,recruiter',
             'company_name' => 'required_if:account_type,recruiter|string|max:255',
-            'company_size' => 'nullable|string|max:255',
+            'company_size' => 'required_if:account_type,recruiter|string|max:255',
             'industry_focus' => 'required_if:account_type,recruiter|string|max:255',
             'hiring_focus' => 'nullable|string|max:255',
-            'recruiter_role' => 'nullable|string|max:255',
+            'recruiter_role' => 'required_if:account_type,recruiter|string|max:255',
             'recruiter_phone' => 'nullable|string|max:30',
             'recruiter_linkedin' => 'nullable|url|max:255',
-            'compliance_accepted' => $isRecruiterSignup ? 'accepted' : 'nullable',
+            'compliance_accepted' => 'required_if:account_type,recruiter|accepted',
         ]);
 
         if ($validator->fails()) {
@@ -69,12 +68,12 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'status' => 'pending',
                 'company_name' => $request->company_name,
-                'company_size' => $request->company_size,
-                'industry_focus' => $request->industry_focus,
-                'hiring_focus' => $request->hiring_focus,
-                'recruiter_role' => $request->recruiter_role,
-                'recruiter_phone' => $request->recruiter_phone,
-                'recruiter_linkedin' => $request->recruiter_linkedin,
+                'company_size' => $request->input('company_size'),
+                'industry_focus' => $request->input('industry_focus'),
+                'hiring_focus' => $request->input('hiring_focus'),
+                'recruiter_role' => $request->input('recruiter_role'),
+                'recruiter_phone' => $request->input('recruiter_phone'),
+                'recruiter_linkedin' => $request->input('recruiter_linkedin'),
                 'compliance_accepted' => (bool) $request->input('compliance_accepted', false),
             ]);
 
@@ -686,6 +685,7 @@ class AuthController extends Controller
             'company_name' => 'nullable|string|max:255',
             'company_size' => 'nullable|string|max:255',
             'industry_focus' => 'nullable|string|max:255',
+            'company_website' => 'nullable|url|max:500',
             'hiring_focus' => 'nullable|string|max:255',
             'recruiter_role' => 'nullable|string|max:255',
             'recruiter_phone' => 'nullable|string|max:30',
@@ -718,6 +718,7 @@ class AuthController extends Controller
                     'company_name',
                     'company_size',
                     'industry_focus',
+                    'company_website',
                     'hiring_focus',
                     'recruiter_role',
                     'recruiter_phone',

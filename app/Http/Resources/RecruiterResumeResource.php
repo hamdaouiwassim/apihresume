@@ -22,6 +22,8 @@ class RecruiterResumeResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'template_id' => $this->template_id,
+            'section_order' => $this->section_order,
+            'typography' => $this->typography,
             'open_to_recruiters' => (bool) $this->open_to_recruiters,
             'recruiter_visible_at' => $this->recruiter_visible_at,
             'created_at' => $this->created_at,

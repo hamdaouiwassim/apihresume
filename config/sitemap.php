@@ -35,8 +35,10 @@ return [
     '/terms' => ['yearly', '0.6'],
     '/refund' => ['yearly', '0.6'],
     '/blog' => ['weekly', '0.8'],
+    '/jobs' => ['daily', '0.85'],
     '/login' => ['monthly', '0.5'],
     '/register' => ['monthly', '0.8'],
+    '/for-recruiters' => ['monthly', '0.85'],
     '/register/recruiter' => ['monthly', '0.7'],
   ],
 

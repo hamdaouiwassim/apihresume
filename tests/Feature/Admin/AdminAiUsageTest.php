@@ -62,6 +62,48 @@ class AdminAiUsageTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_admin_can_view_ai_usage_log_detail_with_payloads(): void
+    {
+        $log = AiUsageLog::create([
+            'user_id' => $this->member->id,
+            'kind' => 'enhance_text',
+            'resume_id' => null,
+            'provider' => 'openai',
+            'model' => 'gpt-4o-mini',
+            'prompt_tokens' => 5,
+            'completion_tokens' => 10,
+            'total_tokens' => 15,
+            'request_payload' => ['text' => 'Hello world', 'context' => 'summary'],
+            'response_payload' => ['enhanced_text' => 'Hello professional world'],
+        ]);
+
+        $this->actingAs($this->admin)
+            ->getJson("/api/admin/ai-usage/logs/{$log->id}")
+            ->assertOk()
+            ->assertJsonPath('status', true)
+            ->assertJsonPath('data.id', $log->id)
+            ->assertJsonPath('data.request_payload.text', 'Hello world')
+            ->assertJsonPath('data.response_payload.enhanced_text', 'Hello professional world');
+    }
+
+    public function test_non_admin_cannot_view_ai_usage_log_detail(): void
+    {
+        $log = AiUsageLog::create([
+            'user_id' => $this->member->id,
+            'kind' => 'enhance_text',
+            'resume_id' => null,
+            'provider' => 'openai',
+            'model' => 'gpt-4o-mini',
+            'prompt_tokens' => 1,
+            'completion_tokens' => 1,
+            'total_tokens' => 2,
+        ]);
+
+        $this->actingAs($this->member)
+            ->getJson("/api/admin/ai-usage/logs/{$log->id}")
+            ->assertForbidden();
+    }
+
     public function test_admin_summary_returns_totals(): void
     {
         AiUsageLog::create([

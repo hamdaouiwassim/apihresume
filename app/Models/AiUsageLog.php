@@ -16,6 +16,8 @@ class AiUsageLog extends Model
         'prompt_tokens',
         'completion_tokens',
         'total_tokens',
+        'request_payload',
+        'response_payload',
     ];
 
     protected function casts(): array
@@ -25,7 +27,14 @@ class AiUsageLog extends Model
             'prompt_tokens' => 'integer',
             'completion_tokens' => 'integer',
             'total_tokens' => 'integer',
+            'request_payload' => 'array',
+            'response_payload' => 'array',
         ];
+    }
+
+    public function resume(): BelongsTo
+    {
+        return $this->belongsTo(Resume::class);
     }
 
     public function user(): BelongsTo

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class AiUsageController extends Controller
 {
-    private const KINDS = ['enhance_text', 'tailor_resume', 'ats_score'];
+    private const KINDS = ['enhance_text', 'tailor_resume', 'ats_score', 'recruiter_compare_deep'];
 
     public function __construct(
         private readonly AiTokenLimitService $aiTokenLimit,
@@ -54,6 +54,24 @@ class AiUsageController extends Controller
         return response()->json([
             'status' => true,
             'data' => $query->paginate($perPage),
+        ]);
+    }
+
+    /**
+     * Single AI call with stored request/response payloads (admin only).
+     */
+    public function show(int $log): JsonResponse
+    {
+        $entry = AiUsageLog::query()
+            ->with([
+                'user:id,name,email,is_pro,is_admin',
+                'resume:id,name,user_id',
+            ])
+            ->findOrFail($log);
+
+        return response()->json([
+            'status' => true,
+            'data' => $entry,
         ]);
     }
 

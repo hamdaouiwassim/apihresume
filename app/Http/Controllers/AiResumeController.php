@@ -84,7 +84,20 @@ class AiResumeController extends Controller
             ]);
 
             $this->aiQuota->increment($user, 'tailor_resume');
-            $this->aiUsageLogger->log($user, 'tailor_resume', $resume->id, $tailored['usage'] ?? null);
+            $this->aiUsageLogger->log(
+                $user,
+                'tailor_resume',
+                $resume->id,
+                $tailored['usage'] ?? null,
+                [
+                    'job_description' => (string) $request->job_description,
+                    'target_role' => $request->target_role,
+                    'seniority' => $request->seniority,
+                    'resume_id' => $resume->id,
+                    'resume_name' => $resume->name,
+                ],
+                is_array($tailored['data'] ?? null) ? ['suggestions' => $tailored['data']] : null,
+            );
             $user->refresh();
 
             return response()->json([
@@ -134,7 +147,17 @@ class AiResumeController extends Controller
             );
 
             $this->aiQuota->increment($user, 'enhance_text');
-            $this->aiUsageLogger->log($user, 'enhance_text', null, $enhanced['usage'] ?? null);
+            $this->aiUsageLogger->log(
+                $user,
+                'enhance_text',
+                null,
+                $enhanced['usage'] ?? null,
+                [
+                    'text' => (string) $request->text,
+                    'context' => $request->filled('context') ? (string) $request->context : null,
+                ],
+                ['enhanced_text' => $enhanced['text'] ?? null],
+            );
             $user->refresh();
 
             return response()->json([
@@ -344,7 +367,19 @@ class AiResumeController extends Controller
         $data['insights_tier'] = $unlimited ? 'full' : 'lite';
 
         $this->aiQuota->increment($user, 'ats_score');
-        $this->aiUsageLogger->log($user, 'ats_score', $resume->id, null);
+        $this->aiUsageLogger->log(
+            $user,
+            'ats_score',
+            $resume->id,
+            null,
+            [
+                'resume_id' => $resume->id,
+                'resume_name' => $resume->name,
+                'job_description' => $jobDescription !== '' ? $jobDescription : null,
+                'candidate_name' => $basicInfo?->full_name ?? $basicInfo?->first_name,
+            ],
+            $data,
+        );
         $user->refresh();
 
         return response()->json([

@@ -16,6 +16,7 @@ class Recruiter extends Model
         'company_name',
         'company_size',
         'industry_focus',
+        'company_website',
         'hiring_focus',
         'recruiter_role',
         'recruiter_phone',

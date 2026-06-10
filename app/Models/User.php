@@ -100,6 +100,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'company_name',
         'company_size',
         'industry_focus',
+        'company_website',
         'hiring_focus',
         'recruiter_role',
         'recruiter_phone',
@@ -267,6 +268,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getIndustryFocusAttribute()
     {
         return $this->recruiter?->industry_focus;
+    }
+
+    public function getCompanyWebsiteAttribute()
+    {
+        return $this->recruiter?->company_website;
     }
 
     /**

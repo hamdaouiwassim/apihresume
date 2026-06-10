@@ -7,11 +7,21 @@ use App\Models\User;
 
 class AiUsageLogger
 {
+    private const MAX_JSON_BYTES = 120_000;
+
     /**
      * @param  array{prompt_tokens?: int, completion_tokens?: int, total_tokens?: int}|null  $usage
+     * @param  array<string, mixed>|null  $requestPayload
+     * @param  array<string, mixed>|null  $responsePayload
      */
-    public function log(User $user, string $kind, ?int $resumeId, ?array $usage): void
-    {
+    public function log(
+        User $user,
+        string $kind,
+        ?int $resumeId,
+        ?array $usage,
+        ?array $requestPayload = null,
+        ?array $responsePayload = null,
+    ): void {
         $raw = strtolower((string) config('services.ai.provider', 'openai'));
         $provider = $raw === 'groq' ? 'groq' : 'openai';
 
@@ -35,6 +45,34 @@ class AiUsageLogger
             'prompt_tokens' => max(0, $prompt),
             'completion_tokens' => max(0, $completion),
             'total_tokens' => max(0, $total),
+            'request_payload' => $this->normalizePayload($requestPayload),
+            'response_payload' => $this->normalizePayload($responsePayload),
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $payload
+     * @return array<string, mixed>|null
+     */
+    private function normalizePayload(?array $payload): ?array
+    {
+        if ($payload === null || $payload === []) {
+            return null;
+        }
+
+        $encoded = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        if ($encoded === false) {
+            return ['_error' => 'Could not encode payload'];
+        }
+
+        if (strlen($encoded) <= self::MAX_JSON_BYTES) {
+            return $payload;
+        }
+
+        return [
+            '_truncated' => true,
+            '_original_bytes' => strlen($encoded),
+            'preview' => mb_substr($encoded, 0, self::MAX_JSON_BYTES - 200).'…',
+        ];
     }
 }

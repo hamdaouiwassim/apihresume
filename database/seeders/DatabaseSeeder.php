@@ -45,5 +45,6 @@ class DatabaseSeeder extends Seeder
 
         // call other seeders here
         $this->call(TemplatesData::class);
+        $this->call(JobCatalogSeeder::class);
     }
 }
