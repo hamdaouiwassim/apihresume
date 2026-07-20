@@ -85,6 +85,107 @@ class AiResumeTailorService
         ];
     }
 
+    /**
+     * @return array{data: array<string, mixed>, usage: array{prompt_tokens: int, completion_tokens: int, total_tokens: int}|null}
+     */
+    public function parseCvText(string $rawText): array
+    {
+        [$baseUrl, $apiKey, $model] = $this->resolveProviderConfig();
+
+        $maxTextLength = 6000;
+        $truncated = mb_strlen($rawText) > $maxTextLength
+            ? mb_substr($rawText, 0, $maxTextLength) . "\n\n[TRUNCATED]"
+            : $rawText;
+
+        $prompt = implode("\n", [
+            'You are a CV/resume parser. Extract structured data from the raw CV text below.',
+            'Return ONLY valid JSON with this exact structure (include all keys, use empty strings/null for missing values):',
+            '{',
+            '  "full_name": "...",',
+            '  "email": "...",',
+            '  "phone": "...",',
+            '  "location": "...",',
+            '  "job_title": "...",',
+            '  "linkedin": "...",',
+            '  "github": "...",',
+            '  "website": "...",',
+            '  "professional_summary": "...",',
+            '  "experiences": [',
+            '    { "title": "...", "company": "...", "location": "...", "start_date": "...", "end_date": "...", "is_present": bool, "description": "bullet points with • prefix" }',
+            '  ],',
+            '  "educations": [',
+            '    { "institution": "...", "degree": "...", "start_date": "...", "end_date": "...", "is_present": bool }',
+            '  ],',
+            '  "skills": [',
+            '    { "name": "...", "proficiency": "..." }',
+            '  ],',
+            '  "languages": [',
+            '    { "language": "...", "proficiency": "..." }',
+            '  ],',
+            '  "certificates": [',
+            '    { "name": "...", "issuer": "...", "date_obtained": "..." }',
+            '  ],',
+            '  "projects": [',
+            '    { "name": "...", "description": "...", "technologies": "...", "url": "..." }',
+            '  ],',
+            '  "hobbies": [',
+            '    { "name": "..." }',
+            '  ]',
+            '}',
+            '',
+            'Rules:',
+            '- Parse dates as YYYY-MM-DD format (use null if not found)',
+            '- For experience descriptions, reconstruct bullet points with • prefix',
+            '- Extract proficiency from parenthetical notation like "English (Fluent)" -> language: "English", proficiency: "Fluent"',
+            '- Do not invent or hallucinate data',
+            '- Use empty array [] for missing sections',
+            '',
+            'RAW CV TEXT:',
+            $truncated,
+        ]);
+
+        $response = Http::timeout(60)
+            ->withToken($apiKey)
+            ->post($baseUrl.'/chat/completions', [
+                'model' => $model,
+                'temperature' => 0.1,
+                'max_tokens' => 4096,
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'You extract structured resume data from raw text. Return strict JSON only.',
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt,
+                    ],
+                ],
+            ]);
+
+        if (! $response->successful()) {
+            $errorBody = $response->body();
+            logger()->error('AI parse CV HTTP error', [
+                'status' => $response->status(),
+                'body' => substr($errorBody, 0, 500),
+            ]);
+            throw new RuntimeException('AI request failed (HTTP '.$response->status().')');
+        }
+
+        $json = $response->json();
+        $content = (string) data_get($json, 'choices.0.message.content', '');
+
+        $decoded = json_decode($this->extractJson($content), true);
+
+        if (! is_array($decoded)) {
+            throw new RuntimeException('AI returned an invalid response format.');
+        }
+
+        return [
+            'data' => $decoded,
+            'usage' => $this->parseUsage(data_get($json, 'usage')),
+        ];
+    }
+
     protected function buildPrompt(array $payload): string
     {
         $resume = $payload['resume'] ?? [];

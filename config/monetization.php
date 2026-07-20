@@ -8,6 +8,7 @@ return [
         'enhance_text' => (int) env('FREE_AI_ENHANCE_PER_MONTH', 5),
         'tailor_resume' => (int) env('FREE_AI_TAILOR_PER_MONTH', 1),
         'ats_score' => (int) env('FREE_AI_ATS_PER_MONTH', 3),
+        'parse_cv_text' => (int) env('FREE_AI_PARSE_PER_MONTH', 3),
     ],
 
     /*

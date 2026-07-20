@@ -11,7 +11,6 @@ class Education extends Model
     protected $fillable = [
         "institution",
         "resume_id",
-        "description",
         "start_date",
         "end_date",
         "degree",

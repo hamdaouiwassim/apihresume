@@ -90,6 +90,17 @@
             margin-bottom: 5px;
             color: #0f172a;
         }
+        .skills-inline {
+            margin: 4px 0;
+        }
+        .skill-badge {
+            display: inline-block;
+            background: #e2e8f0;
+            padding: 2px 8px;
+            margin: 2px 3px;
+            font-size: {{ round(11 * $s) }}px;
+            color: #1e293b;
+        }
         .exec-summary {
             font-size: {{ round(16 * $s) }}px;
             line-height: 1.5;
@@ -203,11 +214,11 @@
 
                 $html = '<section class="exec-section">';
                 $html .= '<h3>' . ($strings['skills'] ?? 'Skills') . '</h3>';
-                $html .= '<ul class="exec-list">';
+                $html .= '<div class="skills-inline">';
                 foreach($skills as $skillLine) {
-                    $html .= '<li>' . $skillLine . '</li>';
+                    $html .= '<span class="skill-badge">' . $skillLine . '</span>';
                 }
-                $html .= '</ul></section>';
+                $html .= '</div></section>';
                 return $html;
             }
         ],
@@ -234,11 +245,11 @@
 
                 $html = '<section class="exec-section">';
                 $html .= '<h3>' . ($strings['languages'] ?? 'Languages') . '</h3>';
-                $html .= '<ul class="exec-list">';
+                $html .= '<div class="skills-inline">';
                 foreach($languages as $language) {
-                    $html .= '<li>' . $language . '</li>';
+                    $html .= '<span class="skill-badge">' . $language . '</span>';
                 }
-                $html .= '</ul></section>';
+                $html .= '</div></section>';
                 return $html;
             }
         ],

@@ -60,6 +60,9 @@ return [
     /** AI tailor endpoint */
     'ai_tailor_per_minute' => (int) env('THROTTLE_AI_TAILOR_PER_MINUTE', 10),
 
+    /** AI parse CV text endpoint (page-by-page needs higher limit) */
+    'ai_parse_cv_per_minute' => (int) env('THROTTLE_AI_PARSE_CV_PER_MINUTE', 60),
+
     /** Resend verification email */
     'verification_resend_per_minute' => (int) env('THROTTLE_VERIFICATION_RESEND_PER_MINUTE', 6),
 

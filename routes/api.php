@@ -165,6 +165,7 @@ Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api
         ->middleware('throttle:ai-tailor');
     Route::post('/ai/ats-score', [AiResumeController::class, 'atsScore'])
         ->middleware('throttle:ai-tailor');
+    Route::post('/ai/parse-cv-text', [AiResumeController::class, 'parseCvText']);
 
     // Active PDF fonts for font dropdown
     Route::get('/pdf-fonts/active', [\App\Http\Controllers\Admin\PdfFontController::class, 'activeFonts']);

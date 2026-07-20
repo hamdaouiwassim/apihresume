@@ -109,6 +109,18 @@
             margin-left: 14px;
         }
 
+        .skills-inline {
+            margin: 4px 0;
+        }
+        .skill-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            margin: 2px 4px;
+            font-size: {{ round(12 * $s) }}px;
+            color: #334155;
+        }
+
         .classic-profile-picture-wrapper {
             width: 100%;
             text-align: center;
@@ -289,11 +301,11 @@
                 if (empty($skills)) return '';
 
                 $html = '<h2>' . ($strings['skills'] ?? 'Skills') . '</h2>';
-                $html .= '<ul class="list-simple">';
+                $html .= '<div class="skills-inline">';
                 foreach($skills as $skillLine) {
-                    $html .= '<li>' . $skillLine . '</li>';
+                    $html .= '<span class="skill-badge">' . $skillLine . '</span>';
                 }
-                $html .= '</ul>';
+                $html .= '</div>';
                 return $html;
             }
         ],
@@ -332,11 +344,11 @@
                 if (empty($languages)) return '';
 
                 $html = '<h2>' . ($strings['languages'] ?? 'Languages') . '</h2>';
-                $html .= '<ul class="list-simple">';
+                $html .= '<div class="skills-inline">';
                 foreach($languages as $language) {
-                    $html .= '<li>' . $language . '</li>';
+                    $html .= '<span class="skill-badge">' . $language . '</span>';
                 }
-                $html .= '</ul>';
+                $html .= '</div>';
                 return $html;
             }
         ],

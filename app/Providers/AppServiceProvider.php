@@ -134,6 +134,13 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(config('rate-limit.ai_tailor_per_minute', 10))->by($key);
         });
 
+        RateLimiter::for('ai-parse-cv', function (Request $request) {
+            $user = $request->user();
+            $key = $user ? 'user:'.$user->id : 'ip:'.$request->ip();
+
+            return Limit::perMinute(config('rate-limit.ai_parse_cv_per_minute', 30))->by($key);
+        });
+
         RateLimiter::for('verification-resend', function (Request $request) {
             return Limit::perMinute(config('rate-limit.verification_resend_per_minute', 6))
                 ->by($request->user()?->id ?: $request->ip());

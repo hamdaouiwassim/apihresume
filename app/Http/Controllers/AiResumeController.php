@@ -154,6 +154,49 @@ class AiResumeController extends Controller
         }
     }
 
+    public function parseCvText(Request $request, AiResumeTailorService $service): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'text' => 'required|string|min:10|max:30000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = $request->user();
+
+        try {
+            $parsed = $service->parseCvText((string) $request->text);
+
+            $this->aiUsageLogger->log($user, 'parse_cv_text', null, $parsed['usage'] ?? null);
+            $user->refresh();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'CV parsed successfully',
+                'data' => $parsed['data'],
+                'ai_quota' => $this->aiQuota->snapshot($user),
+                'ai_tokens' => $this->aiTokenLimit->snapshot($user),
+            ]);
+        } catch (Throwable $e) {
+            logger()->error('AI parse CV text failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'status' => false,
+                'message' => config('app.debug')
+                    ? $e->getMessage()
+                    : 'Unable to parse CV right now.',
+            ], 502);
+        }
+    }
+
     public function atsScore(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

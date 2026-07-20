@@ -82,7 +82,7 @@ class ResumeController extends Controller
             if (! $limitService->canCreateOwnedResume($user)) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Free accounts can only create one resume. Upgrade to Pro to create more.',
+                    'message' => 'Free accounts can create up to 2 resumes. Upgrade to Pro to create more.',
                     'code' => 'resume_limit_reached',
                 ], 403);
             }

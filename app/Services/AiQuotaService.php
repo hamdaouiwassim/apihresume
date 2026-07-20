@@ -10,6 +10,7 @@ class AiQuotaService
         'enhance_text' => 'ai_enhance_used',
         'tailor_resume' => 'ai_tailor_used',
         'ats_score' => 'ai_ats_used',
+        'parse_cv_text' => 'ai_parse_used',
     ];
 
     public function isUnlimited(?User $user): bool
@@ -39,6 +40,7 @@ class AiQuotaService
                 'ai_enhance_used' => 0,
                 'ai_tailor_used' => 0,
                 'ai_ats_used' => 0,
+                'ai_parse_used' => 0,
             ])->save();
         }
     }
@@ -129,6 +131,7 @@ class AiQuotaService
             'enhance' => $row('enhance_text', 'ai_enhance_used'),
             'tailor' => $row('tailor_resume', 'ai_tailor_used'),
             'ats' => $row('ats_score', 'ai_ats_used'),
+            'parse' => $row('parse_cv_text', 'ai_parse_used'),
         ];
     }
 }

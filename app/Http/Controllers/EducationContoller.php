@@ -29,7 +29,6 @@ class EducationContoller extends Controller
         'institution' => 'required|string|max:255',
         'start_date' => 'required|date',
         'end_date' => 'required_if:is_present,false|nullable|date',
-        'description' => 'required|string|max:5000',
         'degree' => 'required|string',
         'is_present' => 'boolean',
 
@@ -108,7 +107,6 @@ class EducationContoller extends Controller
         'institution' => 'required|string|max:255',
         'start_date' => 'required|date',
         'end_date' => 'required_if:is_present,false|nullable|date',
-        'description' => 'required|string|max:5000',
         'degree' => 'required|string',
         'is_present' => 'boolean',
 
