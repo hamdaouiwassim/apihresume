@@ -335,7 +335,7 @@
                                 $html .= '<p class="exec-company">' . $project['technologies'] . '</p>';
                             }
                             if (!empty($project['url'])) {
-                                $html .= '<p class="exec-company" style="font-size: 11px; color: #6B7280;">' . $project['url'] . '</p>';
+                                $html .= '<p class="exec-company" style="font-size: ' . round(11 * $s) . 'px; color: #6B7280;">' . $project['url'] . '</p>';
                             }
                             $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
                             if ($hasBullets) {
