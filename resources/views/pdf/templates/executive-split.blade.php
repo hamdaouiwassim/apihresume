@@ -260,11 +260,11 @@
 
                 $html = '<section class="exec-section">';
                 $html .= '<h3>' . ($strings['hobbies'] ?? 'Hobbies') . '</h3>';
-                $html .= '<ul class="exec-list">';
+                $html .= '<div class="skills-inline">';
                 foreach($hobbies as $hobby) {
-                    $html .= '<li>' . $hobby . '</li>';
+                    $html .= '<span class="skill-badge">' . $hobby . '</span>';
                 }
-                $html .= '</ul></section>';
+                $html .= '</div></section>';
                 return $html;
             }
         ],
@@ -337,15 +337,15 @@
                             if (!empty($project['url'])) {
                                 $html .= '<p class="exec-company" style="font-size: 11px; color: #6B7280;">' . $project['url'] . '</p>';
                             }
-                            if (!empty($project['description'])) {
-                                $html .= '<p class="exec-summary">' . $project['description'] . '</p>';
-                            }
-                            if (!empty($project['bullets'])) {
+                            $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                            if ($hasBullets) {
                                 $html .= '<ul class="exec-bullets">';
                                 foreach ($project['bullets'] as $bullet) {
                                     $html .= '<li>' . $bullet . '</li>';
                                 }
                                 $html .= '</ul>';
+                            } elseif (!empty($project['description'])) {
+                                $html .= '<p class="exec-summary">' . $project['description'] . '</p>';
                             }
                             $html .= '</div>';
                         }
@@ -382,15 +382,15 @@
                     if (!empty($project['url'])) {
                         $html .= '<p class="exec-company" style="font-size: 11px; color: #6B7280;">' . $project['url'] . '</p>';
                     }
-                    if (!empty($project['description'])) {
-                        $html .= '<p class="exec-summary">' . $project['description'] . '</p>';
-                    }
-                    if (!empty($project['bullets'])) {
+                    $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                    if ($hasBullets) {
                         $html .= '<ul class="exec-bullets">';
                         foreach($project['bullets'] as $bullet) {
                             $html .= '<li>' . $bullet . '</li>';
                         }
                         $html .= '</ul>';
+                    } elseif (!empty($project['description'])) {
+                        $html .= '<p class="exec-summary">' . $project['description'] . '</p>';
                     }
                     $html .= '</div>';
                 }

@@ -226,15 +226,15 @@
                             if (!empty($project['start']) || !empty($project['end'])) {
                                 $html .= '<p class="subheading" style="font-size: 11px;">' . ($project['start'] ?? '') . (!empty($project['end']) ? ' – ' . $project['end'] : '') . '</p>';
                             }
-                            if (!empty($project['description'])) {
-                                $html .= '<p style="font-size: 12px; margin: 4px 0;">' . $project['description'] . '</p>';
-                            }
-                            if (!empty($project['bullets'])) {
+                            $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                            if ($hasBullets) {
                                 $html .= '<ul style="margin: 4px 0 0 14px; padding: 0;">';
                                 foreach ($project['bullets'] as $bullet) {
                                     $html .= '<li style="font-size: 11px;">' . $bullet . '</li>';
                                 }
                                 $html .= '</ul>';
+                            } elseif (!empty($project['description'])) {
+                                $html .= '<p style="font-size: 12px; margin: 4px 0;">' . $project['description'] . '</p>';
                             }
                             $html .= '</div>';
                         }
@@ -316,11 +316,11 @@
                 if (empty($allItems)) return '';
 
                 $html = '<h2>' . ($strings['interests'] ?? 'Interests') . '</h2>';
-                $html .= '<ul class="list-simple">';
+                $html .= '<div class="skills-inline">';
                 foreach($allItems as $item) {
-                    $html .= '<li>' . $item . '</li>';
+                    $html .= '<span class="skill-badge">' . $item . '</span>';
                 }
-                $html .= '</ul>';
+                $html .= '</div>';
                 return $html;
             }
         ],
@@ -371,16 +371,15 @@
                         $html .= '<p class="subheading">' . $project['technologies'] . '</p>';
                     }
 
-                    if (!empty($project['description'])) {
-                        $html .= '<p>' . $project['description'] . '</p>';
-                    }
-
-                    if (!empty($project['bullets'])) {
+                    $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                    if ($hasBullets) {
                         $html .= '<ul>';
                         foreach($project['bullets'] as $bullet) {
                             $html .= '<li>' . $bullet . '</li>';
                         }
                         $html .= '</ul>';
+                    } elseif (!empty($project['description'])) {
+                        $html .= '<p>' . $project['description'] . '</p>';
                     }
 
                     if (!empty($project['url'])) {
