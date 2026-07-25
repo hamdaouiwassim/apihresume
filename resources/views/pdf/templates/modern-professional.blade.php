@@ -36,8 +36,8 @@
             padding-left: 10px;
         }
         .modern-profile-picture {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             object-fit: cover;
             margin: 0 auto 16px;

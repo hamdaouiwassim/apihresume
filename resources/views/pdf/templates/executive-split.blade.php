@@ -146,8 +146,8 @@
         }
         .exec-profile-picture {
             display: block;
-            width: 80px;
-            height: 80px;
+            width: 112px;
+            height: 112px;
             border-radius: 50%;
             object-fit: cover;
             margin: 0 auto 16px;

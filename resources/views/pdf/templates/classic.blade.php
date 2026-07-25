@@ -128,8 +128,8 @@
         }
         .classic-profile-picture {
             display: inline-block;
-            width: 72px;
-            height: 72px;
+            width: 112px;
+            height: 112px;
             border-radius: 50%;
             object-fit: cover;
         }
