@@ -175,7 +175,7 @@
         ],
         'experience' => [
             'hasData' => !empty($experience),
-            'render' => function() use ($experience, $strings) {
+            'render' => function() use ($experience, $strings, $s) {
                 if (empty($experience)) return '';
 
                 $html = '<h2>' . ($strings['work_experience'] ?? 'Work Experience') . '</h2>';
@@ -226,15 +226,17 @@
                             if (!empty($project['start']) || !empty($project['end'])) {
                                 $html .= '<p class="subheading" style="font-size: ' . round(11 * $s) . 'px;">' . ($project['start'] ?? '') . (!empty($project['end']) ? ' – ' . $project['end'] : '') . '</p>';
                             }
-                            $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                            $pDesc = is_string($project['description'] ?? null) ? trim($project['description']) : '';
+                            $pBullets = is_array($project['bullets'] ?? null) ? $project['bullets'] : [];
+                            $hasBullets = !empty($pBullets) && (count($pBullets) > 1 || (count($pBullets) === 1 && (bool) preg_match('/^[-•]/u', $pDesc)));
                             if ($hasBullets) {
                                 $html .= '<ul style="margin: 4px 0 0 14px; padding: 0;">';
-                                foreach ($project['bullets'] as $bullet) {
+                                foreach ($pBullets as $bullet) {
                                     $html .= '<li style="font-size: ' . round(12 * $s) . 'px;">' . $bullet . '</li>';
                                 }
                                 $html .= '</ul>';
-                            } elseif (!empty($project['description'])) {
-                                $html .= '<p style="font-size: ' . round(12 * $s) . 'px; margin: 4px 0;">' . $project['description'] . '</p>';
+                            } elseif ($pDesc !== '') {
+                                $html .= '<p style="font-size: ' . round(12 * $s) . 'px; margin: 4px 0;">' . $pDesc . '</p>';
                             }
                             $html .= '</div>';
                         }
@@ -371,15 +373,17 @@
                         $html .= '<p class="subheading">' . $project['technologies'] . '</p>';
                     }
 
-                    $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                    $pDesc = is_string($project['description'] ?? null) ? trim($project['description']) : '';
+                    $pBullets = is_array($project['bullets'] ?? null) ? $project['bullets'] : [];
+                    $hasBullets = !empty($pBullets) && (count($pBullets) > 1 || (count($pBullets) === 1 && (bool) preg_match('/^[-•]/u', $pDesc)));
                     if ($hasBullets) {
                         $html .= '<ul>';
-                        foreach($project['bullets'] as $bullet) {
+                        foreach($pBullets as $bullet) {
                             $html .= '<li>' . $bullet . '</li>';
                         }
                         $html .= '</ul>';
-                    } elseif (!empty($project['description'])) {
-                        $html .= '<p>' . $project['description'] . '</p>';
+                    } elseif ($pDesc !== '') {
+                        $html .= '<p>' . $pDesc . '</p>';
                     }
 
                     if (!empty($project['url'])) {

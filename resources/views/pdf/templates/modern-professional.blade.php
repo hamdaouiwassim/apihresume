@@ -265,7 +265,7 @@
         ],
         'experience' => [
             'hasData' => !empty($experience),
-            'render' => function() use ($experience, $strings, $formatTimeline) {
+            'render' => function() use ($experience, $strings, $formatTimeline, $s) {
                 if (empty($experience)) return '';
 
                 $html = '<section class="modern-section">';
@@ -316,15 +316,17 @@
                             if (!empty($project['url'])) {
                                 $html .= '<p class="modern-item-subtitle" style="font-size: ' . round(11 * $s) . 'px; color: #6B7280;">' . $project['url'] . '</p>';
                             }
-                            $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                            $pDesc = is_string($project['description'] ?? null) ? trim($project['description']) : '';
+                            $pBullets = is_array($project['bullets'] ?? null) ? $project['bullets'] : [];
+                            $hasBullets = !empty($pBullets) && (count($pBullets) > 1 || (count($pBullets) === 1 && (bool) preg_match('/^[-•]/u', $pDesc)));
                             if ($hasBullets) {
                                 $html .= '<ul class="modern-bullets">';
-                                foreach ($project['bullets'] as $bullet) {
+                                foreach ($pBullets as $bullet) {
                                     $html .= '<li>' . $bullet . '</li>';
                                 }
                                 $html .= '</ul>';
-                            } elseif (!empty($project['description'])) {
-                                $html .= '<p class="modern-item-description">' . $project['description'] . '</p>';
+                            } elseif ($pDesc !== '') {
+                                $html .= '<p class="modern-item-description">' . $pDesc . '</p>';
                             }
                             $html .= '</div>';
                         }
@@ -367,7 +369,7 @@
         ],
         'projects' => [
             'hasData' => !empty($projects),
-            'render' => function() use ($projects, $strings, $formatTimeline) {
+            'render' => function() use ($projects, $strings, $formatTimeline, $s) {
                 if (empty($projects)) return '';
 
                 $html = '<section class="modern-section">';
@@ -388,15 +390,17 @@
                     if (!empty($project['technologies'])) {
                         $html .= '<p class="modern-item-subtitle">' . $project['technologies'] . '</p>';
                     }
-                    $hasBullets = !empty($project['bullets']) && (count($project['bullets']) > 1 || (count($project['bullets']) === 1 && preg_match('/^[-•]/', trim($project['description'] ?? ''))));
+                    $pDesc = is_string($project['description'] ?? null) ? trim($project['description']) : '';
+                    $pBullets = is_array($project['bullets'] ?? null) ? $project['bullets'] : [];
+                    $hasBullets = !empty($pBullets) && (count($pBullets) > 1 || (count($pBullets) === 1 && (bool) preg_match('/^[-•]/u', $pDesc)));
                     if ($hasBullets) {
                         $html .= '<ul class="modern-bullets">';
-                        foreach($project['bullets'] as $bullet) {
+                        foreach($pBullets as $bullet) {
                             $html .= '<li>' . $bullet . '</li>';
                         }
                         $html .= '</ul>';
-                    } elseif (!empty($project['description'])) {
-                        $html .= '<p class="modern-item-description">' . $project['description'] . '</p>';
+                    } elseif ($pDesc !== '') {
+                        $html .= '<p class="modern-item-description">' . $pDesc . '</p>';
                     }
                     $html .= '</div>';
                 }
