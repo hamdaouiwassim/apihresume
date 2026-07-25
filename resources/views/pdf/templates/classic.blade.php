@@ -19,7 +19,7 @@
         }
 
         h1 {
-            font-size: {{ round(36 * $s) }}px;
+            font-size: {{ round(24 * $s) }}px;
             letter-spacing: 0.08em;
             text-align: center;
             margin-bottom: 8px;
@@ -128,8 +128,8 @@
         }
         .classic-profile-picture {
             display: inline-block;
-            width: 112px;
-            height: 112px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             object-fit: cover;
         }
