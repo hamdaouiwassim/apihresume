@@ -661,10 +661,38 @@ class AuthController extends Controller
             'code_prefix' => substr($code, 0, 10),
         ]);
 
+        $token = $payload['token'] ?? null;
+
+        // Browser sign-in (the /auth/social-callback page, or a stateful same-origin call): log the user
+        // into the web session and drop the one-time API token, which the browser does not need.
+        if ($request->hasSession()) {
+            $user = User::find(data_get($payload, 'user.id'));
+
+            if (! $user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'This social login code is invalid or has expired. Please sign in again.',
+                ], 410);
+            }
+
+            if ($banResponse = $this->blockIfUserBanned($user, $request, data_get($payload, 'provider', 'google'))) {
+                return $banResponse;
+            }
+
+            Auth::login($user, true);
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
+
+            if ($token) {
+                \Laravel\Sanctum\PersonalAccessToken::findToken($token)?->delete();
+                $token = null;
+            }
+        }
+
         return response()->json([
             'status' => true,
             'message' => 'Login successful',
-            'token' => $payload['token'] ?? null,
+            'token' => $token,
             'user' => $payload['user'] ?? null,
             'is_new_user' => $payload['is_new_user'] ?? false,
             'provider' => $payload['provider'] ?? 'google',

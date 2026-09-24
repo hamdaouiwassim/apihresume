@@ -1,6 +1,6 @@
 {{-- Port of pages/SocialCallback.jsx --}}
 <x-layouts.guest title="Signing you in | HResume" robots="noindex, nofollow">
-    <div class="min-h-screen flex items-center justify-center bg-slate-50 px-4" x-data="socialCallback">
+    <div class="min-h-screen flex items-center justify-center bg-slate-50 px-4" x-data="socialCallback(@js($error ?? null))">
         <div class="max-w-md w-full bg-white shadow-xl rounded-3xl p-10 text-center space-y-6" x-show="status === 'processing'">
             <div class="mx-auto w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <x-lucide-loader-2 class="h-8 w-8 animate-spin" />

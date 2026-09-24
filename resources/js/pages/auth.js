@@ -82,37 +82,28 @@ export default function register(Alpine) {
         },
     }));
 
-    Alpine.data('socialCallback', () => ({
+    // The one-time code is exchanged server-side (AuthPageController@socialCallback); this page only
+    // renders when that failed, or for the legacy no-code redirect where the session already exists.
+    Alpine.data('socialCallback', (serverError = null) => ({
         status: 'processing',
         message: 'Connecting to your account...',
         async init() {
             const query = new URLSearchParams(window.location.search);
             const provider = query.get('provider') || 'google';
-            const code = query.get('code');
 
-            if (query.get('status') !== 'success') {
+            if (serverError) {
                 this.status = 'error';
-                this.message = query.get('message') || `We could not verify your ${provider} session.`;
+                this.message = serverError;
                 return;
             }
 
             try {
-                let profile = null;
-                if (code) {
-                    const { data } = await window.api.post('auth/social/exchange', { code }, { skipAuthRedirect: true });
-                    profile = data?.user;
-                } else {
-                    const { data } = await window.api.get('me', { skipAuthRedirect: true });
-                    profile = data?.user;
-                }
+                const { data } = await window.api.get('me', { skipAuthRedirect: true });
+                const profile = data?.user;
                 if (!profile) throw new Error('Unable to fetch profile');
 
-                if (!profile.email_verified_at) {
-                    window.toast.next('info', 'Please verify your email to continue.');
-                } else {
-                    const label = provider === 'linkedin' ? 'LinkedIn' : provider === 'google' ? 'Google' : provider;
-                    window.toast.next('success', `Signed in with ${label}`);
-                }
+                const label = provider === 'linkedin' ? 'LinkedIn' : 'Google';
+                window.toast.next('success', `Signed in with ${label}`);
                 window.location.replace(homePath(profile));
             } catch (error) {
                 this.status = 'error';
