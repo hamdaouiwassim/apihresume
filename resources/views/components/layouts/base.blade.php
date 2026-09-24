@@ -32,7 +32,7 @@
         : $siteOrigin.'/'.ltrim(request()->path() === '/' ? '' : request()->path(), '/');
     $ogImage = $image
         ? (preg_match('#^https?://#i', $image) ? $image : (str_starts_with($image, '//') ? 'https:'.$image : $siteOrigin.'/'.ltrim($image, '/')))
-        : $siteOrigin.'/og-image.png';
+        : $siteOrigin.'/og-image.jpg';
     $locale = app()->getLocale();
     $viteEntries = ['resources/css/app.css', 'resources/js/app.js'];
     if ($islands) {

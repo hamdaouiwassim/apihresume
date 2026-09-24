@@ -1,6 +1,6 @@
 export const SITE_ORIGIN = 'https://hresume.pro';
 
-export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og-image.png`;
+export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
 
 /**
  * Resolve relative or protocol-relative URLs for Open Graph (requires absolute URLs).

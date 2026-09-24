@@ -50,7 +50,7 @@ class BlogSeo
 
     public static function defaultOgImage(): string
     {
-        return self::frontendBaseUrl().'/og-image.png';
+        return self::frontendBaseUrl().'/og-image.jpg';
     }
 
     private static function limit(string $text, int $maxLen): string

@@ -20,7 +20,7 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="{{ url('/') }}" class="flex-shrink-0 flex items-center space-x-2 group">
-                        <img src="/logo.png" alt="HResume Logo" class="h-10 w-auto group-hover:scale-110 transition-transform duration-300" />
+                        <img src="/logo.webp" width="40" height="40" alt="HResume Logo" class="h-10 w-auto group-hover:scale-110 transition-transform duration-300" />
                         <span {!! $sw('text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r', 'from-blue-200 via-purple-200 to-violet-200', 'from-blue-600 via-purple-600 to-blue-800') !!}>HResume</span>
                     </a>
                 </div>
@@ -133,7 +133,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
                 <div class="lg:col-span-2 space-y-5">
                     <div class="flex items-center space-x-2">
-                        <img src="/logo-light.png" alt="HResume Logo" class="h-10 w-auto" />
+                        <img src="/logo-light.webp" width="40" height="40" alt="HResume Logo" loading="lazy" class="h-10 w-auto" />
                         <span class="text-2xl font-bold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">HResume</span>
                     </div>
                     <p class="text-sm text-gray-400 leading-relaxed">
