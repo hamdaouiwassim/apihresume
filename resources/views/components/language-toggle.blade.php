@@ -12,8 +12,12 @@
         x-effect="swap($el, {{ $toneExpr }}, @js($dark), @js($light))"
     @endif
     {{ $attributes->class([
-        'inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-colors',
+        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-colors',
         $dark => $tone === 'dark',
         $light => $tone !== 'dark',
     ]) }}
->{{ $current === 'en' ? '🇫🇷 FR' : '🇬🇧 EN' }}</a>
+ title="{{ $next === 'fr' ? 'Français' : 'English' }}"
+>
+    <x-flag :country="$next" />
+    <span>{{ strtoupper($next) }}</span>
+</a>
