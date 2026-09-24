@@ -23,7 +23,10 @@ Node is only needed at build time (you can build in CI and upload `public/build`
   OAuth redirects, Stripe/Paddle success URLs, canonical URLs and the sitemap use `FRONTEND_APP_URL`.
 - `SANCTUM_STATEFUL_DOMAINS=hresume.pro,www.hresume.pro` (the site's own host) so the pages' same-origin
   API calls use the session cookie.
-- `SESSION_SAME_SITE=lax` is enough now (no cross-site SPA). `SESSION_DOMAIN` can stay empty.
+- `SESSION_DOMAIN=` (empty) and `SESSION_SAME_SITE=lax`, `SESSION_SECURE_COOKIE=true`. A leftover
+  `SESSION_DOMAIN` from the old API host (e.g. `apihresume.hamdaouiacademy.com`) makes browsers drop the
+  session cookie: every login (password, Google, LinkedIn) bounces back to `/login` or fails with
+  "CSRF token mismatch". Check with `curl -sI https://hresume.pro/login | grep -i set-cookie`.
 - `CORS_ALLOWED_ORIGINS` is no longer needed for the site itself.
 - Update the OAuth apps (Google, LinkedIn, GitHub import) callback URLs to the new API host if it changed:
   `https://hresume.pro/api/auth/google/callback`, `.../api/auth/linkedin/callback`, `.../api/auth/github/import/callback`.
@@ -48,6 +51,23 @@ Images added by external URL are left as they are.
 - Image fallbacks: `/placeholder/{w}x{h}?bg=&fg=&text=` generates an SVG locally.
 - Still external by nature: Google Analytics, OAuth providers, Stripe/Paddle checkout, AI APIs, the optional
   YouTube walkthrough embed, and user avatars that come from Google/LinkedIn sign-in.
+
+### Static file caching and compression
+- `npm run build` outputs minified JS/CSS (no source maps) with hashed file names, plus a `.gz` copy of every
+  text asset over 1 KB (e.g. `app.css` 177 KB -> 22 KB).
+- nginx: include `deploy/nginx/hresume-static.conf` inside the site's `server {}` block, before `location /`:
+  ```nginx
+  include /var/www/html/hresume/api/deploy/nginx/hresume-static.conf;
+  ```
+  then `sudo nginx -t && sudo systemctl reload nginx`. It sets:
+  - `/build/assets/*` and `/fonts/*`: `Cache-Control: public, max-age=31536000, immutable` (hashed names change on each build)
+  - `/build/manifest.json`: `no-cache`
+  - images/icons (`/images`, favicons, `/storage` uploads): 30 days
+  - `gzip_static on` (serves the prebuilt `.gz`) + on-the-fly gzip for HTML/JSON/SVG
+- Apache: the same rules are in `public/.htaccess` (needs `mod_headers`, `mod_rewrite`, `mod_deflate`).
+- Check: `curl -sI -H 'Accept-Encoding: gzip' https://hresume.pro/build/assets/<file>.css` shows
+  `Cache-Control: ... immutable` and `Content-Encoding: gzip`.
+- HTML pages are not cached (they contain the user session and CSRF token).
 
 ### Notes
 - UI translations live in `resources/translations/{en,fr}.json` (same keys as the old React app); use `t('key')` in Blade.

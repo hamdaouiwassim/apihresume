@@ -3,6 +3,34 @@ import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { gzipSync, constants as zlib } from 'node:zlib';
+
+/**
+ * Writes a .gz copy next to every built text asset so nginx can serve it with `gzip_static on`
+ * (compressed once at build time at max level instead of on every request).
+ */
+function precompressAssets() {
+    const outDir = fileURLToPath(new URL('./public/build', import.meta.url));
+    const compressible = /\.(js|mjs|css|svg|json|html|txt|map)$/;
+    const walk = (dir) =>
+        readdirSync(dir).flatMap((name) => {
+            const path = join(dir, name);
+            return statSync(path).isDirectory() ? walk(path) : [path];
+        });
+
+    return {
+        name: 'hresume:precompress',
+        apply: 'build',
+        closeBundle() {
+            for (const file of walk(outDir)) {
+                if (!compressible.test(file) || statSync(file).size < 1024) continue;
+                writeFileSync(`${file}.gz`, gzipSync(readFileSync(file), { level: zlib.Z_BEST_COMPRESSION }));
+            }
+        },
+    };
+}
 
 export default defineConfig({
     plugins: [
@@ -12,6 +40,7 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
+        precompressAssets(),
     ],
     resolve: {
         alias: [
@@ -20,6 +49,10 @@ export default defineConfig({
         ],
     },
     build: {
+        // Production output: minified JS (esbuild) and CSS (lightningcss via Tailwind), no source maps.
+        minify: 'esbuild',
+        cssMinify: true,
+        sourcemap: false,
         chunkSizeWarningLimit: 1000,
         rollupOptions: {
             output: {

@@ -23,3 +23,36 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# ---- Static file caching (nginx equivalent: deploy/nginx/hresume-static.conf) ----
+<IfModule mod_headers.c>
+    # Vite build output and fonts: hashed / versioned -> cache for a year.
+    <If "%{REQUEST_URI} =~ m#^/(build/assets|fonts)/#">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+    <If "%{REQUEST_URI} == '/build/manifest.json'">
+        Header set Cache-Control "no-cache"
+    </If>
+    <FilesMatch "\.(png|jpe?g|gif|webp|avif|svg|ico|mp4|webm|pdf)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>
+
+# Serve the pre-compressed .gz files written by `npm run build`.
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP:Accept-Encoding} gzip
+    RewriteCond %{REQUEST_FILENAME}.gz -s
+    RewriteRule ^(build/.+\.(css|js|mjs|svg|json))$ $1.gz [L]
+    RewriteRule \.css\.gz$ - [T=text/css,E=no-gzip:1,E=is_gz:1]
+    RewriteRule \.m?js\.gz$ - [T=text/javascript,E=no-gzip:1,E=is_gz:1]
+    RewriteRule \.svg\.gz$ - [T=image/svg+xml,E=no-gzip:1,E=is_gz:1]
+    RewriteRule \.json\.gz$ - [T=application/json,E=no-gzip:1,E=is_gz:1]
+</IfModule>
+<IfModule mod_headers.c>
+    Header set Content-Encoding gzip env=is_gz
+    Header append Vary Accept-Encoding env=is_gz
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/json application/javascript text/javascript image/svg+xml
+</IfModule>
