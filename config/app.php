@@ -57,6 +57,14 @@ return [
     'frontend_url' => env('FRONTEND_APP_URL', 'http://localhost:5173'),
 
     /*
+    | Landing page options (formerly VITE_LANDING_HERO_VARIANT, VITE_WALKTHROUGH_VIDEO_URL,
+    | VITE_SHOW_WALKTHROUGH_SECTION in the React frontend).
+    */
+    'landing_hero_variant' => env('LANDING_HERO_VARIANT', 'default'),
+    'walkthrough_video_url' => env('WALKTHROUGH_VIDEO_URL', ''),
+    'show_walkthrough_section' => (bool) env('SHOW_WALKTHROUGH_SECTION', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------

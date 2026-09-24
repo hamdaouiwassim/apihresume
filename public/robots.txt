@@ -1,2 +1,11 @@
 User-agent: *
-Disallow: /
+Allow: /
+
+Disallow: /admin
+Disallow: /api
+Disallow: /resume/edit/
+Disallow: /resumes
+Disallow: /profile
+Disallow: /share/
+
+Sitemap: https://hresume.pro/sitemap.xml

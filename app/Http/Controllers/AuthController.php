@@ -34,7 +34,8 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'account_type' => 'nullable|in:candidate,recruiter',
+            // Recruiter sign-up is disabled for now; only candidate accounts can be created.
+            'account_type' => 'nullable|in:candidate',
             'company_name' => 'required_if:account_type,recruiter|string|max:255',
             'company_size' => 'nullable|string|max:255',
             'industry_focus' => 'required_if:account_type,recruiter|string|max:255',

@@ -1,4 +1,55 @@
-# Production Deployment Guide – Dompdf PDF Generation
+# Production Deployment Guide
+
+## Single app: Blade pages + JSON API (replaces the separate React frontend)
+
+The whole site is now served by this Laravel app. Pages are Blade views (with Alpine.js); the resume,
+cover letter, work certificate and blog editors, the shared resume view and a few admin screens are
+React "islands" mounted inside Blade pages. The React SPA in `hresume_frontend/` is no longer deployed.
+
+### Build and deploy
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci
+npm run build              # Vite: Tailwind CSS, Alpine app, React islands -> public/build
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+Node is only needed at build time (you can build in CI and upload `public/build`).
+
+### Environment changes at cutover (main domain now points to Laravel)
+- `APP_URL=https://hresume.pro` and `FRONTEND_APP_URL=https://hresume.pro` (same origin now).
+  OAuth redirects, Stripe/Paddle success URLs, canonical URLs and the sitemap use `FRONTEND_APP_URL`.
+- `SANCTUM_STATEFUL_DOMAINS=hresume.pro,www.hresume.pro` (the site's own host) so the pages' same-origin
+  API calls use the session cookie.
+- `SESSION_SAME_SITE=lax` is enough now (no cross-site SPA). `SESSION_DOMAIN` can stay empty.
+- `CORS_ALLOWED_ORIGINS` is no longer needed for the site itself.
+- Update the OAuth apps (Google, LinkedIn, GitHub import) callback URLs to the new API host if it changed:
+  `https://hresume.pro/api/auth/google/callback`, `.../api/auth/linkedin/callback`, `.../api/auth/github/import/callback`.
+- Optional landing options (formerly Vite env vars): `LANDING_HERO_VARIANT`, `WALKTHROUGH_VIDEO_URL`, `SHOW_WALKTHROUGH_SECTION`.
+
+### Blog image optimization
+Uploaded blog featured images are converted to WebP at 480, 800 and 1200 px wide (never upscaled).
+Blog pages serve them with `srcset`, real `width`/`height` and a preload for the article image.
+Requires the PHP GD extension with WebP support. After deploying, convert images uploaded earlier once:
+```bash
+php artisan migrate --force
+php artisan blog:optimize-images --dry-run            # list what will change
+php artisan blog:optimize-images --delete-originals   # convert, then remove the original files
+```
+Images added by external URL are left as they are.
+
+### Notes
+- UI translations live in `resources/translations/{en,fr}.json` (same keys as the old React app); use `t('key')` in Blade.
+- The chosen language is stored in the session (`/locale/fr`, `/locale/en`).
+- The recruiter role is disabled: its pages and API routes are removed, `/recruiter/*` and `/register/recruiter`
+  redirect. Models, migrations and `app/Http/Controllers/Recruiter/*` are kept so it can be re-enabled later.
+- Web pages send a CSP that allows `'unsafe-eval'` (required by Alpine.js) and Google Analytics.
+
+---
+
+# PDF generation (Dompdf)
 
 ## Overview
 The backend now uses **Dompdf** (pure PHP) to render resumes into PDFs. Node.js, Puppeteer, and system browsers are no longer required. Dompdf runs completely inside PHP, which greatly simplifies deployment on Linux servers.

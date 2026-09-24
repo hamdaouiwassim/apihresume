@@ -1,0 +1,209 @@
+.blog-rich-text-editor {
+  border: 1px solid rgb(209 213 219);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.blog-rich-text-editor:focus-within {
+  border-color: rgb(168 85 247);
+  box-shadow: 0 0 0 2px rgb(233 213 255);
+}
+
+.blog-rich-text-editor--error {
+  border-color: rgb(239 68 68);
+  background: rgb(254 242 242);
+}
+
+.blog-rich-text-editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgb(229 231 235);
+  background: linear-gradient(to right, rgb(250 245 255), rgb(253 242 248));
+}
+
+.blog-rich-text-editor__toolbar-group--end {
+  margin-left: auto;
+}
+
+.blog-rich-text-editor__toolbar-group--end::after {
+  display: none !important;
+}
+
+.blog-rich-text-editor__import-hint {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: rgb(107 114 128);
+  border-top: 1px solid rgb(243 244 246);
+  background: rgb(249 250 251);
+}
+
+.blog-rich-text-editor__toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  align-items: center;
+}
+
+.blog-rich-text-editor__toolbar-group:not(:last-child)::after {
+  content: '';
+  width: 1px;
+  height: 1.25rem;
+  background: rgb(209 213 219);
+  margin: 0 0.35rem;
+}
+
+.blog-rich-text-editor__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.35rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: rgb(55 65 81);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.blog-rich-text-editor__btn:hover:not(:disabled) {
+  background: rgb(243 232 255);
+  color: rgb(107 33 168);
+}
+
+.blog-rich-text-editor__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.blog-rich-text-editor__btn.is-active {
+  background: rgb(147 51 234);
+  color: #fff;
+}
+
+.blog-rich-text-editor__content {
+  min-height: 280px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.blog-rich-text-editor__content .tiptap {
+  padding: 1rem 1.25rem;
+  outline: none;
+  min-height: 260px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: rgb(17 24 39);
+}
+
+.blog-rich-text-editor__content .tiptap > * + * {
+  margin-top: 0.75em;
+}
+
+.blog-rich-text-editor__content .tiptap h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.blog-rich-text-editor__content .tiptap h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.blog-rich-text-editor__content .tiptap h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.blog-rich-text-editor__content .tiptap h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.blog-rich-text-editor__content .tiptap ul,
+.blog-rich-text-editor__content .tiptap ol {
+  padding-left: 1.5rem;
+}
+
+.blog-rich-text-editor__content .tiptap ul {
+  list-style-type: disc;
+}
+
+.blog-rich-text-editor__content .tiptap ol {
+  list-style-type: decimal;
+}
+
+.blog-rich-text-editor__content .tiptap blockquote {
+  border-left: 4px solid rgb(192 132 252);
+  padding-left: 1rem;
+  color: rgb(75 85 99);
+  font-style: italic;
+}
+
+.blog-rich-text-editor__content .tiptap pre {
+  background: rgb(243 244 246);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+.blog-rich-text-editor__content .tiptap code {
+  background: rgb(243 244 246);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.35rem;
+  font-size: 0.875em;
+}
+
+.blog-rich-text-editor__content .tiptap pre code {
+  background: none;
+  padding: 0;
+}
+
+.blog-rich-text-editor__content .tiptap a {
+  color: rgb(124 58 237);
+  text-decoration: underline;
+}
+
+.blog-rich-text-editor__content .tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.blog-rich-text-editor__content .tiptap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.blog-rich-text-editor__content .tiptap th,
+.blog-rich-text-editor__content .tiptap td {
+  border: 1px solid rgb(209 213 219);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.blog-rich-text-editor__content .tiptap th {
+  background: rgb(249 250 251);
+  font-weight: 600;
+}
+
+.blog-rich-text-editor__content .tiptap p.is-editor-empty:first-child::before {
+  color: rgb(156 163 175);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

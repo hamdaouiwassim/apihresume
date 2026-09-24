@@ -1,0 +1,1309 @@
+{
+    "common": {
+        "update": "Mettre a jour",
+        "save": "Enregistrer",
+        "creatingResume": "Creating Resume...",
+        "startEditingResume": "Start Editing Resume",
+        "appName": "Créateur de CV",
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "required": "Ce champ est obligatoire",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "download": "Télécharger",
+        "templateApplied": "Modèle appliqué !"
+    },
+    "share": {
+        "button": "Partager",
+        "buttonTitle": "Partager le CV",
+        "modalTitle": "Partager votre CV",
+        "description": "Générez un lien temporaire sécurisé pour partager votre CV. Le lien expirera après le nombre de jours sélectionné.",
+        "expiresLabel": "Le lien expire dans (jours)",
+        "days": {
+            "1": "1 jour",
+            "7": "7 jours",
+            "30": "30 jours",
+            "90": "90 jours",
+            "365": "1 an"
+        },
+        "generate": "Générer un lien partageable",
+        "generating": "Génération...",
+        "shareableLink": "Lien partageable",
+        "expires": "Expire le",
+        "open": "Ouvrir le lien",
+        "copy": "Copier le lien",
+        "copied": "Copié !",
+        "deactivate": "Désactiver le lien",
+        "deactivating": "Désactivation...",
+        "newLink": "Générer un nouveau lien",
+        "close": "Fermer",
+        "successGenerate": "Lien partageable généré avec succès !",
+        "successDeactivate": "Lien partageable désactivé",
+        "copySuccess": "Lien copié dans le presse-papiers !",
+        "copyError": "Impossible de copier le lien",
+        "generateError": "Échec de la génération du lien partageable",
+        "deactivateError": "Échec de la désactivation du lien"
+    },
+    "certificates": {
+        "title": "Certificats",
+        "add": "Ajouter un certificat",
+        "remove": "Supprimer",
+        "name": "Nom du certificat",
+        "namePlaceholder": "ex: AWS Certified Solutions Architect",
+        "issuer": "Organisation émettrice",
+        "issuerPlaceholder": "ex: Amazon Web Services",
+        "issueDate": "Date d'émission",
+        "expiryDate": "Date d'expiration",
+        "credentialId": "ID de certification",
+        "credentialIdPlaceholder": "ex: ABC123XYZ",
+        "credentialURL": "URL de vérification",
+        "credentialURLPlaceholder": "https://..."
+    },
+    "resumes": {
+        "title": "Mes CV",
+        "createNew": "Créer un nouveau CV",
+        "noResumes": "Aucun CV pour le moment",
+        "noResumesDesc": "Créez votre premier CV en utilisant nos modèles professionnels",
+        "createFirst": "Créer votre premier CV",
+        "template": "Modèle",
+        "lastModified": "Dernière modification",
+        "freeLimitReached": "L'offre gratuite inclut un seul CV. Passez a Pro pour en creer davantage.",
+        "upgradeToCreate": "Passer a Pro",
+        "usageLabel": "{{count}} sur {{limit}} CV utilise"
+    },
+    "templates": {
+        "title": "Choisir un modèle",
+        "subtitle": "Sélectionnez parmi notre collection de modèles professionnels pour commencer à créer votre CV",
+        "allCategories": "Tous",
+        "corporate": "Entreprise",
+        "creative": "Créatif",
+        "simple": "Simple",
+        "preview": "Aperçu",
+        "useTemplate": "Utiliser ce modèle"
+    },
+    "resumeTemplates": {
+        "badge": "Modèles Professionnels",
+        "title": "Modèles de CV",
+        "subtitle": "Choisissez parmi notre collection de modèles de CV professionnels et compatibles ATS",
+        "currentStatus": {
+            "title": "Disponibilité Actuelle des Modèles",
+            "message": "Pour le moment, nous proposons 1 modèle compatible ATS conçu pour aider votre CV à passer les systèmes de suivi des candidatures. Nous travaillons dur pour étoffer notre collection avec plus de modèles professionnels dans un avenir proche.",
+            "comingSoon": "Plus de modèles à venir bientôt !"
+        },
+        "features": {
+            "ats": {
+                "title": "Compatible ATS",
+                "description": "Optimisé pour passer les systèmes de suivi des candidatures utilisés par la plupart des employeurs"
+            },
+            "professional": {
+                "title": "Design Professionnel",
+                "description": "Mises en page propres et modernes qui font une excellente première impression"
+            },
+            "customizable": {
+                "title": "Entièrement Personnalisable",
+                "description": "Personnalisez facilement les couleurs, les polices et la mise en page pour correspondre à votre style"
+            }
+        },
+        "preview": {
+            "title": "Notre Modèle Actuel",
+            "description": "Notre modèle compatible ATS est conçu pour aider votre CV à se démarquer tout en garantissant qu'il peut être correctement analysé par les systèmes automatisés.",
+            "templateName": "Modèle Professionnel Compatible ATS",
+            "templateDescription": "Un modèle propre et professionnel optimisé pour les lecteurs humains et les systèmes ATS",
+            "tags": {
+                "ats": "Compatible ATS",
+                "professional": "Professionnel",
+                "modern": "Moderne"
+            },
+            "cta": "Commencer Gratuitement"
+        },
+        "future": {
+            "title": "Plus de Modèles à Venir",
+            "description": "Nous travaillons continuellement à l'expansion de notre collection de modèles. À l'avenir, vous pourrez choisir parmi une variété de styles, notamment :",
+            "types": {
+                "corporate": "Entreprise",
+                "corporateDesc": "Designs traditionnels et professionnels pour les environnements d'entreprise",
+                "creative": "Créatif",
+                "creativeDesc": "Designs audacieux et uniques pour les professionnels créatifs",
+                "minimal": "Minimal",
+                "minimalDesc": "Designs propres et simples qui se concentrent sur le contenu"
+            },
+            "footer": "Restez à l'écoute pour les mises à jour ! Nous vous informerons lorsque de nouveaux modèles seront disponibles.",
+            "cta": "Créez votre compte gratuit pour être notifié"
+        }
+    },
+    "welcome": {
+        "title": "Un CV que les recruteurs lisent — sans y passer la journée",
+        "subtitle": "CV compatibles ATS, lettres de motivation et attestations de travail—modèles, aperçu en direct et export PDF. Gratuit pour commencer en une minute.",
+        "heroTitleCompact": "CV prêt pour l'entretien, vite",
+        "heroSubtitleCompact": "CV, lettre de motivation, attestation — gratuit pour débuter.",
+        "heroBadge": "Créateur de CV Professionnel",
+        "getStarted": "Créez votre CV gratuitement",
+        "guestStartCta": "Commencer sans compte",
+        "login": "Se connecter",
+        "register": "S'inscrire",
+        "freeDescription": "Service entièrement gratuit — sans abonnement, sans frais cachés et sans carte bancaire.",
+        "outcomePromise": "Obtenez un CV prêt pour les entretiens en 60s",
+        "walkthrough": {
+            "badge": "Parcours produit",
+            "title": "Voyez comment votre CV s'améliore en quelques minutes",
+            "subtitle": "Regardez le flux complet : choisir un modèle, adapter avec l'IA, vérifier l'ATS, puis exporter en un clic.",
+            "cta": "Tester le parcours",
+            "videoTitle": "Démo HResume",
+            "videoPlaceholder": "Vidéo de démonstration bientôt disponible. Définissez VITE_WALKTHROUGH_VIDEO_URL (URL YouTube ou embed) pour l'afficher ici."
+        },
+        "transformation": {
+            "badge": "Transformations réelles",
+            "title": "Exemples avant / après",
+            "subtitle": "L'utilisateur garde le contrôle pendant que l'IA renforce l'impact et la couverture ATS.",
+            "enhanceWithAi": "Améliorer avec l'IA",
+            "enhanceHint": "Cliquez sur le bouton pour simuler la réécriture de cette phrase par l'IA.",
+            "originalLabel": "Texte d'origine",
+            "enhancingLabel": "Amélioration par l'IA…",
+            "enhancedLabel": "Texte amélioré",
+            "beforeLabel": "Avant",
+            "afterLabel": "Après",
+            "examples": [
+                {
+                    "role": "Développeur frontend",
+                    "before": "Créé un dashboard et corrigé des bugs.",
+                    "after": "Créé un dashboard React utilisé par plus de 40 commerciaux, réduit le temps de reporting de 35 %, et corrigé plus de 120 bugs production avec des tests de régression."
+                },
+                {
+                    "role": "Analyste opérations",
+                    "before": "Géré des rapports de stock et la coordination d'équipe.",
+                    "after": "Automatisé les rapports hebdomadaires sur 5 entrepôts, réduit les ruptures de stock de 22 %, et coordonné la planification inter-équipes en période de pic."
+                }
+            ]
+        },
+        "trust": {
+            "free": "Gratuit à utiliser",
+            "noCard": "Pas de carte bancaire",
+            "instant": "Téléchargement instantané"
+        },
+        "trustProof": {
+            "testimonialsTitle": "Témoignages",
+            "testimonialsText": "Très bien noté par les candidats et les recruteurs pour la vitesse, la clarté et la simplicité.",
+            "pricingTitle": "Tarification transparente",
+            "pricingText": "Commencez gratuitement, puis passez en Pro si vous voulez l'IA illimitée et tous les insights ATS.",
+            "privacyTitle": "Confidentialité d'abord",
+            "privacyText": "Vous choisissez ce qui est public. Vos CV restent privés tant que vous ne les partagez pas.",
+            "pricingLink": "Voir les offres"
+        },
+        "templates": {
+            "title": "Modèles Professionnels",
+            "subtitle": "Choisissez parmi notre collection de modèles de CV conçus professionnellement",
+            "more": "Et bien d'autres modèles disponibles",
+            "cta": "Choisissez Votre Modèle"
+        },
+        "stats": {
+            "candidates": "Candidats",
+            "resumes": "CV Créés"
+        },
+        "suite": {
+            "badge": "Complétez votre dossier",
+            "title": "Plus qu'un CV",
+            "subtitle": "Créez votre CV, votre lettre de motivation et votre attestation de travail au même endroit—gratuit pour commencer avec un seul compte.",
+            "heroLine": "Créez aussi des lettres de motivation et des attestations de travail dans la même application.",
+            "resume": {
+                "shortTitle": "CV",
+                "title": "CV professionnel",
+                "description": "Modèles compatibles ATS, aperçu en direct, aide IA et export PDF en un clic.",
+                "cta": "Commencer votre CV",
+                "note": "Essai possible sans compte"
+            },
+            "coverLetter": {
+                "shortTitle": "Lettres de motivation",
+                "title": "Lettre de motivation",
+                "description": "Rédigez des lettres alignées sur votre CV—modifiez, enregistrez et exportez quand vous êtes prêt.",
+                "cta": "Découvrir les lettres",
+                "note": "Compte gratuit requis"
+            },
+            "workCertificate": {
+                "shortTitle": "Attestations de travail",
+                "title": "Attestation de travail",
+                "description": "Générez des attestations pour les dossiers RH ou les candidatures, puis téléchargez en PDF.",
+                "cta": "Découvrir les attestations",
+                "note": "Compte gratuit requis"
+            }
+        },
+        "features": {
+            "title": "Fonctionnalités",
+            "subtitle": "Des outils d'édition solides et une IA qui vous aide à affiner vos points, cibler les postes et passer les filtres ATS.",
+            "aiBadge": "Assisté par l'IA",
+            "easy": "Facile à Utiliser",
+            "easyDesc": "Interface simple et intuitive pour créer des CV professionnels.",
+            "easyAi": "Recevez des suggestions de formulation pendant que vous rédigez.",
+            "professional": "Modèles Professionnels",
+            "professionalDesc": "Choisissez parmi une variété de modèles conçus professionnellement.",
+            "professionalAi": "Adaptez le ton et la structure aux postes visés.",
+            "ats": "Compatible ATS",
+            "atsDesc": "Optimisé pour les systèmes de suivi des candidatures pour améliorer vos chances.",
+            "atsAi": "L'IA signale les écarts de mots-clés par rapport aux analyses ATS courantes.",
+            "export": "Export en PDF",
+            "exportDesc": "Téléchargez votre CV au format PDF, prêt à être partagé.",
+            "exportAi": "Peaufinez le texte avant d'exporter un PDF prêt à l'emploi.",
+            "multilingual": "Multilingue",
+            "multilingualDesc": "Créez votre CV en différentes langues pour atteindre une audience mondiale.",
+            "multilingualAi": "Traduisez et adaptez les sections avec une aide contextuelle.",
+            "smartAiTitle": "Rédaction IA intelligente",
+            "smartAiDesc": "Améliorez les descriptions, adaptez les points aux offres et lancez des contrôles ATS—dans l'éditeur, selon votre formule.",
+            "smartAiHint": "Les comptes gratuits ont des crédits IA mensuels ; Pro débloque l'IA illimitée et les analyses ATS complètes."
+        },
+        "reviews": {
+            "title": "Ce Que Disent Nos Utilisateurs",
+            "subtitle": "Ne nous croyez pas sur parole. Découvrez ce que nos utilisateurs pensent de leur expérience avec HResume.",
+            "verifiedUser": "Utilisateur Vérifié",
+            "ctaText": "Partagez votre expérience avec HResume",
+            "ctaButton": "Laisser un Avis"
+        },
+        "finalCta": {
+            "title": "Prêt à créer votre CV professionnel ?",
+            "subtitle": "Rejoignez des milliers de professionnels qui nous font confiance",
+            "freeNote": "Notre service est 100 % gratuit, pour toujours.",
+            "candidate": "Inscription candidat"
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Bon Retour",
+            "subtitle": "Connectez-vous à votre compte",
+            "email": "Adresse Email",
+            "password": "Mot de passe",
+            "rememberMe": "Se souvenir de moi",
+            "forgotPassword": "Mot de passe oublié ?",
+            "noAccount": "Pas encore de compte ?",
+            "register": "Inscrivez-vous ici",
+            "submit": "Se connecter"
+        },
+        "register": {
+            "title": "Créer un Compte",
+            "subtitle": "Commencez à créer votre CV professionnel",
+            "name": "Nom Complet",
+            "email": "Adresse Email",
+            "password": "Mot de passe",
+            "confirmPassword": "Confirmer le mot de passe",
+            "hasAccount": "Déjà un compte ?",
+            "login": "Connectez-vous ici",
+            "submit": "S'inscrire",
+            "terms": "J'accepte les conditions d'utilisation"
+        }
+    },
+    "nav": {
+        "preview": "Aperçu du CV",
+        "download": "Télécharger PDF",
+        "myResumes": "Mes CV",
+        "myCoverLetters": "Lettres de Motivation",
+        "workCertification": "Attestation de travail",
+        "templates": "Modèles",
+        "profile": "Profil",
+        "review": "Laisser un Avis",
+        "settings": "Paramètres",
+        "logout": "Déconnexion",
+        "fullPage": "Plein Écran",
+        "adminPanel": "Panneau d'administration",
+        "recruiterHub": "Espace recruteur"
+    },
+    "customisePdf": {
+        "title": "Personnaliser le PDF",
+        "button": "Style PDF",
+        "description": "Personnalisez la police et la taille utilisées lors de la génération de votre CV en PDF.",
+        "fontFamily": "Police de caractères",
+        "fontSize": "Taille de police",
+        "preview": "Aperçu",
+        "save": "Enregistrer",
+        "saved": "Paramètres PDF enregistrés !",
+        "error": "Échec de l'enregistrement des paramètres PDF."
+    },
+    "preview": {
+        "professionalSummary": "Résumé Professionnel",
+        "workExperience": "Expérience Professionnelle",
+        "education": "Formation",
+        "skills": "Compétences",
+        "interests": "Intérêts",
+        "certifications": "Certifications",
+        "languages": "Langues",
+        "projects": "Projets",
+        "present": "En cours",
+        "graduated": "Diplômé",
+        "fullPageView": "Vue Plein Écran",
+        "professionalTitle": "Titre Professionnel",
+        "yourName": "Votre Nom",
+        "editorStepsTitle": "Étapes du CV",
+        "editorStepsHint": "Utilisez les étapes pour accéder à une section. L'aperçu se met à jour en direct.",
+        "livePreviewBadge": "Aperçu en direct",
+        "wizardTitle": "Parcours CV",
+        "wizardPhaseProfile": "Profil",
+        "wizardPhaseExperience": "Expérience & formation",
+        "wizardPhaseAi": "Amélioration IA",
+        "wizardPhaseAts": "Analyse ATS",
+        "wizardPhaseExport": "Aperçu & export",
+        "wizardHintProfile": "Renseignez vos coordonnées, réseaux et résumé professionnel.",
+        "wizardHintExperience": "Ajoutez expériences et formations. Utilisez « Améliorer avec IA » sur les textes longs (Pro).",
+        "wizardHintAi": "Affinez avec « Améliorer avec IA » sous les zones de texte, et « Job Target » pour des idées ciblées (Pro).",
+        "wizardHintAts": "Utilisez « ATS Analysis » dans la barre d’aperçu pour le score et les mots-clés (Pro).",
+        "wizardHintExport": "Téléchargez le PDF, partagez un lien ou ouvrez votre site public depuis l’aperçu.",
+        "wizardPrev": "Précédent",
+        "wizardNext": "Suivant",
+        "wizardAnalyzing": "Analyse en cours…"
+    },
+    "personal": {
+        "title": "Informations de Base",
+        "fullName": "Nom Complet",
+        "fullNameHint": "Comment voulez-vous être appelé",
+        "fullNamePlaceholder": "ex., Jean Dupont",
+        "jobTitle": "Titre Professionnel",
+        "jobTitleHint": "Votre poste actuel ou souhaité",
+        "jobTitlePlaceholder": "ex., Ingénieur Logiciel Senior",
+        "email": "Adresse Email",
+        "emailHint": "Email professionnel de préférence",
+        "emailPlaceholder": "ex., jean.dupont@entreprise.com",
+        "phone": "Numéro de Téléphone",
+        "phoneHint": "Inclure l'indicatif du pays",
+        "phonePlaceholder": "ex., +33 6 12 34 56 78",
+        "location": "Localisation",
+        "locationHint": "Ville, Pays",
+        "locationPlaceholder": "ex., Paris, France",
+        "summary": "Résumé Professionnel",
+        "summaryHint": "Bref aperçu de votre carrière",
+        "summaryPlaceholder": "Rédigez un bref résumé professionnel..."
+    },
+    "experience": {
+        "title": "Expérience",
+        "company": "Nom de l'Entreprise",
+        "companyHint": "Où vous avez travaillé",
+        "companyPlaceholder": "ex., Google, Inc.",
+        "position": "Poste",
+        "positionHint": "Votre rôle dans l'entreprise",
+        "positionPlaceholder": "ex., Ingénieur Logiciel Senior",
+        "startDate": "Date de Début",
+        "startDateHint": "Quand vous avez commencé",
+        "endDate": "Date de Fin",
+        "endDateHint": "Laisser vide si poste actuel",
+        "description": "Réalisations Clés",
+        "descriptionHint": "Utilisez des puces pour plus de clarté",
+        "descriptionPlaceholder": "• Développé et lancé la fonctionnalité X qui a augmenté l'engagement des utilisateurs de Y%\n• Dirigé une équipe de X développeurs pour livrer le projet Y en avance\n• Réduit le temps de réponse du système de X%",
+        "addButton": "Ajouter une Expérience",
+        "removeButton": "Supprimer"
+    },
+    "education": {
+        "title": "Formation",
+        "school": "École/Université",
+        "schoolHint": "Où vous avez étudié",
+        "schoolPlaceholder": "ex., Université Paris-Saclay",
+        "degree": "Diplôme",
+        "degreeHint": "Type de diplôme obtenu",
+        "degreePlaceholder": "ex., Master",
+        "field": "Domaine d'Études",
+        "fieldHint": "Votre spécialisation",
+        "fieldPlaceholder": "ex., Informatique",
+        "startDate": "Date de Début",
+        "endDate": "Date de Fin",
+        "description": "Réalisations Notables",
+        "descriptionHint": "Cours pertinents, mentions, etc.",
+        "addButton": "Ajouter une Formation",
+        "removeButton": "Supprimer"
+    },
+    "skills": {
+        "title": "Compétences",
+        "name": "Nom de la Compétence",
+        "nameHint": "Ajoutez une compétence pertinente",
+        "namePlaceholder": "ex., JavaScript, Gestion de Projet",
+        "level": "Niveau de Maîtrise",
+        "levelHint": "Quel est votre niveau ?",
+        "category": "Catégorie",
+        "categoryHint": "Grouper les compétences similaires",
+        "categoryPlaceholder": "ex., Programmation, Soft Skills",
+        "addButton": "Ajouter une Compétence",
+        "removeButton": "Supprimer",
+        "levels": {
+            "beginner": "Débutant",
+            "intermediate": "Intermédiaire",
+            "advanced": "Avancé",
+            "expert": "Expert"
+        }
+    },
+    "hobbies": {
+        "title": "Loisirs & Intérêts",
+        "name": "Loisir/Intérêt",
+        "nameHint": "Ce que vous aimez faire",
+        "namePlaceholder": "ex., Photographie, Échecs",
+        "description": "Description",
+        "descriptionHint": "Brève explication de votre intérêt",
+        "descriptionPlaceholder": "Parlez-nous de votre loisir...",
+        "addButton": "Ajouter un Loisir",
+        "removeButton": "Supprimer"
+    },
+    "buttons": {
+        "save": "Enregistrer les Modifications"
+    },
+    "dashboard": {
+        "sections": {
+            "personalInfo": {
+                "title": "Informations Personnelles",
+                "fullName": "Nom Complet",
+                "fullNamePlaceholder": "Hamdaoui Wassim",
+                "fullNameHint": "Comment voulez-vous être appelé",
+                "jobTitle": "Titre Professionnel",
+                "jobTitlePlaceholder": "Ingénieur Logiciel Senior",
+                "jobTitleHint": "Votre poste actuel ou souhaité",
+                "email": "Adresse Email",
+                "emailPlaceholder": "ex.,hamdaouiwassim@gmail.com",
+                "emailHint": "Email professionnel de préférence",
+                "phone": "Numéro de Téléphone",
+                "phonePlaceholder": "ex., +33 6 12 34 56 78",
+                "phoneHint": "Inclure l'indicatif du pays",
+                "location": "Localisation",
+                "locationPlaceholder": "ex., Paris, France",
+                "locationHint": "Ville, Pays",
+                "summary": "Résumé Professionnel",
+                "summaryPlaceholder": "Rédigez un bref résumé professionnel...",
+                "summaryHint": "Bref aperçu de votre carrière",
+                "showPhotoOnCv": "Afficher la photo sur le CV"
+            },
+            "socialMedia": {
+                "title": "Réseaux Sociaux",
+                "linkedin": "LinkedIn",
+                "linkedinPlaceholder": "https://linkedin.com/in/votreprofil",
+                "github": "GitHub",
+                "githubPlaceholder": "https://github.com/votrenom",
+                "website": "Site Web",
+                "websitePlaceholder": "https://votresite.com"
+            },
+            "experiences": {
+                "title": "Expériences professionnelles",
+                "addExperience": "Ajouter une expérience",
+                "experience": {
+                    "company": "Nom de l'Entreprise",
+                    "companyHint": "Où vous avez travaillé",
+                    "companyPlaceholder": "ex., Google, Inc.",
+                    "position": "Poste",
+                    "positionHint": "Votre rôle dans l'entreprise",
+                    "positionPlaceholder": "ex., Ingénieur Logiciel Senior",
+                    "startDate": "Date de Début",
+                    "startDateHint": "Quand vous avez commencé",
+                    "endDate": "Date de Fin",
+                    "endDateHint": "Laisser vide si poste actuel",
+                    "isPresent": "C'est mon poste actuel",
+                    "description": "Réalisations Clés",
+                    "descriptionHint": "Utilisez des puces pour plus de clarté",
+                    "descriptionPlaceholder": "• Développé et lancé la fonctionnalité X qui a augmenté l'engagement des utilisateurs de Y%\n• Dirigé une équipe de X développeurs pour livrer le projet Y en avance\n• Réduit le temps de réponse du système de X%"
+                }
+            },
+            "educations": {
+                "title": "Educations",
+                "addEducation": "Ajouter une education",
+                "education": {
+                    "institution": "Etablisement",
+                    "institutionHint": "Votre Etablisement",
+                    "institutionPlaceholder": "Votre Etablisement",
+                    "degree": "Diplôme",
+                    "degreeHint": "Type de diplôme obtenu",
+                    "degreePlaceholder": "ex., Master",
+                    "startDate": "Date de Début",
+                    "startDateHint": "Quand vous avez commencé",
+                    "endDate": "Date de Fin",
+                    "endDateHint": "Laisser vide si poste actuel"
+                }
+            },
+            "skills": {
+                "title": "Compétences",
+                "addSkill": "Ajouter une Compétence",
+                "skill": {
+                    "title": "Compétence",
+                    "name": "Nom de la Compétence",
+                    "nameHint": "Ajoutez une compétence pertinente",
+                    "namePlaceholder": "ex., JavaScript, Gestion de Projet",
+                    "proficiency": "Niveau de Maîtrise",
+                    "proficiencyHint": "Quel est votre niveau?",
+                    "selectProficiency": "Sélectionner le Niveau",
+                    "beginner": "Débutant",
+                    "intermediate": "Intermédiaire",
+                    "advanced": "Avancé",
+                    "expert": "Expert"
+                }
+            },
+            "hobbies": {
+                "title": "Loisirs & Intérêts",
+                "addHobby": "Ajouter un Loisir",
+                "hobby": {
+                    "title": "Loisir",
+                    "name": "Nom du Loisir",
+                    "nameHint": "Ajoutez un loisir ou un intérêt",
+                    "namePlaceholder": "ex., Photographie, Lecture, Voyage"
+                }
+            },
+            "certificates": {
+                "title": "Certificats",
+                "addCertificate": "Ajouter un Certificat",
+                "certificate": {
+                    "title": "Certificat",
+                    "name": "Nom du Certificat",
+                    "nameHint": "Nom du certificat",
+                    "namePlaceholder": "ex., AWS Certified Solutions Architect",
+                    "issuer": "Organisation Émettrice",
+                    "issuerHint": "Organisation qui a émis le certificat",
+                    "issuerPlaceholder": "ex., Amazon Web Services",
+                    "dateObtained": "Date d'Obtention",
+                    "dateObtainedHint": "Quand vous avez reçu le certificat"
+                }
+            },
+            "languages": {
+                "title": "Langues",
+                "addLanguage": "Ajouter une Langue",
+                "language": {
+                    "title": "Langue",
+                    "language": "Nom de la Langue",
+                    "languageHint": "Langue que vous parlez",
+                    "languagePlaceholder": "ex., Anglais, Français, Espagnol",
+                    "proficiency": "Niveau de Maîtrise",
+                    "proficiencyHint": "Votre niveau de maîtrise",
+                    "selectProficiency": "Sélectionner le Niveau",
+                    "native": "Natif",
+                    "fluent": "Courant",
+                    "intermediate": "Intermédiaire",
+                    "basic": "Basique"
+                }
+            },
+            "projects": {
+                "title": "Projets",
+                "addProject": "Ajouter un Projet",
+                "project": {
+                    "title": "Projet",
+                    "name": "Nom du Projet",
+                    "underExperience": "Sous l'expérience",
+                    "nameHint": "Nom de votre projet",
+                    "namePlaceholder": "ex., Site E-commerce, Application Mobile",
+                    "description": "Description du Projet",
+                    "descriptionHint": "Décrivez ce que fait le projet et votre rôle",
+                    "descriptionPlaceholder": "• Construit une plateforme e-commerce full-stack avec React et Node.js\n• Implémenté l'intégration de passerelle de paiement\n• Atteint une augmentation de 40% de l'engagement des utilisateurs",
+                    "technologies": "Technologies Utilisées",
+                    "technologiesHint": "Technologies, frameworks ou outils utilisés",
+                    "technologiesPlaceholder": "ex., React, Node.js, MongoDB, AWS",
+                    "url": "URL du Projet",
+                    "urlHint": "Lien vers le projet en direct ou le dépôt",
+                    "urlPlaceholder": "https://exemple.com ou https://github.com/username/projet",
+                    "startDate": "Date de Début",
+                    "startDateHint": "Quand vous avez commencé le projet",
+                    "endDate": "Date de Fin",
+                    "endDateHint": "Quand le projet a été terminé (laisser vide si en cours)",
+                    "githubRepoLabel": "Importer depuis GitHub",
+                    "githubRepoHint": "Collez l’URL du dépôt ou owner/repo pour préremplir ce projet. Les dépôts publics fonctionnent sans connexion ; les dépôts privés nécessitent GitHub connecté (Profil) ou un jeton GITHUB_TOKEN côté serveur.",
+                    "githubRepoPlaceholder": "https://github.com/owner/repo ou owner/repo",
+                    "githubImportButton": "Remplir depuis GitHub",
+                    "githubImportSuccess": "Champs mis à jour depuis GitHub. Vérifiez puis enregistrez.",
+                    "githubImportError": "Impossible de charger ce dépôt depuis GitHub.",
+                    "githubConnectFromEditor": "Connecter GitHub",
+                    "githubConnectHintShort": "pour les dépôts privés",
+                    "githubConnectUnavailable": "La connexion GitHub n'est pas configurée sur ce serveur.",
+                    "githubRepoRequired": "Saisissez d’abord l’URL du dépôt GitHub."
+                }
+            }
+        }
+    },
+    "createResume": {
+        "title": "Créer votre CV",
+        "pageBadge": "Nouveau CV",
+        "pageSubtitle": "Choisissez un nom et un modèle pour commencer.",
+        "nameSectionTitle": "Nom du CV",
+        "nameLabel": "Nom du CV",
+        "namePlaceholder": "ex. Designer produit 2026",
+        "templateLabel": "Choisissez votre style",
+        "templatesBadge": "Modèles",
+        "templateHint": "Chaque modèle est optimisé pour les ATS et la lecture par les recruteurs.",
+        "searchPlaceholder": "Rechercher un modèle ou un style",
+        "selectedTemplateLabel": "Modèle sélectionné",
+        "heroHint": "Ce libellé n'apparaît que sur votre tableau de bord — pas sur le PDF.",
+        "suggestionsLabel": "Noms rapides",
+        "suggestionsHint": "Cliquez pour utiliser une suggestion :",
+        "suggestionsEmpty": "Sélectionnez un modèle ci-dessous pour des idées",
+        "noTemplatesTitle": "Aucun modèle ne correspond à vos filtres",
+        "noTemplatesSubtitle": "Essayez d'effacer les filtres ou un autre mot-clé.",
+        "atsFriendly": "Compatible ATS",
+        "pickTemplateHint": "Sélectionnez un modèle pour continuer",
+        "enterNameHint": "Saisissez un nom de CV pour continuer",
+        "readyHint": "Prêt à ouvrir l'éditeur",
+        "selectTemplate": "Sélectionner un Modèle",
+        "chooseTemplate": "Choisissez un modèle pour commencer à créer votre CV.",
+        "proceed": "Procéder à la Création",
+        "validationError": "Veuillez choisir un modèle et saisir un nom de CV.",
+        "creationError": "Une erreur s'est produite. Veuillez réessayer.",
+        "limitReached": "L'offre gratuite inclut un seul CV. Passez a Pro pour en creer davantage.",
+        "guestBanner": "Choisissez un modèle et nommez votre CV sans vous connecter. Ensuite, nous enregistrerons vos choix et créerons le CV après inscription ou connexion.",
+        "guestFinalButton": "Continuer vers l'inscription",
+        "guestDraftSavedToast": "Vos choix sont enregistrés. Créez un compte pour ouvrir votre CV.",
+        "guestHasAccount": "Vous avez déjà un compte ?",
+        "guestLoginLink": "Se connecter"
+    },
+    "profile": {
+        "title": "Paramètres du profil",
+        "subtitle": "Gérez les informations de votre compte et vos préférences",
+        "avatar": {
+            "changeTooltip": "Changer l'avatar",
+            "changeCta": "Modifier la photo de profil",
+            "nameFallback": "Votre nom"
+        },
+        "fields": {
+            "name": {
+                "label": "Nom complet",
+                "placeholder": "Entrez votre nom complet"
+            },
+            "email": {
+                "label": "Adresse email",
+                "placeholder": "Entrez votre email"
+            }
+        },
+        "password": {
+            "sectionTitle": "Changer le mot de passe",
+            "helper": "Laissez vide si vous ne souhaitez pas changer votre mot de passe",
+            "newLabel": "Nouveau mot de passe",
+            "newPlaceholder": "Saisissez un nouveau mot de passe",
+            "confirmLabel": "Confirmez le nouveau mot de passe",
+            "confirmPlaceholder": "Confirmez le nouveau mot de passe"
+        },
+        "status": {
+            "unsaved": "Vous avez des modifications non enregistrées"
+        },
+        "buttons": {
+            "save": "Enregistrer les modifications",
+            "saving": "Enregistrement..."
+        },
+        "notifications": {
+            "loadError": "Échec du chargement du profil",
+            "invalidFileType": "Veuillez sélectionner un fichier image",
+            "fileTooLarge": "La taille de l'image doit être inférieure à 5 Mo",
+            "updateSuccess": "Profil mis à jour avec succès !",
+            "updateError": "Échec de la mise à jour du profil"
+        },
+        "validation": {
+            "nameRequired": "Le nom est obligatoire",
+            "emailRequired": "L'email est obligatoire",
+            "emailInvalid": "Veuillez saisir une adresse email valide",
+            "passwordLength": "Le mot de passe doit comporter au moins 8 caractères",
+            "passwordMismatch": "Les mots de passe ne correspondent pas"
+        },
+        "githubImport": {
+            "title": "GitHub (projets du CV)",
+            "description": "Connectez GitHub pour importer des projets depuis des dépôts privés auxquels vous avez accès. Utilise la portée large « repo » — vous pouvez vous déconnecter à tout moment.",
+            "connectedAs": "Connecté en tant que",
+            "connect": "Connecter GitHub",
+            "disconnect": "Déconnecter",
+            "connecting": "Redirection…",
+            "disconnecting": "Déconnexion…",
+            "disconnectSuccess": "GitHub déconnecté.",
+            "connectSuccess": "GitHub connecté. Vous pouvez importer les dépôts auxquels vous avez accès.",
+            "connectError": "Échec de la connexion GitHub.",
+            "notConfigured": "La connexion GitHub n'est pas disponible sur ce serveur."
+        }
+    },
+    "privacy": {
+        "title": "Politique de Confidentialité",
+        "lastUpdated": "Dernière mise à jour :",
+        "introduction": {
+            "title": "Introduction",
+            "content": "Chez HResume, nous nous engageons à protéger votre vie privée et à assurer la sécurité de vos informations personnelles. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre service de création de CV."
+        },
+        "informationWeCollect": {
+            "title": "Informations que Nous Collectons",
+            "personalData": {
+                "title": "Informations Personnelles",
+                "content": "Nous collectons les informations que vous nous fournissez directement, notamment votre nom, votre adresse e-mail, votre numéro de téléphone et toute autre information que vous choisissez d'inclure dans votre CV."
+            },
+            "usageData": {
+                "title": "Données d'Utilisation",
+                "content": "Nous collectons automatiquement certaines informations sur votre appareil et la façon dont vous interagissez avec notre service, notamment l'adresse IP, le type de navigateur, les pages visitées et le temps passé sur les pages."
+            },
+            "cookies": {
+                "title": "Cookies et Suivi",
+                "content": "Nous utilisons des cookies et des technologies de suivi similaires pour améliorer votre expérience, analyser les modèles d'utilisation et aider nos efforts marketing."
+            }
+        },
+        "howWeUse": {
+            "title": "Comment Nous Utilisons Vos Informations",
+            "points": [
+                "Pour fournir, maintenir et améliorer notre service de création de CV",
+                "Pour traiter vos demandes et transactions",
+                "Pour vous envoyer des avis techniques, des mises à jour et des messages de support",
+                "Pour répondre à vos commentaires, questions et demandes",
+                "Pour surveiller et analyser les tendances, l'utilisation et les activités",
+                "Pour détecter, prévenir et résoudre les problèmes techniques et les menaces de sécurité"
+            ]
+        },
+        "dataSharing": {
+            "title": "Partage et Divulgation des Données",
+            "intro": "Nous ne vendons, n'échangeons ni ne louons vos informations personnelles à des tiers. Nous ne pouvons partager vos informations que dans les circonstances suivantes :",
+            "circumstances": [
+                "Avec votre consentement explicite",
+                "Pour se conformer aux obligations légales ou répondre aux demandes légales",
+                "Pour protéger nos droits, notre vie privée, notre sécurité ou nos biens",
+                "Avec des prestataires de services qui nous aident à exploiter notre plateforme (sous des accords de confidentialité stricts)"
+            ]
+        },
+        "dataSecurity": {
+            "title": "Sécurité des Données",
+            "content": "Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles appropriées pour protéger vos informations personnelles contre l'accès non autorisé, l'altération, la divulgation ou la destruction. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n'est sécurisée à 100%, et nous ne pouvons garantir une sécurité absolue."
+        },
+        "yourRights": {
+            "title": "Vos Droits",
+            "intro": "Vous avez le droit de :",
+            "rights": [
+                "Accéder et recevoir une copie de vos données personnelles",
+                "Rectifier des données inexactes ou incomplètes",
+                "Demander la suppression de vos données personnelles",
+                "Vous opposer au traitement de vos données personnelles",
+                "Demander la restriction du traitement",
+                "Portabilité des données (recevoir vos données dans un format structuré)"
+            ]
+        },
+        "contact": {
+            "title": "Contactez-Nous",
+            "content": "Si vous avez des questions concernant cette Politique de Confidentialité ou souhaitez exercer vos droits, veuillez nous contacter à :",
+            "email": "Email : contact@hresume.pro"
+        },
+        "changes": {
+            "title": "Modifications de Cette Politique de Confidentialité",
+            "content": "Nous pouvons mettre à jour cette Politique de Confidentialité de temps à autre. Nous vous informerons de tout changement en publiant la nouvelle Politique de Confidentialité sur cette page et en mettant à jour la date de 'Dernière mise à jour'. Il vous est conseillé de consulter périodiquement cette Politique de Confidentialité pour tout changement."
+        }
+    },
+    "terms": {
+        "title": "Conditions générales d'utilisation",
+        "lastUpdated": "Dernière mise à jour :",
+        "lastUpdatedDate": "mai 2026",
+        "introduction": {
+            "title": "Accord",
+            "content": "En accédant ou en utilisant HResume (hresume.pro), vous acceptez les présentes conditions. Si vous n'acceptez pas ces conditions, n'utilisez pas le service. Elles s'appliquent aux candidats, aux recruteurs (le cas échéant) et aux visiteurs."
+        },
+        "service": {
+            "title": "Le service",
+            "content": "HResume propose des outils pour créer et gérer CV, lettres de motivation, attestations de travail et documents associés, y compris des fonctions IA optionnelles et des abonnements Pro. Nous pouvons modifier, suspendre ou interrompre des fonctionnalités avec un préavis raisonnable lorsque c'est possible."
+        },
+        "accounts": {
+            "title": "Comptes",
+            "points": [
+                "Vous devez fournir des informations exactes et protéger vos identifiants.",
+                "Vous êtes responsable de l'activité effectuée via votre compte.",
+                "Vous devez avoir au moins 16 ans (ou l'âge minimum requis dans votre pays).",
+                "Nous pouvons suspendre ou résilier les comptes qui violent ces conditions ou présentent un risque de sécurité."
+            ]
+        },
+        "acceptableUse": {
+            "title": "Usage acceptable",
+            "intro": "Vous vous engagez à ne pas :",
+            "points": [
+                "Utiliser le service à des fins illégales, frauduleuses ou nuisibles.",
+                "Publier du contenu qui viole les droits d'autrui ou contient des logiciels malveillants.",
+                "Contourner la sécurité, les quotas ou les contrôles d'accès (y compris les limites Pro).",
+                "Extraire des données, rétroconcevoir ou surcharger nos systèmes sans autorisation.",
+                "Partager l'accès au compte d'une manière incompatible avec votre offre ou ces conditions."
+            ]
+        },
+        "content": {
+            "title": "Votre contenu",
+            "content": "Vous conservez la propriété du contenu que vous créez. Vous nous accordez une licence limitée pour héberger, traiter et afficher ce contenu uniquement pour exploiter le service (sauvegardes, export PDF, partage que vous activez). Vous êtes responsable de l'exactitude et de la légalité de ce que vous publiez via les liens de partage ou profils publics."
+        },
+        "ai": {
+            "title": "Fonctionnalités IA",
+            "content": "Les suggestions IA (amélioration, ciblage emploi, score ATS) sont fournies à titre d'aide uniquement. Elles peuvent être inexactes ou incomplètes. Vous devez relire tout résultat avant utilisation. Les offres Pro et gratuites sont soumises aux limites décrites sur la page Tarifs."
+        },
+        "payments": {
+            "title": "Offres payantes",
+            "content": "Les abonnements Pro et tarifs sont décrits sur notre page Tarifs. Les paiements internationaux peuvent être traités par Paddle en tant que merchant of record. La Tunisie et d'autres régions peuvent utiliser d'autres voies de mise à niveau indiquées dans le produit. Les remboursements sont régis par notre politique de remboursement."
+        },
+        "privacy": {
+            "title": "Confidentialité",
+            "content": "La collecte et l'utilisation des données personnelles sont décrites dans notre politique de confidentialité. En utilisant HResume, vous acceptez également cette politique."
+        },
+        "disclaimer": {
+            "title": "Avertissement",
+            "content": "Le service est fourni « en l'état » et « selon disponibilité », sans garantie d'aucune sorte dans la mesure permise par la loi. Nous ne garantissons pas l'obtention d'un emploi, la réussite en entretien ou l'acceptation ATS par un employeur."
+        },
+        "liability": {
+            "title": "Limitation de responsabilité",
+            "content": "Dans la mesure maximale permise par la loi, HResume et ses opérateurs ne sont pas responsables des dommages indirects, accessoires ou consécutifs, ni des pertes de profits, de données ou d'opportunités liées à votre utilisation du service. Notre responsabilité totale pour toute réclamation ne dépassera pas le montant payé au cours des douze (12) mois précédant la réclamation, ou cinquante dollars US (50 USD) si vous n'avez utilisé que l'offre gratuite."
+        },
+        "termination": {
+            "title": "Résiliation",
+            "content": "Vous pouvez cesser d'utiliser le service à tout moment et demander la suppression du compte via contact@hresume.pro. Nous pouvons résilier ou restreindre l'accès en cas de violation. Les clauses qui doivent survivre (limitation de responsabilité, droit applicable, licences sur contenu existant) survivent à la résiliation."
+        },
+        "law": {
+            "title": "Droit applicable",
+            "content": "Ces conditions sont régies par le droit tunisien, sans égard aux règles de conflit de lois, sauf si les lois impératives de protection des consommateurs de votre pays en disposent autrement. Les litiges doivent d'abord être signalés par contact ; les tribunaux tunisiens peuvent être compétents lorsque la loi le permet."
+        },
+        "contact": {
+            "title": "Contact",
+            "content": "Questions sur ces conditions :",
+            "formLink": "Formulaire de contact",
+            "privacyLink": "Politique de confidentialité",
+            "refundLink": "Politique de remboursement"
+        },
+        "changes": {
+            "title": "Modifications",
+            "content": "Nous pouvons mettre à jour ces conditions. Les changements importants seront publiés sur cette page avec une date mise à jour. L'utilisation continue vaut acceptation des conditions révisées."
+        }
+    },
+    "refund": {
+        "title": "Politique de remboursement",
+        "lastUpdated": "Dernière mise à jour :",
+        "lastUpdatedDate": "mai 2026",
+        "introduction": {
+            "title": "Introduction",
+            "content": "Cette politique explique comment fonctionnent les remboursements pour HResume Pro et les services payants associés. L'offre gratuite HResume ne donne lieu à aucun paiement et n'est pas remboursable."
+        },
+        "eligibility": {
+            "title": "Éligibilité au remboursement",
+            "intro": "Nous souhaitons que vous soyez satisfait de HResume Pro. Des remboursements peuvent être accordés dans les conditions ci-dessous.",
+            "points": [
+                "Premier abonnement Pro : remboursement intégral possible dans les 14 jours suivant le premier paiement si vous n'avez pas utilisé de manière substantielle les fonctionnalités Pro (ex. IA illimitée au-delà d'un essai raisonnable).",
+                "Erreurs de facturation ou doubles prélèvements : contactez-nous sous 30 jours ; nous corrigerons ou rembourserons le montant.",
+                "Renouvellements : les renouvellements d'abonnement ne sont en principe pas remboursables, sauf obligation légale ou cas exceptionnel à notre discrétion."
+            ]
+        },
+        "howToRequest": {
+            "title": "Comment demander un remboursement",
+            "content": "Pour demander un remboursement, envoyez-nous un e-mail depuis l'adresse liée à votre compte HResume.",
+            "steps": [
+                "Envoyez un e-mail à contact@hresume.pro avec l'objet « Demande de remboursement ».",
+                "Indiquez l'e-mail du compte, la date de paiement et le motif de la demande.",
+                "Nous examinerons votre demande et répondrons sous 5 à 10 jours ouvrables."
+            ]
+        },
+        "nonRefundable": {
+            "title": "Cas non remboursables",
+            "points": [
+                "Utilisation de l'offre gratuite (aucun paiement effectué).",
+                "Accès Pro accordé manuellement par notre équipe sans facturation.",
+                "Demandes formulées plus de 14 jours après le premier paiement Pro (sauf erreurs de facturation).",
+                "Résiliation du compte pour violation de nos conditions ou abus du service."
+            ]
+        },
+        "cancellations": {
+            "title": "Annulations",
+            "content": "Vous pouvez annuler Pro à tout moment. L'annulation stoppe les renouvellements futurs ; vous conservez Pro jusqu'à la fin de la période en cours. L'annulation n'entraîne pas automatiquement un remboursement de la période en cours, sauf si vous êtes éligible selon cette politique."
+        },
+        "paddle": {
+            "title": "Paiements internationaux (Paddle)",
+            "content": "Les abonnements Pro internationaux sont traités par Paddle en tant que merchant of record. Les remboursements éligibles sont effectués via Paddle sur votre moyen de paiement d'origine. Les délais dépendent de votre banque ou émetteur de carte (généralement 5 à 14 jours ouvrables après approbation)."
+        },
+        "contact": {
+            "title": "Nous contacter",
+            "content": "Des questions sur les remboursements ou la facturation ? Nous sommes là pour vous aider.",
+            "formLink": "Formulaire de contact",
+            "pricingLink": "Tarifs"
+        },
+        "changes": {
+            "title": "Modifications de cette politique",
+            "content": "Nous pouvons mettre à jour cette politique de remboursement. Les modifications prennent effet lors de leur publication sur cette page avec une date mise à jour."
+        }
+    },
+    "faq": {
+        "title": "Questions Fréquemment Posées",
+        "subtitle": "Trouvez des réponses aux questions courantes sur notre service de création de CV",
+        "noQuestions": "Aucune question disponible pour le moment.",
+        "contact": {
+            "title": "Vous avez encore des questions ?",
+            "content": "Si vous ne trouvez pas la réponse que vous cherchez, n'hésitez pas à contacter notre équipe de support.",
+            "email": "Email : support@hresume.com"
+        },
+        "questions": [
+            {
+                "question": "HResume est-il vraiment gratuit ?",
+                "answer": "Oui ! HResume est entièrement gratuit. Il n'y a pas de frais cachés, pas d'abonnements et aucune carte bancaire n'est requise. Vous pouvez créer, modifier et télécharger autant de CV que vous le souhaitez sans aucun coût."
+            },
+            {
+                "question": "Comment créer un CV ?",
+                "answer": "Créer un CV est facile ! Inscrivez-vous simplement pour un compte gratuit, choisissez un modèle professionnel et commencez à remplir vos informations. Vous pouvez ajouter votre expérience professionnelle, votre formation, vos compétences et bien plus encore. L'interface est intuitive et vous guide à chaque étape."
+            },
+            {
+                "question": "Puis-je télécharger mon CV en PDF ?",
+                "answer": "Absolument ! Une fois que vous avez terminé votre CV, vous pouvez le télécharger sous forme de fichier PDF de haute qualité. Le PDF est formaté professionnellement et prêt à être partagé avec des employeurs ou téléchargé sur des sites d'emploi."
+            },
+            {
+                "question": "Les modèles de CV sont-ils compatibles avec les ATS ?",
+                "answer": "Oui, nos modèles de CV sont conçus pour être compatibles avec les systèmes ATS (Applicant Tracking System). Cela signifie qu'ils sont optimisés pour être facilement lus et analysés par les systèmes de recrutement automatisés, augmentant ainsi vos chances d'être remarqué par les employeurs."
+            },
+            {
+                "question": "Puis-je modifier mon CV après l'avoir créé ?",
+                "answer": "Oui, vous pouvez modifier votre CV à tout moment. Connectez-vous simplement à votre compte, sélectionnez le CV que vous souhaitez modifier et apportez vos modifications. Toutes vos données sont enregistrées automatiquement, vous pouvez donc mettre à jour votre CV quand vous le souhaitez."
+            },
+            {
+                "question": "Comment partager mon CV avec d'autres personnes ?",
+                "answer": "Vous pouvez partager votre CV de deux façons : 1) Téléchargez le PDF et envoyez-le par e-mail ou via des applications de messagerie, ou 2) Utilisez notre fonctionnalité de partage sécurisé pour générer un lien temporaire que vous pouvez partager avec des recruteurs ou des employeurs. Le lien peut être configuré pour expirer après un nombre de jours spécifié pour une sécurité accrue."
+            },
+            {
+                "question": "Mes données sont-elles sécurisées ?",
+                "answer": "Nous prenons votre vie privée et la sécurité de vos données au sérieux. Vos informations personnelles sont cryptées et stockées en toute sécurité. Nous ne partageons jamais vos données avec des tiers, et vous pouvez supprimer votre compte et toutes les données associées à tout moment. Pour plus de détails, veuillez consulter notre Politique de Confidentialité."
+            },
+            {
+                "question": "Puis-je créer plusieurs CV ?",
+                "answer": "Oui ! Vous pouvez créer autant de CV que nécessaire. C'est particulièrement utile si vous postulez pour différents types d'emplois et souhaitez adapter votre CV pour chaque poste. Chaque CV est enregistré séparément dans votre compte."
+            },
+            {
+                "question": "Quelles langues sont prises en charge ?",
+                "answer": "Actuellement, HResume prend en charge l'anglais et le français. Vous pouvez basculer entre les langues à tout moment, et tous les éléments de l'interface, y compris les libellés de section et les boutons, seront traduits en conséquence."
+            },
+            {
+                "question": "Dois-je créer un compte ?",
+                "answer": "Oui, la création d'un compte gratuit est nécessaire pour enregistrer et gérer vos CV. Cependant, le processus d'inscription est rapide et simple - il suffit de fournir votre nom, votre e-mail et de créer un mot de passe. Aucune carte bancaire ou information de paiement n'est requise."
+            },
+            {
+                "question": "Les recruteurs peuvent-ils utiliser HResume ?",
+                "answer": "Oui ! HResume propose un Espace Recruteur dédié où les recruteurs peuvent parcourir les CV, utiliser des filtres avancés, partager des liens sécurisés avec les responsables du recrutement et collaborer avec leur équipe. Les recruteurs peuvent également soumettre des propositions de modèles pour approbation."
+            },
+            {
+                "question": "Que faire si j'ai besoin d'aide ou si j'ai une question ?",
+                "answer": "Si vous avez besoin d'assistance, vous pouvez contacter notre équipe de support à contact@hresume.pro. Nous sommes là pour vous aider et répondons généralement dans les 24 à 48 heures. Vous pouvez également consulter cette page FAQ pour obtenir des réponses aux questions courantes."
+            }
+        ]
+    },
+    "contact": {
+        "title": "Contactez-Nous",
+        "subtitle": "Vous avez une question ou besoin d'aide ? Nous sommes là pour vous aider. Envoyez-nous un message et nous vous répondrons dans les plus brefs délais.",
+        "info": {
+            "title": "Restons en Contact",
+            "emailLabel": "Email",
+            "email": "contact@hresume.pro",
+            "phoneLabel": "Téléphone",
+            "phone": "+216 92 045 389",
+            "addressLabel": "Adresse",
+            "address": "Skanes, Monastir - Tunisie",
+            "responseTime": "Nous répondons généralement dans les 24 à 48 heures pendant les jours ouvrables."
+        },
+        "form": {
+            "title": "Envoyez-nous un Message",
+            "nameLabel": "Nom",
+            "namePlaceholder": "Votre nom complet",
+            "emailLabel": "Email",
+            "emailPlaceholder": "votre.email@exemple.com",
+            "subjectLabel": "Sujet",
+            "subjectPlaceholder": "De quoi s'agit-il ?",
+            "messageLabel": "Message",
+            "messagePlaceholder": "Dites-nous comment nous pouvons vous aider...",
+            "submitButton": "Envoyer le Message",
+            "submitting": "Envoi en cours...",
+            "successMessage": "Merci ! Votre message a été envoyé avec succès. Nous vous répondrons bientôt.",
+            "errorMessage": "Oups ! Quelque chose s'est mal passé. Veuillez réessayer plus tard."
+        },
+        "validation": {
+            "nameRequired": "Le nom est obligatoire",
+            "emailRequired": "L'email est obligatoire",
+            "emailInvalid": "Veuillez saisir une adresse email valide",
+            "subjectRequired": "Le sujet est obligatoire",
+            "messageRequired": "Le message est obligatoire",
+            "messageMinLength": "Le message doit contenir au moins 10 caractères"
+        }
+    },
+    "pricing": {
+        "title": "Tarification Transparente",
+        "subtitle": "Choisissez l'offre qui correspond a vos objectifs. Passez en Pro pour debloquer les fonctionnalites d'amelioration IA.",
+        "badge": "Offres Simples",
+        "heroCta": "Créer un compte gratuit",
+        "freePlan": {
+            "name": "HResume Gratuit",
+            "price": "0 DT",
+            "per": "par mois",
+            "description": "Creez vos CV et exportez en PDF avec les outils essentiels.",
+            "features": [
+                "1 CV (un autre apres passage en Pro)",
+                "Tous les modeles standards",
+                "5 ameliorations de texte IA / mois",
+                "1 ciblage emploi (tailor) / mois",
+                "3 analyses ATS / mois (insights lite)",
+                "Lettres de motivation et attestations de travail",
+                "Export PDF, liens de partage et profil public",
+                "Collaboration (e-mail verifie requis pour inviter)"
+            ],
+            "button": "Commencer gratuitement"
+        },
+        "regionNoteTunisia": "Tarifs affichés en dinars tunisiens (TND) pour les visiteurs en Tunisie.",
+        "regionNoteInternational": "Tarifs affichés en dollars américains (USD) pour les visiteurs internationaux.",
+        "proPlan": {
+            "name": "HResume Pro",
+            "price": "5 $",
+            "per": "par mois",
+            "description": "Debloquez les outils d'ecriture IA et des fonctionnalites premium de productivite.",
+            "features": [
+                "CV illimites",
+                "IA illimitee : amelioration, ciblage et ATS",
+                "Ecarts de mots-cles ATS et recommandations completes",
+                "Lettres de motivation et attestations (comme Gratuit)",
+                "Import de projets GitHub (quand active)",
+                "Traitement IA prioritaire",
+                "Support par e-mail"
+            ],
+            "button": "Passer a Pro",
+            "buttonLoading": "Redirection vers le paiement…",
+            "loginToUpgrade": "Connectez-vous pour passer a Pro",
+            "alreadyPro": "Vous etes deja Pro",
+            "checkoutError": "Impossible de demarrer le paiement. Reessayez ou contactez le support.",
+            "billingUnavailable": "Le paiement en ligne n'est pas encore configure. Contactez le support.",
+            "tunisiaUpgradeNote": "Le paiement Pro en ligne est reserve aux clients internationaux. En Tunisie, contactez-nous pour passer a Pro.",
+            "tunisiaContactCta": "Nous contacter pour Pro"
+        },
+        "success": {
+            "title": "Bienvenue en Pro !",
+            "subtitle": "Votre abonnement est actif. CV et IA illimites sont debloques.",
+            "pending": "Confirmation de votre paiement…",
+            "error": "Impossible de confirmer le paiement. Si vous avez ete debite, contactez le support.",
+            "goToResumes": "Voir mes CV",
+            "goToPricing": "Retour aux tarifs"
+        },
+        "note": {
+            "title": "Pourquoi Pro ?",
+            "description": "Gratuit sert a un CV solide et un essai mensuel de l'IA. Pro convient aux recherches actives : CV illimites, IA illimitee et ATS complet. Resiliation via votre compte Paddle (quand la facturation est activee).",
+            "refundLink": "Politique de remboursement"
+        }
+    },
+    "review": {
+        "title": "Partagez Votre Expérience",
+        "subtitle": "Vos commentaires nous aident à nous améliorer et aident les autres à découvrir HResume. Nous aimerions connaître votre expérience !",
+        "ratingLabel": "Comment évaluez-vous votre expérience ?",
+        "titleLabel": "Titre de l'Avis",
+        "titlePlaceholder": "ex., Excellente plateforme pour créer des CV",
+        "commentLabel": "Votre Avis",
+        "commentPlaceholder": "Parlez-nous de votre expérience avec HResume. Qu'avez-vous aimé ? Que pourrait-on améliorer ?",
+        "publicLabel": "Rendre cet avis public",
+        "publicDescription": "Permettre aux autres de voir votre avis sur notre plateforme. Vous pourrez modifier cela plus tard.",
+        "submitButton": "Soumettre l'Avis",
+        "updateButton": "Mettre à Jour l'Avis",
+        "submitting": "Envoi en cours...",
+        "successMessage": "Merci pour votre avis !",
+        "successTitle": "Merci !",
+        "successDescription": "Votre avis a été soumis avec succès. Nous apprécions vos commentaires !",
+        "alreadySubmittedTitle": "Avis Déjà Soumis",
+        "alreadySubmittedMessage": "Vous avez déjà soumis un avis. Merci pour vos commentaires !",
+        "publicStatus": "Cet avis est public",
+        "privateStatus": "Cet avis est privé",
+        "noTitle": "Aucun titre fourni",
+        "noComment": "Aucun commentaire fourni",
+        "errorMessage": "Échec de l'envoi de l'avis. Veuillez réessayer.",
+        "encouragementTitle": "Votre Avis Compte !",
+        "encouragementText": "En partageant votre expérience, vous nous aidez à améliorer HResume et aidez les autres chercheurs d'emploi à découvrir un excellent outil pour créer des CV professionnels. Merci de prendre le temps !",
+        "ratingLabels": {
+            "excellent": "Excellent",
+            "veryGood": "Très Bien",
+            "good": "Bien",
+            "fair": "Moyen",
+            "poor": "Médiocre"
+        },
+        "validation": {
+            "ratingRequired": "Veuillez sélectionner une note",
+            "titleRequired": "Le titre est obligatoire",
+            "titleMinLength": "Le titre doit contenir au moins 3 caractères",
+            "commentRequired": "Le commentaire est obligatoire",
+            "commentMinLength": "L'avis doit contenir au moins 10 caractères"
+        },
+        "characters": "caractères",
+        "minCharacters": "minimum 10"
+    },
+    "blog": {
+        "title": "Blog",
+        "subtitle": "Restez informé des derniers conseils, informations et actualités sur la création de CV et le développement de carrière.",
+        "searchPlaceholder": "Rechercher des articles de blog...",
+        "noPosts": "Aucun article de blog trouvé.",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page",
+        "of": "sur",
+        "backToBlog": "Retour au Blog",
+        "notFound": "Article de Blog Introuvable",
+        "notFoundMessage": "L'article de blog que vous recherchez n'existe pas.",
+        "views": "vues"
+    },
+    "admin": {
+        "blog": {
+            "title": "Gestion du Blog",
+            "subtitle": "Créer et gérer les articles de blog",
+            "newPost": "Nouvel Article",
+            "searchPlaceholder": "Rechercher des articles...",
+            "allStatus": "Tous les Statuts",
+            "published": "Publié",
+            "draft": "Brouillon",
+            "fetchError": "Échec du chargement des articles de blog",
+            "createSuccess": "Article de blog créé avec succès",
+            "updateSuccess": "Article de blog mis à jour avec succès",
+            "deleteSuccess": "Article de blog supprimé avec succès",
+            "saveError": "Échec de l'enregistrement de l'article de blog",
+            "deleteError": "Échec de la suppression de l'article de blog",
+            "titleLabel": "Titre",
+            "excerptLabel": "Résumé",
+            "excerptPlaceholder": "Résumé bref de l'article...",
+            "contentLabel": "Contenu",
+            "contentPlaceholder": "Écrivez le contenu de votre article de blog ici (HTML pris en charge)...",
+            "featuredImageLabel": "URL de l'Image en Vedette",
+            "statusLabel": "Statut",
+            "publishedAtLabel": "Publié Le",
+            "cancel": "Annuler",
+            "save": "Enregistrer",
+            "saving": "Enregistrement...",
+            "editPost": "Modifier l'Article",
+            "backToList": "Retour aux articles",
+            "createSubtitle": "Rédigez et publiez un nouvel article.",
+            "editSubtitle": "Mettez à jour votre article et enregistrez les modifications.",
+            "titleColumn": "Titre",
+            "importMarkdown": "Importer Markdown (.md)",
+            "importMarkdownHint": "Markdown GitHub pris en charge. Frontmatter YAML optionnel (titre, résumé) en tête de fichier.",
+            "importMarkdownSuccess": "Importé : {name}",
+            "importMarkdownError": "Échec de l'import Markdown",
+            "importMarkdownReplaceConfirm": "L'import remplacera le contenu actuel de l'éditeur. Continuer ?",
+            "deleteConfirmTitle": "Supprimer l'Article de Blog",
+            "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer cet article de blog ? Cette action ne peut pas être annulée.",
+            "delete": "Supprimer",
+            "edit": "Modifier",
+            "view": "Voir",
+            "author": "Auteur",
+            "status": "Statut",
+            "publishedAt": "Publié Le",
+            "views": "Vues",
+            "actions": "Actions",
+            "noPosts": "Aucun article de blog trouvé",
+            "validation": {
+                "titleRequired": "Le titre est obligatoire",
+                "contentRequired": "Le contenu est obligatoire"
+            }
+        }
+    },
+    "productLanding": {
+        "common": {
+            "primaryCta": "Créer un compte gratuit",
+            "secondaryCta": "Se connecter",
+            "alsoTry": "Également sur HResume :",
+            "backHome": "Retour à l'accueil"
+        },
+        "coverLetter": {
+            "shortTitle": "Lettre de motivation",
+            "metaTitle": "Créateur de lettre de motivation gratuit | HResume",
+            "metaDescription": "Créez des lettres de motivation professionnelles en ligne avec HResume. Alignez votre CV, modifiez avec des modèles et exportez en PDF. Compte gratuit pour commencer.",
+            "badge": "Lettres de motivation",
+            "title": "Lettre de motivation alignée sur votre CV",
+            "subtitle": "Rédigez, modifiez et enregistrez vos lettres à côté de votre CV—puis exportez un PDF soigné pour vos candidatures.",
+            "accountNote": "Un compte HResume gratuit est nécessaire pour créer et enregistrer des lettres de motivation.",
+            "primaryCta": "Commencer une lettre",
+            "featuresTitle": "Pourquoi HResume pour vos lettres",
+            "bullets": [
+                "Éditeur dédié lié à votre compte",
+                "Modèles et sections structurées",
+                "Plusieurs lettres selon les postes",
+                "Export PDF pour les candidatures",
+                "Même connexion que pour le CV et les attestations"
+            ],
+            "bodyParagraphs": [
+                "Les recruteurs lisent souvent la lettre juste après le CV. HResume garde les deux documents dans le même espace pour rester cohérent.",
+                "En français ou en anglais, gérez vos lettres depuis le tableau de bord et mettez-les à jour quand vous voulez."
+            ]
+        },
+        "workCertificate": {
+            "shortTitle": "Attestation de travail",
+            "metaTitle": "Générateur d'attestation de travail | HResume",
+            "metaDescription": "Générez des attestations de travail en ligne. Renseignez employeur et dates, prévisualisez et téléchargez en PDF avec HResume. Compte gratuit requis.",
+            "badge": "Attestations de travail",
+            "title": "Générateur d'attestation de travail",
+            "subtitle": "Créez des attestations de travail pour les dossiers RH, visas ou candidatures—prévisualisez et téléchargez en PDF.",
+            "accountNote": "Un compte HResume gratuit est nécessaire pour créer et enregistrer des attestations.",
+            "primaryCta": "Créer une attestation",
+            "featuresTitle": "Ce que vous pouvez faire",
+            "bullets": [
+                "Formulaire structuré employeur, salarié et dates",
+                "Interface bilingue (FR / EN)",
+                "Aperçu avant téléchargement",
+                "Export PDF prêt à imprimer ou envoyer",
+                "Stocké avec vos CV et lettres de motivation"
+            ],
+            "bodyParagraphs": [
+                "Une attestation de travail confirme votre poste, vos dates et votre employeur. HResume vous aide à produire un document clair sans repartir d'une page Word vide.",
+                "Cet outil sert aux attestations d'emploi—pas aux certificats de formation listés sur le CV. Pour les diplômes, utilisez la section Certificats dans l'éditeur de CV."
+            ]
+        }
+    },
+    "coverLetter": {
+        "title": "Mes Lettres de Motivation",
+        "subtitle": "Créez et gérez vos lettres de motivation professionnelles",
+        "createNew": "Nouvelle Lettre de Motivation",
+        "noLetters": "Aucune Lettre de Motivation",
+        "noLettersDesc": "Créez votre première lettre de motivation professionnelle pour accompagner votre CV",
+        "createFirst": "Créer votre première lettre",
+        "letterCountOne": "lettre de motivation",
+        "letterCountOther": "lettres de motivation",
+        "lastModified": "Dernière modification",
+        "form": {
+            "internalTitle": "Titre Interne (pour votre référence)",
+            "recipientName": "Nom du destinataire",
+            "recipientCompany": "Entreprise du destinataire",
+            "recipientAddress": "Adresse du destinataire",
+            "recipientEmail": "Email du destinataire",
+            "city": "Ville",
+            "country": "Pays",
+            "date": "Date",
+            "subject": "Objet",
+            "content": "Contenu de la lettre",
+            "style": "Style du modèle"
+        },
+        "templates": {
+            "quickStart": "Démarrage Rapide : Choisissez un modèle",
+            "types": {
+                "software_engineer": "Ingénieur Logiciel",
+                "digital_marketing": "Marketing Digital",
+                "customer_success": "Responsable Succès Client"
+            },
+            "content": {
+                "software_engineer": {
+                    "subject": "Candidature pour le poste de [Nom du Poste] - [Votre Nom]",
+                    "text": "Madame, Monsieur,\n\nC'est avec un vif intérêt que je vous soumets ma candidature pour le poste de [Nom du Poste] au sein de [Nom de l'Entreprise]. Fort d'une solide expérience en développement full-stack et passionné par la création d'applications évolutives, je suis convaincu que mes compétences en [Technologies] font de moi un candidat idéal pour votre équipe.\n\nLors de ma précédente expérience chez [Entreprise Précédente], j'ai dirigé le développement de [Nom du Projet], ce qui a permis d'augmenter les performances du système de [Pourcentage]%. J'apprécie relever des défis architecturaux complexes et je suis un fervent défenseur du code propre et maintenable.\n\nJe suis avec attention les récents travaux de [Nom de l'Entreprise] sur [Projet Spécifique] et je suis impressionné par votre engagement envers l'innovation. Je suis impatient d'apporter mon expertise technique pour aider [Nom de l'Entreprise] à atteindre ses objectifs.\n\nJe vous remercie de l'attention que vous porterez à ma candidature et reste à votre entière disposition pour un entretien.\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n[Votre Nom]"
+                },
+                "digital_marketing": {
+                    "subject": "Candidature pour le poste de Spécialiste Marketing Digital - [Votre Nom]",
+                    "text": "Madame, Monsieur,\n\nJe suis ravi de vous présenter ma candidature pour le poste de Spécialiste Marketing Digital au sein de [Nom de l'Entreprise]. En tant que marketeur axé sur les données avec une expérience confirmée dans la gestion de campagnes multicanales, j'ai l'habitude d'accroître la visibilité des marques et de générer un ROI mesurable.\n\nDans mon dernier poste chez [Entreprise Précédente], j'ai piloté une stratégie qui a permis de doubler notre taux d'engagement en six mois. Je maîtrise le SEO, le SEM et l'analyse de performance, et je suis fier de ma capacité à traduire des données complexes en informations exploitables.\n\nLa réputation de [Nom de l'Entreprise] pour [Valeur Spécifique] résonne profondément avec ma philosophie professionnelle. Je suis impatient de mettre à profit mon esprit stratégique pour atteindre de nouveaux publics et renforcer la position de marché de [Nom de l'Entreprise].\n\nJe serais ravi d'échanger avec vous sur la manière dont mon expertise en stratégie digitale peut aider [Nom de l'Entreprise] à atteindre ses ambitieux objectifs de croissance.\n\nBien cordialement,\n\n[Votre Nom]"
+                },
+                "customer_success": {
+                    "subject": "Candidature pour le poste de Responsable Succès Client - [Votre Nom]",
+                    "text": "Madame, Monsieur,\n\nJe suis enchanté par l'opportunité de rejoindre [Nom de l'Entreprise] en tant que Responsable Succès Client. Riche d'une expérience dans des rôles en contact direct avec la clientèle et animé par une passion profonde pour la satisfaction des utilisateurs, j'ai à cœur d'aider les clients de [Nom de l'Entreprise] à exploiter tout leur potentiel.\n\nTout au long de ma carrière chez [Entreprise Précédente], j'ai maintenu un taux de fidélisation client élevé et j'ai géré avec succès l'intégration de nombreux comptes stratégiques. Je suis convaincu que le véritable succès client passe par une communication proactive et une compréhension approfondie des besoins business uniques de chaque client.\n\nAdmirateur de longue date de l'approche de [Nom de l'Entreprise] concernant [Fonctionnalité Spécifique], je suis certain que ma capacité à bâtir des relations solides et durables sera un atout précieux pour votre équipe.\n\nJe vous remercie de l'intérêt porté à ma candidature et espère avoir l'occasion de vous rencontrer prochainement.\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n[Votre Nom]"
+                }
+            }
+        },
+        "messages": {
+            "loadError": "Échec du chargement des lettres",
+            "saveSuccess": "Lettre de motivation enregistrée avec succès",
+            "saveError": "Échec de l'enregistrement de la lettre",
+            "deleteSuccess": "Lettre de motivation supprimée avec succès",
+            "deleteError": "Échec de la suppression de la lettre"
+        }
+    },
+    "workCertificate": {
+        "title": "Attestation de travail",
+        "subtitle": "Créez des attestations de travail à télécharger en PDF",
+        "createNew": "Nouvelle attestation",
+        "noItems": "Aucune attestation",
+        "noItemsDesc": "Générez une attestation de travail pour vos dossiers ou candidatures.",
+        "createFirst": "Créer votre première attestation",
+        "countOne": "attestation",
+        "countOther": "attestations",
+        "lastModified": "Dernière mise à jour",
+        "preview": {
+            "panelTitle": "Aperçu",
+            "liveHint": "Aperçu en direct — même mise en page que le PDF"
+        },
+        "editorSectionTitle": "Détails de l'attestation",
+        "form": {
+            "documentTitle": "Titre du document",
+            "employeeName": "Nom complet du salarié",
+            "jobTitle": "Intitulé du poste",
+            "companyName": "Nom de l'entreprise",
+            "companyAddress": "Adresse de l'entreprise",
+            "employmentStart": "Date de début",
+            "employmentEnd": "Date de fin",
+            "currentJob": "J'occupe toujours ce poste",
+            "duties": "Principales missions (facultatif)",
+            "letterPlace": "Lieu (ex. ville en en-tête)",
+            "letterDate": "Date du courrier",
+            "signer": "Nom et fonction du signataire (facultatif)",
+            "languagePdf": "Langue du PDF"
+        },
+        "messages": {
+            "loadError": "Échec du chargement des attestations",
+            "saveSuccess": "Attestation enregistrée",
+            "saveError": "Échec de l'enregistrement",
+            "deleteSuccess": "Attestation supprimée",
+            "deleteError": "Échec de la suppression",
+            "deleteConfirmMessage": "Supprimer définitivement cette attestation ?",
+            "pdfError": "Échec du téléchargement du PDF"
+        }
+    }
+}

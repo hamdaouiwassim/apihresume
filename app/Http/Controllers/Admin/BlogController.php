@@ -7,8 +7,10 @@ use App\Jobs\SendBlogPostNotifications;
 use App\Models\BlogPost;
 use App\Support\AdminPagination;
 use App\Support\ApiJson;
+use App\Services\BlogImageOptimizer;
 use App\Support\BlogHtmlSanitizer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -107,30 +109,11 @@ class BlogController extends Controller
                 $count++;
             }
 
-            // Handle featured image upload
+            // Handle featured image upload (resized to WebP variants for SEO / page speed)
             $featuredImageUrl = $request->featured_image;
-            if ($request->hasFile('featured_image_file')) {
-                $file = $request->file('featured_image_file');
-                if ($file->isValid()) {
-                    // Ensure blog-images directory exists
-                    $blogImagesDir = Storage::disk('public')->path('blog-images');
-                    if (! is_dir($blogImagesDir)) {
-                        Storage::disk('public')->makeDirectory('blog-images', 0755, true);
-                    }
-
-                    // Store image with unique name
-                    $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
-                    $filename = time().'_'.uniqid().'.'.$extension;
-                    $imagePath = $file->storeAs('blog-images', $filename, 'public');
-
-                    if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-                        $scheme = $request->getScheme();
-                        $host = $request->getHost();
-                        $port = $request->getPort();
-                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
-                        $featuredImageUrl = $baseUrl.'/storage/'.$imagePath;
-                    }
-                }
+            $featuredImageMeta = null;
+            if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
+                [$featuredImageUrl, $featuredImageMeta] = $this->storeFeaturedImage($request);
             }
 
             $post = BlogPost::create([
@@ -140,6 +123,7 @@ class BlogController extends Controller
                 'excerpt' => $request->excerpt,
                 'content' => BlogHtmlSanitizer::clean($request->content),
                 'featured_image' => $featuredImageUrl,
+                'featured_image_meta' => $featuredImageMeta,
                 'status' => $request->status,
                 'published_at' => $request->status === 'published'
                     ? ($request->published_at ?? now())
@@ -204,41 +188,14 @@ class BlogController extends Controller
                 $updateData['content'] = BlogHtmlSanitizer::clean($updateData['content']);
             }
 
-            // Handle featured image upload
-            if ($request->hasFile('featured_image_file')) {
-                $file = $request->file('featured_image_file');
-                if ($file->isValid()) {
-                    // Delete old image if exists
-                    if ($post->featured_image) {
-                        $storageUrl = Storage::disk('public')->url('');
-                        if (str_contains($post->featured_image, $storageUrl)) {
-                            $oldImagePath = str_replace($storageUrl, '', $post->featured_image);
-                            $oldImagePath = ltrim($oldImagePath, '/');
-                            if (! empty($oldImagePath) && Storage::disk('public')->exists($oldImagePath)) {
-                                Storage::disk('public')->delete($oldImagePath);
-                            }
-                        }
-                    }
-
-                    // Ensure blog-images directory exists
-                    $blogImagesDir = Storage::disk('public')->path('blog-images');
-                    if (! is_dir($blogImagesDir)) {
-                        Storage::disk('public')->makeDirectory('blog-images', 0755, true);
-                    }
-
-                    // Store new image
-                    $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
-                    $filename = time().'_'.uniqid().'.'.$extension;
-                    $imagePath = $file->storeAs('blog-images', $filename, 'public');
-
-                    if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-                        $scheme = $request->getScheme();
-                        $host = $request->getHost();
-                        $port = $request->getPort();
-                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
-                        $updateData['featured_image'] = $baseUrl.'/storage/'.$imagePath;
-                    }
-                }
+            // Handle featured image upload (resized to WebP variants for SEO / page speed)
+            if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
+                $this->deleteFeaturedImage($post);
+                [$updateData['featured_image'], $updateData['featured_image_meta']] = $this->storeFeaturedImage($request);
+            } elseif (array_key_exists('featured_image', $updateData) && $updateData['featured_image'] !== $post->featured_image) {
+                // Switched to an external URL (or removed the image): old optimized variants no longer apply.
+                $this->deleteFeaturedImage($post);
+                $updateData['featured_image_meta'] = null;
             }
 
             // Handle slug if title changed
@@ -312,6 +269,45 @@ class BlogController extends Controller
                 'status' => false,
                 'message' => 'Failed to delete blog post',
             ], ApiJson::debugError($e)), 500);
+        }
+    }
+
+    /**
+     * Store an uploaded featured image as optimized WebP variants.
+     * Falls back to storing the original file when it cannot be decoded.
+     *
+     * @return array{0: string|null, 1: array|null} [public URL of the largest variant, meta]
+     */
+    private function storeFeaturedImage(Request $request): array
+    {
+        $file = $request->file('featured_image_file');
+        $baseUrl = $request->getScheme().'://'.$request->getHost()
+            .($request->getPort() && ! in_array($request->getPort(), [80, 443]) ? ':'.$request->getPort() : '');
+
+        try {
+            $meta = app(BlogImageOptimizer::class)->optimize($file);
+
+            return [$baseUrl.'/storage/'.$meta['path'], $meta];
+        } catch (Throwable $e) {
+            Log::warning('Blog image optimization failed, storing original', ['error' => $e->getMessage()]);
+        }
+
+        $extension = $file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg';
+        $imagePath = $file->storeAs(BlogImageOptimizer::DIRECTORY, time().'_'.uniqid().'.'.$extension, 'public');
+
+        return [$imagePath ? $baseUrl.'/storage/'.$imagePath : null, null];
+    }
+
+    /** Remove the post's stored featured image files (optimized variants and legacy originals). */
+    private function deleteFeaturedImage(BlogPost $post): void
+    {
+        app(BlogImageOptimizer::class)->delete($post->featured_image_meta);
+
+        if ($post->featured_image && str_contains($post->featured_image, '/storage/'.BlogImageOptimizer::DIRECTORY.'/')) {
+            $path = BlogImageOptimizer::DIRECTORY.'/'.basename(parse_url($post->featured_image, PHP_URL_PATH));
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
         }
     }
 }

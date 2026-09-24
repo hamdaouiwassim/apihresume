@@ -30,8 +30,6 @@ use App\Http\Controllers\LinkedInResumeImportController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PricingRegionController;
 use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\Recruiter\ResumeController as RecruiterResumeController;
-use App\Http\Controllers\Recruiter\TemplateProposalController as RecruiterTemplateProposalController;
 use App\Http\Controllers\ResumeCollaboratorController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\ReviewController;
@@ -223,10 +221,4 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::patch('/ai-usage/users/{user}/token-limit', [AiUsageController::class, 'updateUserTokenLimit']);
 });
 
-// Recruiter routes
-Route::middleware(['auth:sanctum', 'not.banned', 'verified', 'track.activity', 'recruiter', 'throttle:api-authenticated'])->prefix('recruiter')->group(function () {
-    Route::get('/resumes', [RecruiterResumeController::class, 'index']);
-    Route::get('/resumes/{resume}', [RecruiterResumeController::class, 'show']);
-    Route::get('/templates/proposals', [RecruiterTemplateProposalController::class, 'index']);
-    Route::post('/templates/proposals', [RecruiterTemplateProposalController::class, 'store']);
-});
+// Recruiter routes removed: the recruiter role is disabled for now (controllers kept in app/Http/Controllers/Recruiter).

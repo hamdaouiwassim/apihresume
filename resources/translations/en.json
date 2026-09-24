@@ -1,0 +1,1309 @@
+{
+    "common": {
+        "update": "Update",
+        "save": "Save",
+        "creatingResume": "Creating Resume...",
+        "startEditingResume": "Start Editing Resume",
+        "appName": "CV Builder",
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "required": "This field is required",
+        "edit": "Edit",
+        "delete": "Delete",
+        "download": "Download",
+        "templateApplied": "Template applied!"
+    },
+    "share": {
+        "button": "Share",
+        "buttonTitle": "Share CV",
+        "modalTitle": "Share Your CV",
+        "description": "Generate a secure temporary link to share your CV with others. The link will expire after the selected number of days.",
+        "expiresLabel": "Link expires in (days)",
+        "days": {
+            "1": "1 day",
+            "7": "7 days",
+            "30": "30 days",
+            "90": "90 days",
+            "365": "1 year"
+        },
+        "generate": "Generate Shareable Link",
+        "generating": "Generating...",
+        "shareableLink": "Shareable Link",
+        "expires": "Expires",
+        "open": "Open Link",
+        "copy": "Copy link",
+        "copied": "Copied!",
+        "deactivate": "Deactivate Link",
+        "deactivating": "Deactivating...",
+        "newLink": "Generate New Link",
+        "close": "Close",
+        "successGenerate": "Shareable link generated successfully!",
+        "successDeactivate": "Shareable link deactivated",
+        "copySuccess": "Link copied to clipboard!",
+        "copyError": "Failed to copy link",
+        "generateError": "Failed to generate shareable link",
+        "deactivateError": "Failed to deactivate link"
+    },
+    "certificates": {
+        "title": "Certificates",
+        "add": "Add Certificate",
+        "remove": "Remove",
+        "name": "Certificate Name",
+        "namePlaceholder": "e.g., AWS Certified Solutions Architect",
+        "issuer": "Issuing Organization",
+        "issuerPlaceholder": "e.g., Amazon Web Services",
+        "issueDate": "Issue Date",
+        "expiryDate": "Expiry Date",
+        "credentialId": "Credential ID",
+        "credentialIdPlaceholder": "e.g., ABC123XYZ",
+        "credentialURL": "Credential URL",
+        "credentialURLPlaceholder": "https://..."
+    },
+    "resumes": {
+        "title": "My Resumes",
+        "createNew": "Create New Resume",
+        "noResumes": "No Resumes Yet",
+        "noResumesDesc": "Create your first resume using our professional templates",
+        "createFirst": "Create Your First Resume",
+        "template": "Template",
+        "lastModified": "Last Modified",
+        "freeLimitReached": "Free plan includes one resume. Upgrade to Pro to create more.",
+        "upgradeToCreate": "Upgrade to Pro",
+        "usageLabel": "{{count}} of {{limit}} resume used"
+    },
+    "templates": {
+        "title": "Choose a Template",
+        "subtitle": "Select from our collection of professional templates to start creating your resume",
+        "allCategories": "All",
+        "corporate": "Corporate",
+        "creative": "Creative",
+        "simple": "Simple",
+        "preview": "Preview",
+        "useTemplate": "Use Template"
+    },
+    "resumeTemplates": {
+        "badge": "Professional Templates",
+        "title": "Resume Templates",
+        "subtitle": "Choose from our collection of professional, ATS-friendly resume templates",
+        "currentStatus": {
+            "title": "Current Template Availability",
+            "message": "At the moment, we offer 1 ATS-friendly template designed to help your resume pass through Applicant Tracking Systems. We're working hard to expand our collection with more professional templates in the near future.",
+            "comingSoon": "More templates coming soon!"
+        },
+        "features": {
+            "ats": {
+                "title": "ATS-Friendly",
+                "description": "Optimized to pass through Applicant Tracking Systems used by most employers"
+            },
+            "professional": {
+                "title": "Professional Design",
+                "description": "Clean, modern layouts that make a great first impression"
+            },
+            "customizable": {
+                "title": "Fully Customizable",
+                "description": "Easily customize colors, fonts, and layout to match your style"
+            }
+        },
+        "preview": {
+            "title": "Our Current Template",
+            "description": "Our ATS-friendly template is designed to help your resume stand out while ensuring it can be properly parsed by automated systems.",
+            "templateName": "ATS-Friendly Professional Template",
+            "templateDescription": "A clean, professional template optimized for both human readers and ATS systems",
+            "tags": {
+                "ats": "ATS-Friendly",
+                "professional": "Professional",
+                "modern": "Modern"
+            },
+            "cta": "Get Started Free"
+        },
+        "future": {
+            "title": "More Templates Coming Soon",
+            "description": "We're continuously working on expanding our template collection. In the future, you'll be able to choose from a variety of styles including:",
+            "types": {
+                "corporate": "Corporate",
+                "corporateDesc": "Traditional and professional designs for corporate environments",
+                "creative": "Creative",
+                "creativeDesc": "Bold and unique designs for creative professionals",
+                "minimal": "Minimal",
+                "minimalDesc": "Clean and simple designs that focus on content"
+            },
+            "footer": "Stay tuned for updates! We'll notify you when new templates are available.",
+            "cta": "Create your free account to be notified"
+        }
+    },
+    "welcome": {
+        "title": "A CV recruiters actually read — in one sitting",
+        "subtitle": "ATS-friendly CVs, cover letters, and employment certificates—templates, live preview, and PDF export. Free to start in under a minute.",
+        "heroTitleCompact": "Interview-ready CV, fast",
+        "heroSubtitleCompact": "CV, cover letter, work certificate — free to start.",
+        "heroBadge": "Professional CV Builder",
+        "getStarted": "Create your CV now — it's free",
+        "guestStartCta": "Start without an account",
+        "login": "Login",
+        "register": "Register",
+        "freeDescription": "Totally free service — no subscriptions, no hidden fees, no credit card required.",
+        "outcomePromise": "Get interview-ready CV in 60s",
+        "walkthrough": {
+            "badge": "Product walkthrough",
+            "title": "See how your CV improves in minutes",
+            "subtitle": "Watch the exact flow: choose a template, tailor with AI, check ATS feedback, and export with one click.",
+            "cta": "Try the flow now",
+            "videoTitle": "HResume walkthrough",
+            "videoPlaceholder": "Walkthrough video coming soon. Set VITE_WALKTHROUGH_VIDEO_URL to a YouTube watch or embed URL to show it here."
+        },
+        "transformation": {
+            "badge": "Real transformations",
+            "title": "Before and after examples",
+            "subtitle": "Users keep control while AI sharpens impact and ATS coverage.",
+            "enhanceWithAi": "Enhance with AI",
+            "enhanceHint": "Click the button to simulate AI rewriting this line of text.",
+            "originalLabel": "Original text",
+            "enhancingLabel": "Enhancing with AI…",
+            "enhancedLabel": "Enhanced text",
+            "beforeLabel": "Before",
+            "afterLabel": "After",
+            "examples": [
+                {
+                    "role": "Frontend developer",
+                    "before": "Built dashboard and fixed bugs.",
+                    "after": "Built a React dashboard used by 40+ sales reps, cut reporting time by 35%, and resolved 120+ production bugs with automated regression checks."
+                },
+                {
+                    "role": "Operations analyst",
+                    "before": "Handled inventory reports and team coordination.",
+                    "after": "Automated weekly inventory reporting across 5 warehouses, reduced stockout incidents by 22%, and coordinated cross-team planning for peak seasons."
+                }
+            ]
+        },
+        "trust": {
+            "free": "Free to use",
+            "noCard": "No credit card",
+            "instant": "Instant download"
+        },
+        "trustProof": {
+            "testimonialsTitle": "Testimonials",
+            "testimonialsText": "Rated highly by candidates and recruiters for speed, clarity, and ease of use.",
+            "pricingTitle": "Transparent pricing",
+            "pricingText": "Free to start, optional Pro when you want unlimited AI and full ATS insights.",
+            "privacyTitle": "Privacy first",
+            "privacyText": "You control what is public. Private resumes stay private unless you choose to share.",
+            "pricingLink": "See plans"
+        },
+        "templates": {
+            "title": "Professional Templates",
+            "subtitle": "Choose from our collection of professionally designed resume templates",
+            "more": "And many more templates available",
+            "cta": "Choose Your Template"
+        },
+        "stats": {
+            "candidates": "Candidates",
+            "resumes": "Resumes Created"
+        },
+        "suite": {
+            "badge": "Complete your application",
+            "title": "More than a resume",
+            "subtitle": "Build your CV, cover letter, and employment certificate in one place—free to start with a single account.",
+            "heroLine": "Also create professional cover letters and work certificates in the same app.",
+            "resume": {
+                "shortTitle": "Resume",
+                "title": "Professional resume",
+                "description": "ATS-friendly templates, live preview, AI polish, and one-click PDF export.",
+                "cta": "Start your CV",
+                "note": "No account required to try"
+            },
+            "coverLetter": {
+                "shortTitle": "Cover letters",
+                "title": "Cover letter builder",
+                "description": "Write tailored letters that match your CV—edit, save, and export when you're ready.",
+                "cta": "Explore cover letters",
+                "note": "Free account required"
+            },
+            "workCertificate": {
+                "shortTitle": "Work certificates",
+                "title": "Employment certificate",
+                "description": "Generate attestation-style work certificates for HR files or job applications, then download PDF.",
+                "cta": "Explore work certificates",
+                "note": "Free account required"
+            }
+        },
+        "features": {
+            "title": "Features",
+            "subtitle": "Solid editing tools plus AI that helps you sharpen bullets, target roles, and pass ATS screening.",
+            "aiBadge": "AI-assisted",
+            "easy": "Easy to Use",
+            "easyDesc": "Simple and intuitive interface for creating professional CVs.",
+            "easyAi": "Get wording suggestions while you edit your experience.",
+            "professional": "Professional Templates",
+            "professionalDesc": "Choose from a variety of professionally designed templates.",
+            "professionalAi": "Match tone and structure hints to the role you're applying for.",
+            "ats": "ATS Friendly",
+            "atsDesc": "Optimized for Applicant Tracking Systems to improve your chances.",
+            "atsAi": "AI highlights keyword gaps against typical ATS scans.",
+            "export": "Export to PDF",
+            "exportDesc": "Download your CV in PDF format, ready to be shared.",
+            "exportAi": "Polish final copy before you download a print-ready PDF.",
+            "multilingual": "Multiple Languages",
+            "multilingualDesc": "Create your CV in different languages to reach a global audience.",
+            "multilingualAi": "Translate and adapt sections with context-aware help.",
+            "smartAiTitle": "Smart AI writing",
+            "smartAiDesc": "Enhance descriptions, tailor bullets to job posts, and run ATS checks—all in the editor, within your plan limits.",
+            "smartAiHint": "Free accounts get monthly AI credits; Pro unlocks unlimited AI and full ATS insights."
+        },
+        "reviews": {
+            "title": "What Our Users Say",
+            "subtitle": "Don't just take our word for it. See what our users have to say about their experience with HResume.",
+            "verifiedUser": "Verified User",
+            "ctaText": "Share your experience with HResume",
+            "ctaButton": "Leave a Review"
+        },
+        "finalCta": {
+            "title": "Ready to create your professional resume?",
+            "subtitle": "Join thousands of professionals who trust our platform",
+            "freeNote": "Our service is 100% free forever.",
+            "candidate": "Candidate signup"
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Welcome Back",
+            "subtitle": "Login to your account",
+            "email": "Email Address",
+            "password": "Password",
+            "rememberMe": "Remember me",
+            "forgotPassword": "Forgot Password?",
+            "noAccount": "Don't have an account?",
+            "register": "Register here",
+            "submit": "Login"
+        },
+        "register": {
+            "title": "Create Account",
+            "subtitle": "Start building your professional CV",
+            "name": "Full Name",
+            "email": "Email Address",
+            "password": "Password",
+            "confirmPassword": "Confirm Password",
+            "hasAccount": "Already have an account?",
+            "login": "Login here",
+            "submit": "Register",
+            "terms": "I agree to the Terms and Conditions"
+        }
+    },
+    "nav": {
+        "preview": "CV Preview",
+        "download": "Download PDF",
+        "myResumes": "My Resumes",
+        "myCoverLetters": "Cover Letters",
+        "workCertification": "Work certification",
+        "templates": "Templates",
+        "profile": "Profile",
+        "review": "Leave a Review",
+        "settings": "Settings",
+        "logout": "Logout",
+        "fullPage": "Full Page",
+        "adminPanel": "Admin Panel",
+        "recruiterHub": "Recruiter Hub"
+    },
+    "customisePdf": {
+        "title": "Customise PDF",
+        "button": "PDF Style",
+        "description": "Customise the font and size used when generating your PDF resume.",
+        "fontFamily": "Font Family",
+        "fontSize": "Font Size",
+        "preview": "Preview",
+        "save": "Save Settings",
+        "saved": "PDF settings saved!",
+        "error": "Failed to save PDF settings."
+    },
+    "preview": {
+        "professionalSummary": "Professional Summary",
+        "workExperience": "Work Experience",
+        "education": "Education",
+        "skills": "Skills",
+        "interests": "Interests",
+        "certifications": "Certifications",
+        "languages": "Languages",
+        "projects": "Projects",
+        "present": "Present",
+        "graduated": "Graduated",
+        "fullPageView": "Full Page View",
+        "professionalTitle": "Professional Title",
+        "yourName": "Your Name",
+        "editorStepsTitle": "Build your CV",
+        "editorStepsHint": "Use the steps to jump to a section. The preview updates as you edit.",
+        "livePreviewBadge": "Live preview",
+        "wizardTitle": "CV builder flow",
+        "wizardPhaseProfile": "Profile",
+        "wizardPhaseExperience": "Experience & education",
+        "wizardPhaseAi": "AI improve",
+        "wizardPhaseAts": "ATS review",
+        "wizardPhaseExport": "Preview & export",
+        "wizardHintProfile": "Fill in your details, social links, and professional summary.",
+        "wizardHintExperience": "Add work history and education. Use “Enhance with IA” on longer text (Pro).",
+        "wizardHintAi": "Polish text with Enhance with IA under text areas, and use Job Target for tailored ideas (Pro).",
+        "wizardHintAts": "Use ATS Analysis in the preview toolbar for scores and keyword tips (Pro).",
+        "wizardHintExport": "Use the preview toolbar to download PDF, share, or open your public website.",
+        "wizardPrev": "Previous",
+        "wizardNext": "Next",
+        "wizardAnalyzing": "Analyzing…"
+    },
+    "personal": {
+        "title": "Basic Information",
+        "fullName": "Full Name",
+        "fullNameHint": "How you want to be addressed",
+        "fullNamePlaceholder": "e.g., John Doe",
+        "jobTitle": "Professional Title",
+        "jobTitleHint": "Your current or desired role",
+        "jobTitlePlaceholder": "e.g., Senior Software Engineer",
+        "email": "Email Address",
+        "emailHint": "Professional email preferred",
+        "emailPlaceholder": "e.g., john.doe@company.com",
+        "phone": "Phone Number",
+        "phoneHint": "Include country code",
+        "phonePlaceholder": "e.g., +1 (555) 000-0000",
+        "location": "Location",
+        "locationHint": "City, Country",
+        "locationPlaceholder": "e.g., San Francisco, United States",
+        "summary": "Professional Summary",
+        "summaryHint": "Brief overview of your career",
+        "summaryPlaceholder": "Write a brief professional summary..."
+    },
+    "experience": {
+        "title": "Experience",
+        "company": "Company Name",
+        "companyHint": "Where you worked",
+        "companyPlaceholder": "e.g., Google, Inc.",
+        "position": "Position",
+        "positionHint": "Your role at the company",
+        "positionPlaceholder": "e.g., Senior Software Engineer",
+        "startDate": "Start Date",
+        "startDateHint": "When you joined",
+        "endDate": "End Date",
+        "endDateHint": "Leave empty if current",
+        "description": "Key Achievements",
+        "descriptionHint": "Use bullet points for better readability",
+        "descriptionPlaceholder": "• Developed and launched feature X that increased user engagement by Y%\n• Led a team of X developers to deliver project Y ahead of schedule\n• Reduced system response time by X% through optimization",
+        "addButton": "Add Experience",
+        "removeButton": "Remove"
+    },
+    "education": {
+        "title": "Education",
+        "school": "School/University",
+        "schoolHint": "Where you studied",
+        "schoolPlaceholder": "e.g., Stanford University",
+        "degree": "Degree",
+        "degreeHint": "Type of degree earned",
+        "degreePlaceholder": "e.g., Bachelor of Science",
+        "field": "Field of Study",
+        "fieldHint": "Your major or specialization",
+        "fieldPlaceholder": "e.g., Computer Science",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "description": "Notable Achievements",
+        "descriptionHint": "Relevant coursework, honors, etc.",
+        "addButton": "Add Education",
+        "removeButton": "Remove"
+    },
+    "skills": {
+        "title": "Skills",
+        "name": "Skill Name",
+        "nameHint": "Add a relevant skill",
+        "namePlaceholder": "e.g., JavaScript, Project Management",
+        "level": "Proficiency Level",
+        "levelHint": "How skilled are you?",
+        "category": "Category",
+        "categoryHint": "Group similar skills",
+        "categoryPlaceholder": "e.g., Programming, Soft Skills",
+        "addButton": "Add Skill",
+        "removeButton": "Remove",
+        "levels": {
+            "beginner": "Beginner",
+            "intermediate": "Intermediate",
+            "advanced": "Advanced",
+            "expert": "Expert"
+        }
+    },
+    "hobbies": {
+        "title": "Hobbies & Interests",
+        "name": "Hobby/Interest",
+        "nameHint": "What you enjoy doing",
+        "namePlaceholder": "e.g., Photography, Chess",
+        "description": "Description",
+        "descriptionHint": "Brief explanation of your interest",
+        "descriptionPlaceholder": "Tell us more about your hobby...",
+        "addButton": "Add Hobby",
+        "removeButton": "Remove"
+    },
+    "buttons": {
+        "save": "Save Changes"
+    },
+    "dashboard": {
+        "sections": {
+            "personalInfo": {
+                "title": "Personal Information",
+                "fullName": "Full Name",
+                "fullNamePlaceholder": "John Doe",
+                "fullNameHint": "How you want to be addressed",
+                "jobTitle": "Professional Title",
+                "jobTitlePlaceholder": "Senior Software Engineer",
+                "jobTitleHint": "Your current or desired role",
+                "email": "Email Address",
+                "emailPlaceholder": "e.g.,hamdaouiwassim@gmail.com",
+                "emailHint": "Professional email preferred",
+                "phone": "Phone Number",
+                "phonePlaceholder": "e.g., +1 (555) 000-0000",
+                "phoneHint": "Include country code",
+                "location": "Location",
+                "locationPlaceholder": "e.g., San Francisco, United States",
+                "locationHint": "City, Country",
+                "summary": "Professional Summary",
+                "summaryPlaceholder": "Write a brief professional summary...",
+                "summaryHint": "Brief overview of your career",
+                "showPhotoOnCv": "Show photo on CV"
+            },
+            "experiences": {
+                "title": "Professional experiences",
+                "addExperience": "Add Experience",
+                "experience": {
+                    "title": "Professional Experience",
+                    "company": "Company Name",
+                    "companyHint": "Where you worked",
+                    "companyPlaceholder": "e.g., Google, Inc.",
+                    "position": "Position",
+                    "positionHint": "Your role at the company",
+                    "positionPlaceholder": "e.g., Senior Software Engineer",
+                    "startDate": "Start Date",
+                    "startDateHint": "When you joined",
+                    "endDate": "End Date",
+                    "endDateHint": "Leave empty if current",
+                    "isPresent": "This is my current position",
+                    "description": "Key Achievements",
+                    "descriptionHint": "Use bullet points for better readability",
+                    "descriptionPlaceholder": "• Developed and launched feature X that increased user engagement by Y%\n• Led a team of X developers to deliver project Y ahead of schedule\n• Reduced system response time by X% through optimization",
+                    "addButton": "Add Experience"
+                }
+            },
+            "educations": {
+                "title": "Educations",
+                "addEducation": "Add Education",
+                "education": {
+                    "institution": "institution",
+                    "institutionHint": "Votre Etablisement",
+                    "institutionPlaceholder": "Votre Etablisement",
+                    "degree": "Diplôme",
+                    "degreeHint": "Type de diplôme obtenu",
+                    "degreePlaceholder": "ex., Master",
+                    "startDate": "Date de Début",
+                    "startDateHint": "Quand vous avez commencé",
+                    "endDate": "Date de Fin",
+                    "endDateHint": "Laisser vide si poste actuel"
+                }
+            },
+            "skills": {
+                "title": "Skills",
+                "addSkill": "Add Skill",
+                "skill": {
+                    "title": "Skill",
+                    "name": "Skill Name",
+                    "nameHint": "Add a relevant skill",
+                    "namePlaceholder": "e.g., JavaScript, Project Management",
+                    "proficiency": "Proficiency Level",
+                    "proficiencyHint": "How skilled are you?",
+                    "selectProficiency": "Select Proficiency",
+                    "beginner": "Beginner",
+                    "intermediate": "Intermediate",
+                    "advanced": "Advanced",
+                    "expert": "Expert"
+                }
+            },
+            "hobbies": {
+                "title": "Hobbies & Interests",
+                "addHobby": "Add Hobby",
+                "hobby": {
+                    "title": "Hobby",
+                    "name": "Hobby Name",
+                    "nameHint": "Add a hobby or interest",
+                    "namePlaceholder": "e.g., Photography, Reading, Travel"
+                }
+            },
+            "certificates": {
+                "title": "Certificates",
+                "addCertificate": "Add Certificate",
+                "certificate": {
+                    "title": "Certificate",
+                    "name": "Certificate Name",
+                    "nameHint": "Name of the certificate",
+                    "namePlaceholder": "e.g., AWS Certified Solutions Architect",
+                    "issuer": "Issuing Organization",
+                    "issuerHint": "Organization that issued the certificate",
+                    "issuerPlaceholder": "e.g., Amazon Web Services",
+                    "dateObtained": "Date Obtained",
+                    "dateObtainedHint": "When you received the certificate"
+                }
+            },
+            "languages": {
+                "title": "Languages",
+                "addLanguage": "Add Language",
+                "language": {
+                    "title": "Language",
+                    "language": "Language Name",
+                    "languageHint": "Language you speak",
+                    "languagePlaceholder": "e.g., English, French, Spanish",
+                    "proficiency": "Proficiency Level",
+                    "proficiencyHint": "Your level of proficiency",
+                    "selectProficiency": "Select Proficiency",
+                    "native": "Native",
+                    "fluent": "Fluent",
+                    "intermediate": "Intermediate",
+                    "basic": "Basic"
+                }
+            },
+            "projects": {
+                "title": "Projects",
+                "addProject": "Add Project",
+                "project": {
+                    "title": "Project",
+                    "name": "Project Name",
+                    "underExperience": "Under experience",
+                    "nameHint": "Name of your project",
+                    "namePlaceholder": "e.g., E-commerce Website, Mobile App",
+                    "description": "Project Description",
+                    "descriptionHint": "Describe what the project does and your role",
+                    "descriptionPlaceholder": "• Built a full-stack e-commerce platform with React and Node.js\n• Implemented payment gateway integration\n• Achieved 40% increase in user engagement",
+                    "technologies": "Technologies Used",
+                    "technologiesHint": "Technologies, frameworks, or tools used",
+                    "technologiesPlaceholder": "e.g., React, Node.js, MongoDB, AWS",
+                    "url": "Project URL",
+                    "urlHint": "Link to live project or repository",
+                    "urlPlaceholder": "https://example.com or https://github.com/username/project",
+                    "startDate": "Start Date",
+                    "startDateHint": "When you started the project",
+                    "endDate": "End Date",
+                    "endDateHint": "When the project was completed (leave empty if ongoing)",
+                    "githubRepoLabel": "Import from GitHub",
+                    "githubRepoHint": "Paste a repository URL or owner/repo to pre-fill this project. Public repos work without login; private repos need GitHub connected (Profile) or a server GITHUB_TOKEN.",
+                    "githubRepoPlaceholder": "https://github.com/owner/repo or owner/repo",
+                    "githubImportButton": "Fill from GitHub",
+                    "githubImportSuccess": "Project fields updated from GitHub. Review and save.",
+                    "githubImportError": "Could not load this repository from GitHub.",
+                    "githubConnectFromEditor": "Connect GitHub",
+                    "githubConnectHintShort": "for private repositories",
+                    "githubConnectUnavailable": "GitHub connection is not configured on this server.",
+                    "githubRepoRequired": "Enter a GitHub repository URL first."
+                }
+            }
+        }
+    },
+    "createResume": {
+        "title": "Create your resume",
+        "pageBadge": "New resume",
+        "pageSubtitle": "Pick a name and template to get started.",
+        "nameSectionTitle": "Resume name",
+        "nameLabel": "Resume Name",
+        "namePlaceholder": "e.g., Product Designer 2026",
+        "templateLabel": "Choose your look",
+        "templatesBadge": "Templates",
+        "templateHint": "Each template is optimized for ATS scanners and recruiter readability.",
+        "searchPlaceholder": "Search template name or style",
+        "selectedTemplateLabel": "Selected template",
+        "heroHint": "This label appears on your dashboard only — not on the PDF.",
+        "suggestionsLabel": "Quick names",
+        "suggestionsHint": "Tap to use a suggestion:",
+        "suggestionsEmpty": "Select a template below for ideas",
+        "noTemplatesTitle": "No templates match your filters",
+        "noTemplatesSubtitle": "Try clearing the filters or searching for another keyword.",
+        "atsFriendly": "ATS-Ready",
+        "pickTemplateHint": "Select a template to continue",
+        "enterNameHint": "Enter a resume name to continue",
+        "readyHint": "Ready to open the editor",
+        "subtitle": "Fill in the details to build your professional resume",
+        "personalInfo": "Personal Information",
+        "socialMedia": "Social Media",
+        "experience": "Experience",
+        "education": "Education",
+        "skills": "Skills",
+        "hobbies": "Hobbies & Interests",
+        "certificates": "Certificates",
+        "saveButton": "Save Resume",
+        "previewButton": "Preview Resume",
+        "validationError": "Please choose a template and enter a resume name.",
+        "creationError": "Something went wrong. Please try again.",
+        "limitReached": "Free plan includes one resume. Upgrade to Pro to create more.",
+        "guestBanner": "Pick a template and name your resume without signing in. When you continue, we will save your choices and create the resume after you register or log in.",
+        "guestFinalButton": "Continue to sign up",
+        "guestDraftSavedToast": "Your choices are saved. Create an account to open your resume.",
+        "guestHasAccount": "Already have an account?",
+        "guestLoginLink": "Log in"
+    },
+    "profile": {
+        "title": "Profile Settings",
+        "subtitle": "Manage your account information and preferences",
+        "avatar": {
+            "changeTooltip": "Change avatar",
+            "changeCta": "Change Profile Picture",
+            "nameFallback": "Your Name"
+        },
+        "fields": {
+            "name": {
+                "label": "Full Name",
+                "placeholder": "Enter your full name"
+            },
+            "email": {
+                "label": "Email Address",
+                "placeholder": "Enter your email"
+            }
+        },
+        "password": {
+            "sectionTitle": "Change Password",
+            "helper": "Leave blank if you don't want to change your password",
+            "newLabel": "New Password",
+            "newPlaceholder": "Enter new password",
+            "confirmLabel": "Confirm New Password",
+            "confirmPlaceholder": "Confirm new password"
+        },
+        "status": {
+            "unsaved": "You have unsaved changes"
+        },
+        "buttons": {
+            "save": "Save Changes",
+            "saving": "Saving..."
+        },
+        "notifications": {
+            "loadError": "Failed to load profile",
+            "invalidFileType": "Please select an image file",
+            "fileTooLarge": "Image size should be less than 5MB",
+            "updateSuccess": "Profile updated successfully!",
+            "updateError": "Failed to update profile"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Please enter a valid email address",
+            "passwordLength": "Password must be at least 8 characters",
+            "passwordMismatch": "Passwords do not match"
+        },
+        "githubImport": {
+            "title": "GitHub (resume projects)",
+            "description": "Connect GitHub to import project details from private repositories you can access. Uses the broad \"repo\" scope — you can disconnect anytime.",
+            "connectedAs": "Connected as",
+            "connect": "Connect GitHub",
+            "disconnect": "Disconnect",
+            "connecting": "Redirecting…",
+            "disconnecting": "Disconnecting…",
+            "disconnectSuccess": "GitHub disconnected.",
+            "connectSuccess": "GitHub connected. You can import repositories you have access to.",
+            "connectError": "GitHub connection failed.",
+            "notConfigured": "GitHub connection is not available on this server."
+        }
+    },
+    "privacy": {
+        "title": "Privacy Policy",
+        "lastUpdated": "Last updated:",
+        "introduction": {
+            "title": "Introduction",
+            "content": "At HResume, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our resume builder service."
+        },
+        "informationWeCollect": {
+            "title": "Information We Collect",
+            "personalData": {
+                "title": "Personal Information",
+                "content": "We collect information that you provide directly to us, including your name, email address, phone number, and any other information you choose to include in your resume."
+            },
+            "usageData": {
+                "title": "Usage Data",
+                "content": "We automatically collect certain information about your device and how you interact with our service, including IP address, browser type, pages visited, and time spent on pages."
+            },
+            "cookies": {
+                "title": "Cookies and Tracking",
+                "content": "We use cookies and similar tracking technologies to enhance your experience, analyze usage patterns, and assist in our marketing efforts."
+            }
+        },
+        "howWeUse": {
+            "title": "How We Use Your Information",
+            "points": [
+                "To provide, maintain, and improve our resume builder service",
+                "To process your requests and transactions",
+                "To send you technical notices, updates, and support messages",
+                "To respond to your comments, questions, and requests",
+                "To monitor and analyze trends, usage, and activities",
+                "To detect, prevent, and address technical issues and security threats"
+            ]
+        },
+        "dataSharing": {
+            "title": "Data Sharing and Disclosure",
+            "intro": "We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:",
+            "circumstances": [
+                "With your explicit consent",
+                "To comply with legal obligations or respond to legal requests",
+                "To protect our rights, privacy, safety, or property",
+                "With service providers who assist us in operating our platform (under strict confidentiality agreements)"
+            ]
+        },
+        "dataSecurity": {
+            "title": "Data Security",
+            "content": "We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security."
+        },
+        "yourRights": {
+            "title": "Your Rights",
+            "intro": "You have the right to:",
+            "rights": [
+                "Access and receive a copy of your personal data",
+                "Rectify inaccurate or incomplete data",
+                "Request deletion of your personal data",
+                "Object to processing of your personal data",
+                "Request restriction of processing",
+                "Data portability (receive your data in a structured format)"
+            ]
+        },
+        "contact": {
+            "title": "Contact Us",
+            "content": "If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us at:",
+            "email": "Email: contact@hresume.pro"
+        },
+        "changes": {
+            "title": "Changes to This Privacy Policy",
+            "content": "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the 'Last updated' date. You are advised to review this Privacy Policy periodically for any changes."
+        }
+    },
+    "terms": {
+        "title": "Terms and Conditions",
+        "lastUpdated": "Last updated:",
+        "lastUpdatedDate": "May 2026",
+        "introduction": {
+            "title": "Agreement",
+            "content": "By accessing or using HResume (hresume.pro), you agree to these Terms and Conditions. If you do not agree, do not use the service. These terms apply to candidates, recruiters (where applicable), and visitors."
+        },
+        "service": {
+            "title": "The service",
+            "content": "HResume provides tools to create and manage resumes, cover letters, work certificates, and related career documents, including optional AI-assisted features and Pro subscriptions. We may update, suspend, or discontinue features with reasonable notice when possible."
+        },
+        "accounts": {
+            "title": "Accounts",
+            "points": [
+                "You must provide accurate registration information and keep your credentials secure.",
+                "You are responsible for activity under your account.",
+                "You must be at least 16 years old (or the minimum age required in your country) to use the service.",
+                "We may suspend or terminate accounts that violate these terms or pose a security risk."
+            ]
+        },
+        "acceptableUse": {
+            "title": "Acceptable use",
+            "intro": "You agree not to:",
+            "points": [
+                "Use the service for unlawful, fraudulent, or harmful purposes.",
+                "Upload content that infringes others' rights or contains malware.",
+                "Attempt to bypass security, quotas, or access controls (including Pro limits).",
+                "Scrape, reverse engineer, or overload our systems without permission.",
+                "Share account access in a way that violates your plan or these terms."
+            ]
+        },
+        "content": {
+            "title": "Your content",
+            "content": "You retain ownership of content you create (CV data, cover letters, etc.). You grant us a limited license to host, process, and display your content solely to operate the service (including backups, PDF export, and sharing features you enable). You are responsible for the accuracy and legality of what you publish via share links or public profiles."
+        },
+        "ai": {
+            "title": "AI features",
+            "content": "AI suggestions (enhance, job targeting, ATS scoring) are provided as-is for assistance only. They may be inaccurate or incomplete. You must review all output before use. Pro and free tiers are subject to usage limits described on our Pricing page."
+        },
+        "payments": {
+            "title": "Paid plans",
+            "content": "Pro subscriptions and pricing are described on our Pricing page. International payments may be processed by Paddle as merchant of record. Tunisia and other regions may use alternate upgrade paths as shown in the product. Refunds are governed by our Refund Policy."
+        },
+        "privacy": {
+            "title": "Privacy",
+            "content": "Our collection and use of personal data is described in our Privacy Policy. By using HResume, you also agree to that policy."
+        },
+        "disclaimer": {
+            "title": "Disclaimer",
+            "content": "The service is provided \"as is\" and \"as available\" without warranties of any kind, to the fullest extent permitted by law. We do not guarantee employment outcomes, interview success, or ATS acceptance by any employer."
+        },
+        "liability": {
+            "title": "Limitation of liability",
+            "content": "To the maximum extent permitted by law, HResume and its operators shall not be liable for indirect, incidental, special, or consequential damages, or for loss of profits, data, or opportunities arising from your use of the service. Our total liability for any claim related to the service shall not exceed the amount you paid us in the twelve (12) months before the claim, or fifty US dollars (USD 50) if you used only the free plan."
+        },
+        "termination": {
+            "title": "Termination",
+            "content": "You may stop using the service at any time and may request account deletion via contact@hresume.pro. We may terminate or restrict access for breach of these terms. Provisions that by nature should survive (liability limits, governing law, your content licenses for existing backups) survive termination."
+        },
+        "law": {
+            "title": "Governing law",
+            "content": "These terms are governed by the laws of Tunisia, without regard to conflict-of-law rules, except where mandatory consumer protection laws in your country require otherwise. Disputes should first be addressed by contacting us; courts in Tunisia may have jurisdiction where permitted by law."
+        },
+        "contact": {
+            "title": "Contact",
+            "content": "Questions about these terms:",
+            "formLink": "Contact form",
+            "privacyLink": "Privacy Policy",
+            "refundLink": "Refund Policy"
+        },
+        "changes": {
+            "title": "Changes",
+            "content": "We may update these Terms and Conditions. Material changes will be posted on this page with an updated date. Continued use after changes constitutes acceptance of the revised terms."
+        }
+    },
+    "refund": {
+        "title": "Refund Policy",
+        "lastUpdated": "Last updated:",
+        "lastUpdatedDate": "May 2026",
+        "introduction": {
+            "title": "Introduction",
+            "content": "This Refund Policy explains how refunds work for HResume Pro and related paid services. The HResume Free plan does not involve charges and is not eligible for refunds."
+        },
+        "eligibility": {
+            "title": "Refund eligibility",
+            "intro": "We want you to be satisfied with HResume Pro. Refunds may be available under the conditions below.",
+            "points": [
+                "First-time Pro subscription: you may request a full refund within 14 days of your initial payment if you have not substantially used Pro features (e.g. unlimited AI beyond a reasonable trial).",
+                "Billing errors or duplicate charges: contact us within 30 days and we will correct or refund the charge.",
+                "Renewals: subscription renewals are generally non-refundable except where required by law or at our discretion for exceptional cases."
+            ]
+        },
+        "howToRequest": {
+            "title": "How to request a refund",
+            "content": "To request a refund, email us from the address linked to your HResume account.",
+            "steps": [
+                "Send an email to contact@hresume.pro with the subject \"Refund request\".",
+                "Include your account email, payment date, and reason for the request.",
+                "We will review your request and respond within 5–10 business days."
+            ]
+        },
+        "nonRefundable": {
+            "title": "Non-refundable situations",
+            "points": [
+                "Free plan usage (no payment was made).",
+                "Pro access granted manually by our team without a charge.",
+                "Requests made more than 14 days after the initial Pro payment (except billing errors).",
+                "Account termination due to violation of our terms or abuse of the service."
+            ]
+        },
+        "cancellations": {
+            "title": "Cancellations",
+            "content": "You may cancel Pro at any time. Cancellation stops future renewals; you keep Pro until the end of the current billing period. Canceling does not automatically issue a refund for the current period unless eligible under this policy."
+        },
+        "paddle": {
+            "title": "International payments (Paddle)",
+            "content": "International Pro subscriptions are processed by Paddle as merchant of record. Refunds for eligible requests are issued through Paddle to your original payment method. Processing times depend on your bank or card issuer (typically 5–14 business days after approval)."
+        },
+        "contact": {
+            "title": "Contact us",
+            "content": "Questions about refunds or billing? We are happy to help.",
+            "formLink": "Contact form",
+            "pricingLink": "Pricing"
+        },
+        "changes": {
+            "title": "Changes to this policy",
+            "content": "We may update this Refund Policy from time to time. Changes are effective when posted on this page with an updated date."
+        }
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Find answers to common questions about our resume builder service",
+        "noQuestions": "No questions available at the moment.",
+        "contact": {
+            "title": "Still have questions?",
+            "content": "If you can't find the answer you're looking for, feel free to reach out to our support team.",
+            "email": "Email: support@hresume.com"
+        },
+        "questions": [
+            {
+                "question": "Is HResume really free?",
+                "answer": "Yes! HResume is completely free to use. There are no hidden fees, no subscriptions, and no credit card required. You can create, edit, and download as many resumes as you want without any cost."
+            },
+            {
+                "question": "How do I create a resume?",
+                "answer": "Creating a resume is easy! Simply sign up for a free account, choose a professional template, and start filling in your information. You can add your work experience, education, skills, and more. The interface is intuitive and guides you through each step."
+            },
+            {
+                "question": "Can I download my resume as a PDF?",
+                "answer": "Absolutely! Once you've completed your resume, you can download it as a high-quality PDF file. The PDF is formatted professionally and ready to share with employers or upload to job boards."
+            },
+            {
+                "question": "Are the resume templates ATS-friendly?",
+                "answer": "Yes, our resume templates are designed to be ATS (Applicant Tracking System) friendly. This means they are optimized to be easily read and parsed by automated recruitment systems, increasing your chances of getting noticed by employers."
+            },
+            {
+                "question": "Can I edit my resume after creating it?",
+                "answer": "Yes, you can edit your resume at any time. Simply log in to your account, select the resume you want to edit, and make your changes. All your data is saved automatically, so you can update your resume whenever needed."
+            },
+            {
+                "question": "How do I share my resume with others?",
+                "answer": "You can share your resume in two ways: 1) Download the PDF and send it via email or messaging apps, or 2) Use our secure sharing feature to generate a temporary link that you can share with recruiters or employers. The link can be set to expire after a specified number of days for added security."
+            },
+            {
+                "question": "Is my data secure?",
+                "answer": "We take your privacy and data security seriously. Your personal information is encrypted and stored securely. We never share your data with third parties, and you can delete your account and all associated data at any time. For more details, please review our Privacy Policy."
+            },
+            {
+                "question": "Can I create multiple resumes?",
+                "answer": "Yes! You can create as many resumes as you need. This is especially useful if you're applying for different types of jobs and want to tailor your resume for each position. Each resume is saved separately in your account."
+            },
+            {
+                "question": "What languages are supported?",
+                "answer": "Currently, HResume supports English and French. You can switch between languages at any time, and all interface elements, including section labels and buttons, will be translated accordingly."
+            },
+            {
+                "question": "Do I need to create an account?",
+                "answer": "Yes, creating a free account is required to save and manage your resumes. However, the registration process is quick and simple - just provide your name, email, and create a password. No credit card or payment information is needed."
+            },
+            {
+                "question": "Can recruiters use HResume?",
+                "answer": "Yes! HResume offers a dedicated Recruiter Hub where recruiters can browse resumes, use advanced filters, share secure links with hiring managers, and collaborate with their team. Recruiters can also submit template proposals for approval."
+            },
+            {
+                "question": "What if I need help or have a question?",
+                "answer": "If you need assistance, you can reach out to our support team at contact@hresume.pro. We're here to help and typically respond within 24-48 hours. You can also check this FAQ page for answers to common questions."
+            }
+        ]
+    },
+    "contact": {
+        "title": "Contact Us",
+        "subtitle": "Have a question or need help? We're here to assist you. Send us a message and we'll get back to you as soon as possible.",
+        "info": {
+            "title": "Get in Touch",
+            "emailLabel": "Email",
+            "email": "contact@hresume.pro",
+            "phoneLabel": "Phone",
+            "phone": "+216 92 045 389",
+            "addressLabel": "Address",
+            "address": "Skanes, Monastir - Tunisia",
+            "responseTime": "We typically respond within 24-48 hours during business days."
+        },
+        "form": {
+            "title": "Send us a Message",
+            "nameLabel": "Name",
+            "namePlaceholder": "Your full name",
+            "emailLabel": "Email",
+            "emailPlaceholder": "your.email@example.com",
+            "subjectLabel": "Subject",
+            "subjectPlaceholder": "What is this regarding?",
+            "messageLabel": "Message",
+            "messagePlaceholder": "Tell us how we can help you...",
+            "submitButton": "Send Message",
+            "submitting": "Sending...",
+            "successMessage": "Thank you! Your message has been sent successfully. We'll get back to you soon.",
+            "errorMessage": "Oops! Something went wrong. Please try again later."
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Please enter a valid email address",
+            "subjectRequired": "Subject is required",
+            "messageRequired": "Message is required",
+            "messageMinLength": "Message must be at least 10 characters"
+        }
+    },
+    "pricing": {
+        "title": "Transparent Pricing",
+        "subtitle": "Choose the plan that matches your goals. Upgrade to Pro to unlock AI enhancement features.",
+        "badge": "Simple Plans",
+        "heroCta": "Create Free Account",
+        "freePlan": {
+            "name": "HResume Free",
+            "price": "$0",
+            "per": "per month",
+            "description": "Build resumes and export PDFs with essential tools.",
+            "features": [
+                "1 resume (create another after upgrading to Pro)",
+                "All standard templates",
+                "5 AI text enhancements / month",
+                "1 job-targeting (tailor) run / month",
+                "3 ATS checks / month (lite insights)",
+                "Cover letters & work certificates",
+                "PDF export, share links & public profile",
+                "Collaboration (verified email required to invite)"
+            ],
+            "button": "Start for Free"
+        },
+        "regionNoteTunisia": "Prices shown in Tunisian dinars (TND) for visitors in Tunisia.",
+        "regionNoteInternational": "Prices shown in US dollars for international visitors.",
+        "proPlan": {
+            "name": "HResume Pro",
+            "price": "$5",
+            "per": "per month",
+            "description": "Unlock AI-powered writing tools and premium productivity features.",
+            "features": [
+                "Unlimited resumes",
+                "Unlimited AI enhance, job targeting & ATS",
+                "Full ATS keyword gaps & recommendations",
+                "Cover letters & work certificates (same as Free)",
+                "GitHub project import (when enabled)",
+                "Priority AI processing",
+                "Email support"
+            ],
+            "button": "Upgrade to Pro",
+            "buttonLoading": "Redirecting to checkout…",
+            "loginToUpgrade": "Sign in to upgrade",
+            "alreadyPro": "You are on Pro",
+            "checkoutError": "Could not start checkout. Try again or contact support.",
+            "billingUnavailable": "Online checkout is not configured yet. Contact support to upgrade.",
+            "tunisiaUpgradeNote": "Online Pro checkout is for international customers. In Tunisia, contact us to upgrade.",
+            "tunisiaContactCta": "Contact us for Pro"
+        },
+        "success": {
+            "title": "Welcome to Pro!",
+            "subtitle": "Your subscription is active. Unlimited resumes and AI are now unlocked.",
+            "pending": "We are confirming your payment…",
+            "error": "We could not confirm your payment. If you were charged, contact support with your receipt.",
+            "goToResumes": "Go to my resumes",
+            "goToPricing": "Back to pricing"
+        },
+        "note": {
+            "title": "Why Pro?",
+            "description": "Free is built for one strong CV and a monthly taste of AI. Pro is for active job searches: unlimited resumes, unlimited AI, and full ATS insights. Cancel anytime from your Paddle account (when billing is enabled).",
+            "refundLink": "Refund policy"
+        }
+    },
+    "review": {
+        "title": "Share Your Experience",
+        "subtitle": "Your feedback helps us improve and helps others discover HResume. We'd love to hear about your experience!",
+        "ratingLabel": "How would you rate your experience?",
+        "titleLabel": "Review Title",
+        "titlePlaceholder": "e.g., Great platform for creating resumes",
+        "commentLabel": "Your Review",
+        "commentPlaceholder": "Tell us about your experience with HResume. What did you like? What could be improved?",
+        "publicLabel": "Make this review public",
+        "publicDescription": "Allow others to see your review on our platform. You can change this later.",
+        "submitButton": "Submit Review",
+        "updateButton": "Update Review",
+        "submitting": "Submitting...",
+        "successMessage": "Thank you for your review!",
+        "successTitle": "Thank You!",
+        "successDescription": "Your review has been submitted successfully. We appreciate your feedback!",
+        "alreadySubmittedTitle": "Review Already Submitted",
+        "alreadySubmittedMessage": "You have already submitted a review. Thank you for your feedback!",
+        "publicStatus": "This review is public",
+        "privateStatus": "This review is private",
+        "noTitle": "No title provided",
+        "noComment": "No comment provided",
+        "errorMessage": "Failed to submit review. Please try again.",
+        "encouragementTitle": "Your Review Matters!",
+        "encouragementText": "By sharing your experience, you're helping us improve HResume and helping other job seekers discover a great tool for creating professional resumes. Thank you for taking the time!",
+        "ratingLabels": {
+            "excellent": "Excellent",
+            "veryGood": "Very Good",
+            "good": "Good",
+            "fair": "Fair",
+            "poor": "Poor"
+        },
+        "validation": {
+            "ratingRequired": "Please select a rating",
+            "titleRequired": "Title is required",
+            "titleMinLength": "Title must be at least 3 characters",
+            "commentRequired": "Review comment is required",
+            "commentMinLength": "Review must be at least 10 characters"
+        },
+        "characters": "characters",
+        "minCharacters": "minimum 10"
+    },
+    "blog": {
+        "title": "Blog",
+        "subtitle": "Stay updated with the latest tips, insights, and news about resume building and career development.",
+        "searchPlaceholder": "Search blog posts...",
+        "noPosts": "No blog posts found.",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of",
+        "backToBlog": "Back to Blog",
+        "notFound": "Blog Post Not Found",
+        "notFoundMessage": "The blog post you're looking for doesn't exist.",
+        "views": "views"
+    },
+    "admin": {
+        "blog": {
+            "title": "Blog Management",
+            "subtitle": "Create and manage blog posts",
+            "newPost": "New Post",
+            "searchPlaceholder": "Search posts...",
+            "allStatus": "All Status",
+            "published": "Published",
+            "draft": "Draft",
+            "fetchError": "Failed to load blog posts",
+            "createSuccess": "Blog post created successfully",
+            "updateSuccess": "Blog post updated successfully",
+            "deleteSuccess": "Blog post deleted successfully",
+            "saveError": "Failed to save blog post",
+            "deleteError": "Failed to delete blog post",
+            "titleLabel": "Title",
+            "excerptLabel": "Excerpt",
+            "excerptPlaceholder": "Brief summary of the post...",
+            "contentLabel": "Content",
+            "contentPlaceholder": "Write your blog post content here (HTML supported)...",
+            "featuredImageLabel": "Featured Image URL",
+            "statusLabel": "Status",
+            "publishedAtLabel": "Published At",
+            "cancel": "Cancel",
+            "save": "Save",
+            "saving": "Saving...",
+            "editPost": "Edit Post",
+            "backToList": "Back to blog posts",
+            "createSubtitle": "Write and publish a new article.",
+            "editSubtitle": "Update your blog post and save changes.",
+            "titleColumn": "Title",
+            "importMarkdown": "Import Markdown (.md)",
+            "importMarkdownHint": "Supports GitHub-flavored Markdown. Optional YAML frontmatter (title, excerpt) at the top.",
+            "importMarkdownSuccess": "Imported {name}",
+            "importMarkdownError": "Failed to import Markdown file",
+            "importMarkdownReplaceConfirm": "Importing will replace the current editor content. Continue?",
+            "deleteConfirmTitle": "Delete Blog Post",
+            "deleteConfirmMessage": "Are you sure you want to delete this blog post? This action cannot be undone.",
+            "delete": "Delete",
+            "edit": "Edit",
+            "view": "View",
+            "author": "Author",
+            "status": "Status",
+            "publishedAt": "Published At",
+            "views": "Views",
+            "actions": "Actions",
+            "noPosts": "No blog posts found",
+            "validation": {
+                "titleRequired": "Title is required",
+                "contentRequired": "Content is required"
+            }
+        }
+    },
+    "productLanding": {
+        "common": {
+            "primaryCta": "Create free account",
+            "secondaryCta": "Log in",
+            "alsoTry": "Also available on HResume:",
+            "backHome": "Back to homepage"
+        },
+        "coverLetter": {
+            "shortTitle": "Cover letter builder",
+            "metaTitle": "Free Cover Letter Builder | HResume",
+            "metaDescription": "Create professional cover letters online with HResume. Match your resume, edit with templates, and export PDF. Free account to get started.",
+            "badge": "Cover letters",
+            "title": "Cover letter builder that matches your resume",
+            "subtitle": "Draft, edit, and save cover letters alongside your CV—then export a polished PDF when you're ready to apply.",
+            "accountNote": "A free HResume account is required to create and save cover letters.",
+            "primaryCta": "Start writing cover letters",
+            "featuresTitle": "Why use HResume for cover letters",
+            "bullets": [
+                "Dedicated cover letter editor linked to your account",
+                "Professional templates and structured sections",
+                "Save multiple letters for different roles",
+                "Export to PDF for applications",
+                "Same login as your resume and work certificates"
+            ],
+            "bodyParagraphs": [
+                "Recruiters often read your cover letter right after your CV. HResume keeps both documents in one workspace so your tone and details stay consistent.",
+                "Whether you're applying in English or French, you can manage letters from your dashboard and update them as often as you need."
+            ]
+        },
+        "workCertificate": {
+            "shortTitle": "Work certificate generator",
+            "metaTitle": "Work Certificate Generator (Employment Attestation) | HResume",
+            "metaDescription": "Generate employment work certificates (attestation de travail) online. Fill in employer details, preview, and download PDF with HResume. Free account required.",
+            "badge": "Work certificates",
+            "title": "Employment certificate generator",
+            "subtitle": "Create official-style work certificates (employment attestations) for HR records, visa files, or job applications—preview and download PDF.",
+            "accountNote": "A free HResume account is required to create and save work certificates.",
+            "primaryCta": "Create a work certificate",
+            "featuresTitle": "What you can do",
+            "bullets": [
+                "Structured form for employer, employee, and dates",
+                "Bilingual-friendly layout (EN / FR UI)",
+                "Preview before download",
+                "PDF export ready to print or email",
+                "Stored in your account next to resumes and cover letters"
+            ],
+            "bodyParagraphs": [
+                "A work certificate (certificate of employment / attestation de travail) confirms your role, dates, and employer. HResume helps you produce a clear document without starting from a blank Word file.",
+                "This tool is for employment attestations—not course certificates listed on your CV. For diplomas and training, use the Certificates section inside the resume editor."
+            ]
+        }
+    },
+    "coverLetter": {
+        "title": "My Cover Letters",
+        "subtitle": "Create and manage your professional cover letters",
+        "createNew": "Create New Cover Letter",
+        "noLetters": "No Cover Letters Yet",
+        "noLettersDesc": "Create your first professional cover letter to accompany your resume",
+        "createFirst": "Create Your First Cover Letter",
+        "letterCountOne": "cover letter",
+        "letterCountOther": "cover letters",
+        "lastModified": "Last Modified",
+        "form": {
+            "internalTitle": "Internal Title (for your reference)",
+            "recipientName": "Recipient Name",
+            "recipientCompany": "Recipient Company",
+            "recipientAddress": "Recipient Address",
+            "recipientEmail": "Recipient Email",
+            "city": "City",
+            "country": "Country",
+            "date": "Date",
+            "subject": "Subject Line",
+            "content": "Cover Letter Content",
+            "style": "Template Style"
+        },
+        "templates": {
+            "quickStart": "Quick Start: Choose a template",
+            "types": {
+                "software_engineer": "Software Engineer",
+                "digital_marketing": "Digital Marketing",
+                "customer_success": "Customer Success"
+            },
+            "content": {
+                "software_engineer": {
+                    "subject": "Application for [Position Name] - [Your Name]",
+                    "text": "Dear [Hiring Manager Name],\n\nI am writing to express my strong interest in the [Position Name] role at [Company Name]. With a solid background in full-stack development and a passion for building scalable applications, I am confident that my skills in [Tech Stack] make me an ideal candidate for your team.\n\nAt my previous role at [Previous Company], I led the development of a [Project Name] that resulted in a [Percentage]% increase in system performance. I enjoy tackling complex architectural challenges and am a firm believer in clean, maintainable code.\n\nI have followed [Company Name]’s recent work on [Specific Project] and am impressed by your commitment to innovation. I am eager to bring my technical expertise to help [Company Name] achieve its goals.\n\nThank you for your time and consideration. I look forward to the possibility of discussing how my background can contribute to your team.\n\nSincerely,\n[Your Name]"
+                },
+                "digital_marketing": {
+                    "subject": "Application for Digital Marketing Specialist - [Your Name]",
+                    "text": "Dear [Hiring Manager Name],\n\nI am excited to submit my application for the Digital Marketing Specialist position at [Company Name]. As a data-driven marketer with experience in managing multi-channel campaigns, I have a proven track record of increasing brand visibility and driving measurable ROI.\n\nIn my most recent position at [Previous Company], I spearheaded a strategy that doubled our engagement rate within six months. I am proficient in SEO, SEM, and performance analytics, and I pride myself on my ability to translate complex data into actionable insights.\n\n[Company Name]’s reputation for [Specific Value] resonates deeply with my professional philosophy. I am eager to leverage my strategic mindset to reach new audiences and strengthen [Company Name]’s market position.\n\nI would welcome the opportunity to discuss how my expertise in digital strategy can help [Company Name] reach its ambitious growth targets.\n\nBest regards,\n[Your Name]"
+                },
+                "customer_success": {
+                    "subject": "Application for Customer Success Manager - [Your Name]",
+                    "text": "Dear [Hiring Manager Name],\n\nI was thrilled to see the opening for a Customer Success Manager at [Company Name]. With a background in client-facing roles and a deep-seated passion for ensuring user satisfaction, I am eager to help [Company Name]’s clients achieve their fullest potential.\n\nThroughout my career at [Previous Company], I maintained a high client retention rate and successfully onboarded numerous enterprise accounts. I believe that true customer success comes from proactive communication and a thorough understanding of the client’s unique business needs.\n\nI have been a long-time admirer of [Company Name]’s approach to [Specific Feature], and I am confident that my ability to build strong, lasting relationships will be a valuable asset to your team.\n\nThank you for considering my application. I look forward to hearing from you.\n\nSincerely,\n[Your Name]"
+                }
+            }
+        },
+        "messages": {
+            "loadError": "Failed to load cover letters",
+            "saveSuccess": "Cover letter saved successfully",
+            "saveError": "Failed to save cover letter",
+            "deleteSuccess": "Cover letter deleted successfully",
+            "deleteError": "Failed to delete cover letter"
+        }
+    },
+    "workCertificate": {
+        "title": "Work certification",
+        "subtitle": "Create employment certificates to download as PDF",
+        "createNew": "New certificate",
+        "noItems": "No certificates yet",
+        "noItemsDesc": "Generate a certificate of employment for your records or job applications.",
+        "createFirst": "Create your first certificate",
+        "countOne": "certificate",
+        "countOther": "certificates",
+        "lastModified": "Last updated",
+        "preview": {
+            "panelTitle": "Preview",
+            "liveHint": "Live preview — matches the PDF layout"
+        },
+        "editorSectionTitle": "Certificate details",
+        "form": {
+            "documentTitle": "Document title",
+            "employeeName": "Employee full name",
+            "jobTitle": "Job title",
+            "companyName": "Company name",
+            "companyAddress": "Company address",
+            "employmentStart": "Employment start",
+            "employmentEnd": "Employment end",
+            "currentJob": "I currently work here",
+            "duties": "Main duties (optional)",
+            "letterPlace": "Place (e.g. city for letter header)",
+            "letterDate": "Letter date",
+            "signer": "Signer name & title (optional)",
+            "languagePdf": "PDF language"
+        },
+        "messages": {
+            "loadError": "Failed to load certificates",
+            "saveSuccess": "Certificate saved",
+            "saveError": "Failed to save certificate",
+            "deleteSuccess": "Certificate deleted",
+            "deleteError": "Failed to delete certificate",
+            "deleteConfirmMessage": "Are you sure you want to delete this certificate? This cannot be undone.",
+            "pdfError": "Failed to download PDF"
+        }
+    }
+}

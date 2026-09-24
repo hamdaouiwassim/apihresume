@@ -37,7 +37,6 @@ return [
     '/blog' => ['weekly', '0.8'],
     '/login' => ['monthly', '0.5'],
     '/register' => ['monthly', '0.8'],
-    '/register/recruiter' => ['monthly', '0.7'],
   ],
 
 ];

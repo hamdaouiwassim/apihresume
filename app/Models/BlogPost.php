@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BlogPost extends Model
@@ -19,6 +20,7 @@ class BlogPost extends Model
         'excerpt',
         'content',
         'featured_image',
+        'featured_image_meta',
         'status',
         'published_at',
         'views',
@@ -26,6 +28,7 @@ class BlogPost extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
+        'featured_image_meta' => 'array',
     ];
 
     /**
@@ -85,6 +88,31 @@ class BlogPost extends Model
     /**
      * Increment views
      */
+    /**
+     * Optimized featured image variants (see App\Services\BlogImageOptimizer), or null for
+     * external URLs / images uploaded before optimization existed.
+     */
+    public function optimizedFeaturedImage(): ?array
+    {
+        $meta = $this->featured_image_meta;
+        if (! is_array($meta) || empty($meta['variants'])) {
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+        $variants = collect($meta['variants'])
+            ->mapWithKeys(fn ($path, $width) => [(int) $width => $disk->url($path)])
+            ->sortKeys();
+
+        return [
+            'src' => $variants->last(),
+            'srcset' => $variants->map(fn ($url, $width) => "{$url} {$width}w")->implode(', '),
+            'smallest' => $variants->first(),
+            'width' => (int) ($meta['width'] ?? 0),
+            'height' => (int) ($meta['height'] ?? 0),
+        ];
+    }
+
     public function incrementViews()
     {
         $this->increment('views');

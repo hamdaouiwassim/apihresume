@@ -37,6 +37,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('api', \App\Http\Middleware\SecurityHeaders::class);
         $middleware->appendToGroup('api', \App\Http\Middleware\SanitizeApiJsonResponse::class);
         $middleware->appendToGroup('web', \App\Http\Middleware\SecurityHeaders::class);
+        $middleware->appendToGroup('web', \App\Http\Middleware\SetLocale::class);
+
+        // Blade pages: guests hitting private pages go to /login, signed-in users hitting /login go to /resumes.
+        $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectUsersTo(fn () => route('resumes.index'));
         $middleware->appendToGroup('web', \App\Http\Middleware\ThrottleSanctumCsrfCookie::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

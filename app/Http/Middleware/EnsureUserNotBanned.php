@@ -26,6 +26,15 @@ class EnsureUserNotBanned
         if ($this->userBanService->isBanned($user)) {
             $user->tokens()->delete();
 
+            if (! $request->expectsJson() && ! $request->is('api/*')) {
+                $message = $this->banMessage($user);
+                auth()->guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->with('error', $message);
+            }
+
             return response()->json([
                 'status' => false,
                 'message' => $this->banMessage($user),

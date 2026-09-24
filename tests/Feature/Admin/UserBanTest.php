@@ -69,8 +69,9 @@ class UserBanTest extends TestCase
             ->assertJsonPath('code', 'account_banned');
     }
 
-    public function test_banned_recruiter_cannot_access_recruiter_api(): void
+    public function test_recruiter_api_is_disabled(): void
     {
+        // The recruiter role is disabled for now: its API routes are no longer registered.
         $user = User::factory()->create([
             'email_verified_at' => now(),
             'is_recruiter' => true,
@@ -83,13 +84,9 @@ class UserBanTest extends TestCase
             'compliance_accepted' => true,
         ]);
 
-        app(UserBanService::class)->ban($user, $this->admin, UserBanService::DURATION_7_DAYS);
-
         Sanctum::actingAs($user->fresh());
 
-        $this->getJson('/api/recruiter/resumes')
-            ->assertStatus(403)
-            ->assertJsonPath('code', 'account_banned');
+        $this->getJson('/api/recruiter/resumes')->assertNotFound();
     }
 
     public function test_login_rejects_banned_user(): void
