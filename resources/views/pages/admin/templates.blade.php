@@ -35,7 +35,7 @@
                         <div class="relative h-48 bg-gray-50 flex items-start justify-center p-4 overflow-hidden">
                             <template x-if="template.preview_image_url">
                                 <img :src="template.preview_image_url" :alt="template.name" class="max-h-full w-auto object-contain drop-shadow-md"
-                                    x-on:error="$el.src = 'https://via.placeholder.com/800x1000/667eea/ffffff?text=' + encodeURIComponent(template.name)" />
+                                    x-on:error="$el.src = placeholderImage(800, 1000, '667eea', 'ffffff', template.name)" />
                             </template>
                             <template x-if="!template.preview_image_url">
                                 <div class="w-full h-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center rounded-xl"><span class="text-white text-xl font-bold" x-text="template.name"></span></div>

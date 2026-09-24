@@ -190,4 +190,53 @@ class WebPagesTest extends TestCase
         $this->get('/this-page-does-not-exist')->assertRedirect('/');
         $this->getJson('/api/this-does-not-exist')->assertNotFound();
     }
+
+    public function test_placeholder_images_are_served_locally(): void
+    {
+        $this->get('/placeholder/600x800?bg=0f172a&fg=ffffff&text=Classic')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'image/svg+xml')
+            ->assertSee('Classic', false)
+            ->assertSee('#0f172a', false);
+    }
+
+    public function test_pages_do_not_load_third_party_fonts_avatars_or_placeholders(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true, 'email_verified_at' => now()]));
+
+        foreach (['/', '/pricing', '/resumes', '/profile', '/admin'] as $path) {
+            $html = $this->get($path)->assertOk()->getContent();
+            foreach (['fonts.googleapis.com', 'fonts.gstatic.com', 'fonts.bunny.net', 'api.dicebear.com', 'via.placeholder.com'] as $host) {
+                $this->assertStringNotContainsString($host, $html, "{$path} references {$host}");
+            }
+        }
+    }
+
+    public function test_route_names_are_unique_so_page_links_never_point_to_the_api(): void
+    {
+        $names = collect(\Illuminate\Support\Facades\Route::getRoutes()->getRoutes())
+            ->map(fn ($route) => $route->getName())
+            // Unnamed routes inside a named group only carry the group prefix (e.g. "api.") and are never used by name.
+            ->filter(fn ($name) => $name && ! str_ends_with($name, '.'));
+
+        $this->assertSame([], $names->duplicates()->values()->all(), 'Duplicate route names found');
+
+        foreach (['blog.index', 'blog.show', 'resumes.index', 'templates.index', 'cover-letters.index', 'work-certificates.index'] as $name) {
+            $this->assertStringStartsNotWith('/api/', route($name, ['slug' => 'x', 'id' => 1], false), $name);
+        }
+    }
+
+    public function test_blog_list_links_to_public_post_pages(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        BlogPost::create([
+            'user_id' => $admin->id, 'title' => 'Linked post', 'slug' => 'linked-post', 'content' => '<p>x</p>',
+            'status' => 'published', 'published_at' => now()->subHour(),
+        ]);
+
+        $this->get('/blog')
+            ->assertOk()
+            ->assertSee('href="/blog/linked-post"', false)
+            ->assertDontSee('/api/admin/blog', false);
+    }
 }

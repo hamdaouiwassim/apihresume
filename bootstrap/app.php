@@ -39,6 +39,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', \App\Http\Middleware\SecurityHeaders::class);
         $middleware->appendToGroup('web', \App\Http\Middleware\SetLocale::class);
 
+        // Behind Cloudflare / a load balancer / an Nginx proxy: honour X-Forwarded-* so generated
+        // URLs keep https and the public host instead of http:// or an internal address.
+        $middleware->trustProxies(at: '*');
+
         // Blade pages: guests hitting private pages go to /login, signed-in users hitting /login go to /resumes.
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('resumes.index'));

@@ -236,7 +236,7 @@
                     @foreach ($s['recent_users'] ?? [] as $u)
                         <li>
                             <a href="{{ url('/admin/users') }}" class="flex items-center gap-3 rounded-xl border border-transparent p-3 transition-colors hover:border-purple-100 hover:bg-purple-50/40">
-                                <img src="{{ ($u['avatar'] ?? null) ?: 'https://api.dicebear.com/7.x/avataaars/svg?seed=default' }}" alt="" class="h-10 w-10 rounded-full border-2 border-white shadow ring-1 ring-purple-100" />
+                                <img src="{{ ($u['avatar'] ?? null) ?: default_avatar() }}" alt="" class="h-10 w-10 rounded-full border-2 border-white shadow ring-1 ring-purple-100" />
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate font-semibold text-gray-900">{{ $u['name'] }}</p>
                                     <p class="truncate text-xs text-gray-500">{{ $u['email'] }}</p>

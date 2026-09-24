@@ -128,7 +128,7 @@ export default function register(Alpine) {
                     }
                 },
                 get avatar() {
-                    return this.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(this.user?.email || this.user?.name || 'user')}`;
+                    return this.user?.avatar || window.defaultAvatar(this.user?.email || this.user?.name || 'user');
                 },
                 timeAgo(value) {
                     if (!value) return 'Never';

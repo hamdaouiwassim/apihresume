@@ -91,7 +91,9 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware(['signed', 'throttle:email-verify'])
     ->name('verification.verify');
 
-Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api-authenticated'])->group(function () {
+// Route names are prefixed with "api." so apiResource names (blog.show, resumes.index, ...) never
+// override the Blade page routes with the same names in routes/web.php.
+Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api-authenticated'])->name('api.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/auth/github/import/url', [GitHubImportOAuthController::class, 'url'])
@@ -173,7 +175,7 @@ Route::middleware(['auth:sanctum', 'not.banned', 'track.activity', 'throttle:api
 });
 
 // Admin routes
-Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throttle:api-authenticated'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throttle:api-authenticated'])->prefix('admin')->name('api.admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::post('users/{user}/restore', [AdminUserController::class, 'restore']);
     Route::delete('users/{user}/force', [AdminUserController::class, 'forceDestroy']);
@@ -183,7 +185,7 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::apiResource('templates', AdminTemplateController::class);
     Route::apiResource('cover-letter-templates', AdminCoverLetterTemplateController::class);
     Route::apiResource('blog', AdminBlogController::class);
-    Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('admin.users.message');
+    Route::post('users/{user}/message', \App\Http\Controllers\Admin\UserMessageController::class)->name('users.message');
     Route::post('users/{user}/emails/resume-reminder', [OutboundEmailController::class, 'sendResumeReminder']);
     Route::post('users/{user}/emails/verification-reminder', [OutboundEmailController::class, 'sendVerificationReminder']);
     Route::post('users/{user}/emails/new-features', [OutboundEmailController::class, 'sendNewFeaturesToUser']);

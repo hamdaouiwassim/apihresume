@@ -67,7 +67,7 @@
                             @if ($template->preview_image_url)
                                 <img src="{{ $template->preview_image_url }}" alt="{{ $template->name }}" loading="lazy"
                                     class="max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow"
-                                    onerror="this.onerror=null; this.src='https://via.placeholder.com/800x1000/667eea/ffffff?text={{ rawurlencode($template->name) }}';" />
+                                    onerror="this.onerror=null; this.src='{{ placeholder_image(800, 1000, '667eea', 'ffffff', $template->name) }}';" />
                             @else
                                 <div class="w-full h-full rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">{{ $template->name }}</div>
                             @endif

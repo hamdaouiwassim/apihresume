@@ -34,7 +34,7 @@
                             {{-- Profile card --}}
                             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                                 <div class="flex items-start space-x-6">
-                                    <img :src="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.email" :alt="user.name" class="h-24 w-24 rounded-full border-4 border-purple-200" />
+                                    <img :src="user.avatar || defaultAvatar(user.email)" :alt="user.name" class="h-24 w-24 rounded-full border-4 border-purple-200" />
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-2">
                                             <h2 class="text-2xl font-bold text-gray-900" x-text="user.name"></h2>

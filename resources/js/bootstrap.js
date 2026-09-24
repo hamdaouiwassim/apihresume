@@ -87,6 +87,19 @@ if (csrfToken) {
 
 window.api = api;
 
+/** Same algorithm as default_avatar() in app/helpers.php (local files in public/images/avatars). */
+window.defaultAvatar = (seed = 'default') => {
+    const s = String(seed || 'default');
+    if (['default', 'Admin', 'alex-morgan'].includes(s)) return `/images/avatars/${s}.svg`;
+    let sum = 0;
+    for (const ch of s) sum += ch.codePointAt(0);
+    return `/images/avatars/a${(sum % 12) + 1}.svg`;
+};
+
+/** Local placeholder image URL (replaces via.placeholder.com). */
+window.placeholderImage = (w, h, bg, fg, text = '') =>
+    `/placeholder/${w}x${h}?` + new URLSearchParams({ bg, fg, text }).toString();
+
 /** Pull a readable message out of an axios error (mirrors the React error handling). */
 window.apiErrorMessage = (error, fallback = 'Something went wrong') => error?.response?.data?.message || fallback;
 

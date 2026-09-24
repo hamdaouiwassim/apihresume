@@ -107,9 +107,37 @@ if (! function_exists('ui_date')) {
     }
 }
 
+if (! function_exists('default_avatar')) {
+    /**
+     * Locally hosted default avatar (public/images/avatars). Same algorithm as window.defaultAvatar() in JS:
+     * known seeds have their own file, anything else maps deterministically to a1..a12.
+     */
+    function default_avatar(?string $seed = 'default'): string
+    {
+        $seed = (string) ($seed ?: 'default');
+        if (in_array($seed, ['default', 'Admin', 'alex-morgan'], true)) {
+            return "/images/avatars/{$seed}.svg";
+        }
+        $sum = 0;
+        foreach (mb_str_split($seed) as $char) {
+            $sum += mb_ord($char);
+        }
+
+        return '/images/avatars/a'.(($sum % 12) + 1).'.svg';
+    }
+}
+
+if (! function_exists('placeholder_image')) {
+    /** Local SVG placeholder (replaces the discontinued via.placeholder.com service). */
+    function placeholder_image(int $width, int $height, string $bg, string $fg, string $text = ''): string
+    {
+        return "/placeholder/{$width}x{$height}?".http_build_query(['bg' => $bg, 'fg' => $fg, 'text' => $text]);
+    }
+}
+
 if (! function_exists('user_avatar')) {
     function user_avatar($user, string $seed = 'default'): string
     {
-        return $user?->avatar ?: "https://api.dicebear.com/7.x/avataaars/svg?seed={$seed}";
+        return $user?->avatar ?: default_avatar($seed);
     }
 }

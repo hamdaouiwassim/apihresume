@@ -51,7 +51,7 @@
                                 <div class="relative h-56 bg-slate-50 flex items-start justify-center p-5 border-b border-gray-100">
                                     @if (! empty($template['preview_image_url']))
                                         <img src="{{ $template['preview_image_url'] }}" alt="{{ $label }}" loading="lazy" class="max-h-full w-auto object-contain drop-shadow"
-                                            onerror="this.onerror=null; this.src='https://via.placeholder.com/600x800/0f172a/ffffff?text={{ rawurlencode($label) }}';" />
+                                            onerror="this.onerror=null; this.src='{{ placeholder_image(600, 800, '0f172a', 'ffffff', $label) }}';" />
                                     @else
                                         <div class="w-full h-full rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-lg font-semibold">{{ $label }}</div>
                                     @endif

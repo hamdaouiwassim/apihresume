@@ -39,7 +39,7 @@
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                     @foreach ($posts as $post)
-                        <a href="{{ route('blog.show', $post->slug) }}" class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                        <a href="{{ route('blog.show', $post->slug, false) }}" class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
                             @if ($post->featured_image)
                                 <div class="aspect-video w-full overflow-hidden bg-gray-200">
                                     <x-blog-image :post="$post" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />

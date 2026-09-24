@@ -1,7 +1,7 @@
 {{-- Port of Layouts/AdminLayout.jsx --}}
 @php
     $user = auth()->user();
-    $avatar = $user?->avatar ?: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin';
+    $avatar = $user?->avatar ?: default_avatar('Admin');
     $navItems = [
         ['path' => 'admin', 'icon' => 'bar-chart-3', 'label' => 'Dashboard'],
         ['path' => 'admin/ai-usage', 'icon' => 'sparkles', 'label' => 'AI usage'],

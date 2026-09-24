@@ -39,7 +39,7 @@ class SecurityHeaders
         // Blade pages: Alpine.js evaluates x-* expressions ('unsafe-eval'), Google Analytics,
         // blob: previews (avatars, fonts, PDFs), pdf.js worker and YouTube walkthrough embeds.
         $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com";
-        $styleSrc = "'self' 'unsafe-inline' https://fonts.googleapis.com";
+        $styleSrc = "'self' 'unsafe-inline'";
         $connectSrc = "'self' https: http:";
 
         if (app()->environment('local')) {
@@ -58,7 +58,7 @@ class SecurityHeaders
             "img-src 'self' data: blob: https:",
             "script-src {$scriptSrc}",
             "style-src {$styleSrc}",
-            "font-src 'self' https://fonts.gstatic.com data: blob:",
+            "font-src 'self' data: blob:",
             "connect-src {$connectSrc}",
             "worker-src 'self' blob:",
             "frame-src 'self' blob: https://www.youtube.com https://www.youtube-nocookie.com",

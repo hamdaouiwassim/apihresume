@@ -39,6 +39,11 @@ class AppServiceProvider extends ServiceProvider
         Template::observe(TemplateObserver::class);
 
         $this->configureRateLimiting();
+
+        // Generated links (route(), url(), redirects) always use https when the site is served over https.
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 
     protected function configureRateLimiting(): void

@@ -70,7 +70,7 @@
                                 <tr class="hover:bg-gray-50 transition-colors" :class="user.deleted_at ? 'bg-red-50/40' : ''">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <img :src="user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'" :alt="user.name" class="h-10 w-10 rounded-full border-2 border-purple-200 mr-3" />
+                                            <img :src="user.avatar || defaultAvatar()" :alt="user.name" class="h-10 w-10 rounded-full border-2 border-purple-200 mr-3" />
                                             <div>
                                                 <div class="text-sm font-semibold text-gray-900" x-text="user.name"></div>
                                                 <div class="text-sm text-gray-500 flex items-center">

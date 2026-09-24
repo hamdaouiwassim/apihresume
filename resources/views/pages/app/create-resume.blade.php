@@ -76,7 +76,7 @@
                                 <div class="h-40 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center overflow-hidden">
                                     <template x-if="tpl.preview_image_url">
                                         <img :src="tpl.preview_image_url" :alt="tpl.name" class="max-h-full w-auto object-contain"
-                                            x-on:error="$el.src = 'https://via.placeholder.com/400x520/e2e8f0/64748b?text=' + encodeURIComponent(tpl.name)" />
+                                            x-on:error="$el.src = placeholderImage(400, 520, 'e2e8f0', '64748b', tpl.name)" />
                                     </template>
                                     <template x-if="!tpl.preview_image_url">
                                         <span class="text-sm font-medium text-slate-500" x-text="tpl.name"></span>

@@ -38,7 +38,7 @@
                             <tr class="hover:bg-gray-50/50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-3">
-                                        <img :src="review.user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + review.user?.name" alt="" class="h-9 w-9 rounded-full ring-2 ring-white" />
+                                        <img :src="review.user?.avatar || defaultAvatar(review.user?.name)" alt="" class="h-9 w-9 rounded-full ring-2 ring-white" />
                                         <div>
                                             <div class="text-sm font-semibold text-gray-900" x-text="review.user?.name"></div>
                                             <div class="text-xs text-gray-500" x-text="review.user?.email"></div>

@@ -18,7 +18,7 @@ const SAMPLE_RESUME = {
     linkedin: "linkedin.com/in/alexmorgan",
     github: "github.com/alexmorgan",
     website: "alexmorgan.dev",
-    profile_picture: "https://api.dicebear.com/7.x/avataaars/svg?seed=alex-morgan",
+    profile_picture: "/images/avatars/alex-morgan.svg",
   },
   summary:
     "Product leader with 8+ years of experience delivering B2B SaaS platforms. Strong track record in cross-functional execution, roadmap prioritization, and measurable business impact.",

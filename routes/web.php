@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\AuthPageController;
 use App\Http\Controllers\Web\BlogPageController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\PageController;
+use App\Http\Controllers\Web\PlaceholderImageController;
 use App\Http\Controllers\Web\PublicResumeController;
 use App\Http\Controllers\Web\TemplatePageController;
 use Illuminate\Support\Facades\Mail;
@@ -23,6 +24,11 @@ Route::get('/blog/{slug}/social', [BlogSocialPreviewController::class, 'show'])
     ->name('blog.social-preview');
 
 Route::get('/resume-template-preview', [PDFController::class, 'preview']);
+
+// Local placeholder images (replaces via.placeholder.com).
+Route::get('/placeholder/{width}x{height}', PlaceholderImageController::class)
+    ->whereNumber(['width', 'height'])
+    ->name('placeholder');
 
 Route::get('/locale/{locale}', LocaleController::class)
     ->whereIn('locale', ['en', 'fr'])

@@ -32,7 +32,7 @@
                 <div class="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-8 border-b border-gray-200">
                     <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
                         <div class="relative">
-                            <img :src="form.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'" src="{{ user_avatar($user) }}" alt="Profile" class="h-24 w-24 rounded-full border-4 border-white shadow-lg object-cover" />
+                            <img :src="form.avatar || defaultAvatar()" src="{{ user_avatar($user) }}" alt="Profile" class="h-24 w-24 rounded-full border-4 border-white shadow-lg object-cover" />
                             <label for="avatar-upload" class="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full cursor-pointer hover:bg-blue-700 transition-colors shadow-lg" title="{{ $av['changeTooltip'] ?? 'Change avatar' }}">
                                 <x-lucide-camera class="h-4 w-4" />
                                 <input id="avatar-upload" type="file" accept="image/*" @change="onAvatar($event)" class="hidden" />

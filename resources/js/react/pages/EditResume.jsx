@@ -253,7 +253,7 @@ export default function EditResume() {
     github: "",
     website: "",
     professional_summary: "",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=default",
+    avatar: "/images/avatars/default.svg",
     show_photo_on_cv: true,
     experiences: [],
     educations: [],

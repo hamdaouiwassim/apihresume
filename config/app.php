@@ -54,7 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'frontend_url' => env('FRONTEND_APP_URL', 'http://localhost:5173'),
+    // Public site origin used for canonical URLs, sitemap, OAuth and email links.
+    // Pages are served by this app, so it defaults to APP_URL.
+    'frontend_url' => env('FRONTEND_APP_URL', env('APP_URL', 'http://localhost')),
 
     /*
     | Landing page options (formerly VITE_LANDING_HERO_VARIANT, VITE_WALKTHROUGH_VIDEO_URL,

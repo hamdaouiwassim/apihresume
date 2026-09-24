@@ -360,7 +360,7 @@ export default function GeneratedCV() {
                                                                 className="flex items-center hover:text-purple-600 transition-colors"
                                                             >
                                                                 <img
-                                                                    src={resume.user.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + resume.user.email}
+                                                                    src={resume.user.avatar || window.defaultAvatar(resume.user.email)}
                                                                     alt={resume.user.name}
                                                                     className="h-8 w-8 rounded-full mr-2"
                                                                 />

@@ -40,6 +40,15 @@ php artisan blog:optimize-images --delete-originals   # convert, then remove the
 ```
 Images added by external URL are left as they are.
 
+### Self-hosted assets (no CDNs)
+- JS/CSS libraries (Alpine, React, Tiptap, pdf.js + worker, axios, Lucide icons) are bundled by Vite into `public/build`.
+- Fonts: `public/fonts/inter` (Pulse admin login) and `public/fonts/figtree` (Pulse dashboard, overridden in
+  `resources/views/vendor/pulse/components/pulse.blade.php`). The site itself uses the system font stack.
+- Default avatars: `public/images/avatars/*.svg` (`default_avatar()` in PHP, `window.defaultAvatar()` in JS).
+- Image fallbacks: `/placeholder/{w}x{h}?bg=&fg=&text=` generates an SVG locally.
+- Still external by nature: Google Analytics, OAuth providers, Stripe/Paddle checkout, AI APIs, the optional
+  YouTube walkthrough embed, and user avatars that come from Google/LinkedIn sign-in.
+
 ### Notes
 - UI translations live in `resources/translations/{en,fr}.json` (same keys as the old React app); use `t('key')` in Blade.
 - The chosen language is stored in the session (`/locale/fr`, `/locale/en`).
