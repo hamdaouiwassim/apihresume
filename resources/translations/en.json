@@ -132,8 +132,8 @@
         }
     },
     "welcome": {
-        "title": "A CV recruiters actually read — in one sitting",
-        "subtitle": "ATS-friendly CVs, cover letters, and employment certificates—templates, live preview, and PDF export. Free to start in under a minute.",
+        "title": "Create a CV Recruiters Actually Read",
+        "subtitle": "Free AI-powered CV builder for ATS-friendly resumes, professional templates, cover letters, and PDF export.",
         "heroTitleCompact": "Interview-ready CV, fast",
         "heroSubtitleCompact": "CV, cover letter, work certificate — free to start.",
         "heroBadge": "Professional CV Builder",
@@ -1305,5 +1305,34 @@
             "deleteConfirmMessage": "Are you sure you want to delete this certificate? This cannot be undone.",
             "pdfError": "Failed to download PDF"
         }
+    },
+    "templatePage": {
+        "metaTitle": "{{name}} Resume Template – Free & ATS-Friendly | HResume",
+        "metaDescription": "{{description}} Free {{name}} resume template: ATS-friendly layout, live preview and PDF download.",
+        "h1": "{{name}} resume template",
+        "breadcrumbHome": "Home",
+        "breadcrumbTemplates": "Resume templates",
+        "tags": {
+            "ats": "ATS-friendly",
+            "free": "Free",
+            "pdf": "PDF export"
+        },
+        "imageAlt": "{{name}} ATS-friendly resume template",
+        "whyTitle": "Why choose the {{name}} template",
+        "features": [
+            "Clear section headings that applicant tracking systems (ATS) can read",
+            "Clean layout that recruiters scan in seconds",
+            "Fill it in online with live preview, then download as PDF",
+            "Switch to another template at any time without retyping"
+        ],
+        "cta": "Use this template",
+        "ctaNote": "Free — no credit card required.",
+        "browseAll": "Browse all templates",
+        "previewTitle": "Preview with sample data",
+        "previewSubtitle": "This is how the {{name}} template looks with a complete resume.",
+        "othersTitle": "Other resume templates",
+        "viewTemplate": "View template",
+        "notFoundTitle": "Template not found",
+        "notFoundText": "This resume template does not exist or was removed."
     }
 }

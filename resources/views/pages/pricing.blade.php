@@ -97,7 +97,7 @@
                                 {{ $proPlan['loginToUpgrade'] ?? 'Sign in to upgrade' }}
                             </a>
                         @elseif ($region['isTunisia'])
-                            <a href="{{ route('contact') }}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-indigo-700 bg-white hover:bg-slate-100 transition">
+                            <a href="{{ localized_route('contact') }}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-indigo-700 bg-white hover:bg-slate-100 transition">
                                 <x-lucide-mail class="h-4 w-4 mr-2" />
                                 {{ $proPlan['tunisiaContactCta'] ?? 'Contact us for Pro' }}
                             </a>
@@ -134,7 +134,7 @@
                     <h2 class="text-2xl font-bold text-slate-900 mb-3">{{ $pricing['note']['title'] ?? 'Why Pro?' }}</h2>
                     <p class="text-slate-700">{{ $pricing['note']['description'] ?? 'Free is built for one strong CV and a monthly taste of AI. Pro is for active job searches.' }}</p>
                     <p class="text-sm text-slate-600 mt-3">
-                        <a href="{{ route('refund') }}" class="text-blue-600 font-semibold hover:underline">{{ $pricing['note']['refundLink'] ?? 'Refund policy' }}</a>
+                        <a href="{{ localized_route('refund') }}" class="text-blue-600 font-semibold hover:underline">{{ $pricing['note']['refundLink'] ?? 'Refund policy' }}</a>
                     </p>
                 </div>
             </div>

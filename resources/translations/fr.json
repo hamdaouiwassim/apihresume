@@ -132,8 +132,8 @@
         }
     },
     "welcome": {
-        "title": "Un CV que les recruteurs lisent — sans y passer la journée",
-        "subtitle": "CV compatibles ATS, lettres de motivation et attestations de travail—modèles, aperçu en direct et export PDF. Gratuit pour commencer en une minute.",
+        "title": "Créez un CV que les recruteurs lisent vraiment",
+        "subtitle": "Créateur de CV gratuit avec IA : CV compatibles ATS, modèles professionnels, lettres de motivation et export PDF.",
         "heroTitleCompact": "CV prêt pour l'entretien, vite",
         "heroSubtitleCompact": "CV, lettre de motivation, attestation — gratuit pour débuter.",
         "heroBadge": "Créateur de CV Professionnel",
@@ -1305,5 +1305,34 @@
             "deleteConfirmMessage": "Supprimer définitivement cette attestation ?",
             "pdfError": "Échec du téléchargement du PDF"
         }
+    },
+    "templatePage": {
+        "metaTitle": "Modèle de CV {{name}} – gratuit et compatible ATS | HResume",
+        "metaDescription": "Modèle de CV {{name}} gratuit : mise en page compatible ATS, aperçu en direct et téléchargement en PDF. {{description}}",
+        "h1": "Modèle de CV {{name}}",
+        "breadcrumbHome": "Accueil",
+        "breadcrumbTemplates": "Modèles de CV",
+        "tags": {
+            "ats": "Compatible ATS",
+            "free": "Gratuit",
+            "pdf": "Export PDF"
+        },
+        "imageAlt": "Modèle de CV {{name}} compatible ATS",
+        "whyTitle": "Pourquoi choisir le modèle {{name}}",
+        "features": [
+            "Des titres de section clairs, lisibles par les logiciels de recrutement (ATS)",
+            "Une mise en page épurée que les recruteurs parcourent en quelques secondes",
+            "Remplissez-le en ligne avec aperçu en direct, puis téléchargez-le en PDF",
+            "Changez de modèle à tout moment sans tout ressaisir"
+        ],
+        "cta": "Utiliser ce modèle",
+        "ctaNote": "Gratuit — sans carte bancaire.",
+        "browseAll": "Voir tous les modèles",
+        "previewTitle": "Aperçu avec des données d'exemple",
+        "previewSubtitle": "Voici le rendu du modèle {{name}} avec un CV complet.",
+        "othersTitle": "Autres modèles de CV",
+        "viewTemplate": "Voir le modèle",
+        "notFoundTitle": "Modèle introuvable",
+        "notFoundText": "Ce modèle de CV n'existe pas ou a été supprimé."
     }
 }

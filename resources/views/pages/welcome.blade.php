@@ -28,11 +28,14 @@
         ['icon' => 'award', 'grad' => 'from-indigo-400 to-indigo-600', 'title' => $wf['multilingual'] ?? '', 'desc' => $wf['multilingualDesc'] ?? '', 'ai' => $wf['multilingualAi'] ?? null],
         ['icon' => 'wand-2', 'grad' => 'from-violet-500 to-fuchsia-600', 'title' => $wf['smartAiTitle'] ?? '', 'desc' => $wf['smartAiDesc'] ?? '', 'ai' => $wf['smartAiHint'] ?? null, 'highlight' => true],
     ];
-    $jsonLd = [
-        '@context' => 'https://schema.org',
+    $jsonLd = \App\Support\SchemaOrg::graph([
         '@type' => 'WebApplication',
+        '@id' => \App\Support\SchemaOrg::siteUrl().'#webapp',
         'name' => 'HResume',
-        'url' => rtrim((string) config('app.frontend_url'), '/'),
+        'url' => \App\Support\SchemaOrg::siteUrl(),
+        'publisher' => ['@id' => \App\Support\SchemaOrg::organizationId()],
+        'provider' => ['@id' => \App\Support\SchemaOrg::organizationId()],
+        'isPartOf' => ['@id' => \App\Support\SchemaOrg::websiteId()],
         'description' => 'Free job application suite: ATS-friendly CV builder, cover letter editor, and employment work certificate generator with PDF export.',
         'applicationCategory' => 'BusinessApplication',
         'operatingSystem' => 'Web',
@@ -41,7 +44,7 @@
             'Free resume and CV builder', 'Cover letter generator', 'Work certificate (employment attestation) PDF',
             'ATS-friendly templates', 'PDF download', 'Multiple language support', 'Secure sharing links',
         ],
-    ];
+    ]);
 @endphp
 <x-layouts.guest nav-variant="hero" canonical="/" :json-ld="$jsonLd">
     <div class="relative min-h-screen">
@@ -77,7 +80,7 @@
                                 <p class="mt-3 text-sm sm:text-base text-slate-300/95 text-center lg:text-left max-w-xl mx-auto lg:mx-0">{{ $suite['heroLine'] }}</p>
                             @endif
                             <p class="mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-x-1 gap-y-1 text-sm text-slate-300">
-                                <a href="{{ route('landing.cover-letter') }}" class="font-medium text-violet-200 hover:text-white underline-offset-2 hover:underline">{{ $suite['coverLetter']['shortTitle'] ?? 'Cover letters' }}</a><span class="text-slate-500" aria-hidden="true">·</span><a href="{{ route('landing.work-certificate') }}" class="font-medium text-violet-200 hover:text-white underline-offset-2 hover:underline">{{ $suite['workCertificate']['shortTitle'] ?? 'Work certificates' }}</a>
+                                <a href="{{ localized_route('landing.cover-letter') }}" class="font-medium text-violet-200 hover:text-white underline-offset-2 hover:underline">{{ $suite['coverLetter']['shortTitle'] ?? 'Cover letters' }}</a><span class="text-slate-500" aria-hidden="true">·</span><a href="{{ localized_route('landing.work-certificate') }}" class="font-medium text-violet-200 hover:text-white underline-offset-2 hover:underline">{{ $suite['workCertificate']['shortTitle'] ?? 'Work certificates' }}</a>
                             </p>
                             <div class="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 text-violet-100 px-4 py-2 text-sm font-semibold border border-white/20 backdrop-blur-sm mx-auto lg:mx-0">
                                 <x-lucide-sparkles class="h-4 w-4 text-violet-300" />
@@ -176,7 +179,7 @@
                         </div>
                         <p class="relative text-xs uppercase tracking-[0.2em] text-purple-600 font-semibold mb-2">{{ $trustProof['pricingTitle'] ?? 'Transparent pricing' }}</p>
                         <p class="relative text-sm text-gray-600 leading-relaxed">{{ $trustProof['pricingText'] ?? 'Free to start, optional Pro when you want unlimited AI and full ATS insights.' }}</p>
-                        <a href="{{ route('pricing') }}" class="relative mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-85 underline-offset-4 hover:underline transition-opacity">
+                        <a href="{{ localized_route('pricing') }}" class="relative mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-85 underline-offset-4 hover:underline transition-opacity">
                             {{ $trustProof['pricingLink'] ?? 'See plans' }}
                             <x-lucide-arrow-right class="h-4 w-4 shrink-0 text-purple-600 opacity-90" aria-hidden="true" />
                         </a>

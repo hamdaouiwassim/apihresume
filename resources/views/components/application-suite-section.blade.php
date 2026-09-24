@@ -29,7 +29,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         @foreach ($items as $item)
             @php $card = (array) t('welcome.suite.'.$item['key'], [], []); @endphp
-            <a href="{{ url($item['href']) }}" class="group flex flex-col rounded-2xl border p-5 sm:p-6 transition-all duration-300 {{ $cardClass }}">
+            <a href="{{ localized_url($item['href']) }}" class="group flex flex-col rounded-2xl border p-5 sm:p-6 transition-all duration-300 {{ $cardClass }}">
                 <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br {{ $item['grad'] }} text-white shadow-md">
                     <x-dynamic-component :component="'lucide-'.$item['icon']" class="h-6 w-6" aria-hidden="true" />
                 </div>

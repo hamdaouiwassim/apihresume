@@ -22,7 +22,7 @@
                     <x-lucide-shield-check class="h-5 w-5" />
                     Try again
                 </a>
-                <a href="{{ url('/') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+                <a href="{{ localized_url('/') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 font-semibold text-slate-700 hover:bg-slate-50">
                     <x-lucide-home class="h-5 w-5" />
                     Back to home
                 </a>

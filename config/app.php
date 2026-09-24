@@ -56,6 +56,12 @@ return [
 
     // Public site origin used for canonical URLs, sitemap, OAuth and email links.
     // Pages are served by this app, so it defaults to APP_URL.
+    /*
+    | Former origins of this app (comma separated). Stored file URLs on these hosts are rewritten to
+    | APP_URL (App\Support\LegacyUrls, php artisan app:rewrite-legacy-urls).
+    */
+    'legacy_urls' => array_filter(explode(',', (string) env('LEGACY_APP_URLS', 'https://apihresume.hamdaouiacademy.com,http://apihresume.hamdaouiacademy.com'))),
+
     'frontend_url' => env('FRONTEND_APP_URL', env('APP_URL', 'http://localhost')),
 
     /*

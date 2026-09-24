@@ -19,7 +19,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="{{ url('/') }}" class="flex-shrink-0 flex items-center space-x-2 group">
+                    <a href="{{ localized_url('/') }}" class="flex-shrink-0 flex items-center space-x-2 group">
                         <img src="/logo.webp" width="40" height="40" alt="HResume Logo" class="h-10 w-auto group-hover:scale-110 transition-transform duration-300" />
                         <span {!! $sw('text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r', 'from-blue-200 via-purple-200 to-violet-200', 'from-blue-600 via-purple-600 to-blue-800') !!}>HResume</span>
                     </a>
@@ -152,21 +152,21 @@
                     <div>
                         <h3 class="text-sm font-semibold text-white uppercase tracking-[0.2em]">Product</h3>
                         <ul class="mt-4 space-y-4 text-sm text-gray-400">
-                            <li><a href="{{ url('/templates/public') }}" class="hover:text-white transition">Resume Templates</a></li>
-                            <li><a href="{{ url('/cover-letter-builder') }}" class="hover:text-white transition">Cover Letter Builder</a></li>
-                            <li><a href="{{ url('/work-certificate') }}" class="hover:text-white transition">Work Certificate</a></li>
-                            <li><a href="{{ url('/pricing') }}" class="hover:text-white transition">Pricing</a></li>
+                            <li><a href="{{ localized_url('/templates/public') }}" class="hover:text-white transition">Resume Templates</a></li>
+                            <li><a href="{{ localized_url('/cover-letter-builder') }}" class="hover:text-white transition">Cover Letter Builder</a></li>
+                            <li><a href="{{ localized_url('/work-certificate') }}" class="hover:text-white transition">Work Certificate</a></li>
+                            <li><a href="{{ localized_url('/pricing') }}" class="hover:text-white transition">Pricing</a></li>
                             <li><a href="{{ url('/blog') }}" class="hover:text-white transition">Blog</a></li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-sm font-semibold text-white uppercase tracking-[0.2em]">Company</h3>
                         <ul class="mt-4 space-y-4 text-sm text-gray-400">
-                            <li><a href="{{ url('/contact') }}" class="hover:text-white transition">Contact</a></li>
-                            <li><a href="{{ url('/faq') }}" class="hover:text-white transition">FAQ</a></li>
-                            <li><a href="{{ url('/terms') }}" class="hover:text-white transition">Terms</a></li>
-                            <li><a href="{{ url('/privacy') }}" class="hover:text-white transition">Privacy</a></li>
-                            <li><a href="{{ url('/refund') }}" class="hover:text-white transition">Refunds</a></li>
+                            <li><a href="{{ localized_url('/contact') }}" class="hover:text-white transition">Contact</a></li>
+                            <li><a href="{{ localized_url('/faq') }}" class="hover:text-white transition">FAQ</a></li>
+                            <li><a href="{{ localized_url('/terms') }}" class="hover:text-white transition">Terms</a></li>
+                            <li><a href="{{ localized_url('/privacy') }}" class="hover:text-white transition">Privacy</a></li>
+                            <li><a href="{{ localized_url('/refund') }}" class="hover:text-white transition">Refunds</a></li>
                             <li><a href="{{ url('/review') }}" class="hover:text-white transition">Reviews</a></li>
                         </ul>
                     </div>
@@ -199,9 +199,9 @@
             <div class="mt-12 border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
                 <p>© {{ date('Y') }} HResume. Built for ambitious careers.</p>
                 <div class="flex items-center gap-6">
-                    <a href="{{ url('/terms') }}" class="hover:text-white transition">Terms</a>
-                    <a href="{{ url('/privacy') }}" class="hover:text-white transition">Privacy</a>
-                    <a href="{{ url('/refund') }}" class="hover:text-white transition">Refunds</a>
+                    <a href="{{ localized_url('/terms') }}" class="hover:text-white transition">Terms</a>
+                    <a href="{{ localized_url('/privacy') }}" class="hover:text-white transition">Privacy</a>
+                    <a href="{{ localized_url('/refund') }}" class="hover:text-white transition">Refunds</a>
                     <span class="text-gray-600">SOC2-ready infrastructure</span>
                 </div>
             </div>

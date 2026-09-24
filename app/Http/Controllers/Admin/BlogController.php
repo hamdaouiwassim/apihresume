@@ -281,8 +281,7 @@ class BlogController extends Controller
     private function storeFeaturedImage(Request $request): array
     {
         $file = $request->file('featured_image_file');
-        $baseUrl = $request->getScheme().'://'.$request->getHost()
-            .($request->getPort() && ! in_array($request->getPort(), [80, 443]) ? ':'.$request->getPort() : '');
+        $baseUrl = rtrim((string) config('app.url'), '/'); // never the request host (it may be a former domain)
 
         try {
             $meta = app(BlogImageOptimizer::class)->optimize($file);

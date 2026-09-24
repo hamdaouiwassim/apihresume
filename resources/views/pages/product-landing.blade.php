@@ -51,7 +51,7 @@
 
             <section class="text-center rounded-2xl border border-dashed border-slate-300 bg-white/60 p-6">
                 <p class="text-sm text-slate-600 mb-3">{{ $common['alsoTry'] ?? '' }}</p>
-                <a href="{{ url($config['otherHref']) }}" class="font-semibold text-blue-600 hover:text-purple-700 hover:underline">{{ $other['shortTitle'] ?? $config['otherKey'] }}</a><span class="text-slate-400 mx-2">·</span><a href="{{ url('/') }}" class="font-semibold text-blue-600 hover:text-purple-700 hover:underline">{{ $common['backHome'] ?? 'Back to homepage' }}</a>
+                <a href="{{ localized_url($config['otherHref']) }}" class="font-semibold text-blue-600 hover:text-purple-700 hover:underline">{{ $other['shortTitle'] ?? $config['otherKey'] }}</a><span class="text-slate-400 mx-2">·</span><a href="{{ localized_url('/') }}" class="font-semibold text-blue-600 hover:text-purple-700 hover:underline">{{ $common['backHome'] ?? 'Back to homepage' }}</a>
             </section>
 
             <x-application-suite-section />

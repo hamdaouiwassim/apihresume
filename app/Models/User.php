@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\LegacyUrls;
 use App\Models\Concerns\CascadesSoftDeletesToOwnedContent;
 use App\Services\AiQuotaService;
 use App\Services\AiTokenLimitService;
@@ -339,5 +340,11 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return app(AiTokenLimitService::class)->snapshot($this);
+    }
+
+    /** Avatars uploaded under a former domain of this app are served from APP_URL now. */
+    protected function avatar(): Attribute
+    {
+        return Attribute::get(fn ($value) => LegacyUrls::rewrite($value));
     }
 }

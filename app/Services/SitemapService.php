@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\BlogPost;
 use App\Models\Resume;
 use App\Models\Template;
+use App\Support\LocalizedUrls;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,7 +14,7 @@ class SitemapService
     public const CACHE_KEY = 'sitemap.xml';
 
     /**
-     * @return list<array{loc: string, lastmod: string, changefreq: string, priority: string}>
+     * @return list<array{loc: string, lastmod: string, changefreq: string, priority: string, alternates?: array<string, string>}>
      */
     public function entries(): array
     {
@@ -21,7 +22,7 @@ class SitemapService
         $entries = [];
 
         foreach (config('sitemap.static_paths', []) as $path => [$changefreq, $priority]) {
-            $entries[] = $this->entry($base, $path, now(), $changefreq, $priority);
+            array_push($entries, ...$this->localizedEntries($base, $path, now(), $changefreq, $priority));
         }
 
         BlogPost::published()
@@ -40,15 +41,16 @@ class SitemapService
 
         Template::query()
             ->orderBy('id')
-            ->get(['id', 'updated_at'])
+            ->whereNotNull('slug')
+            ->get(['id', 'slug', 'updated_at'])
             ->each(function (Template $template) use ($base, &$entries) {
-                $entries[] = $this->entry(
+                array_push($entries, ...$this->localizedEntries(
                     $base,
-                    '/templates/public/preview/'.$template->id,
+                    '/templates/'.$template->slug,
                     $template->updated_at ?? now(),
                     'monthly',
-                    '0.6'
-                );
+                    '0.8'
+                ));
             });
 
         Resume::query()
@@ -108,14 +110,39 @@ class SitemapService
             $lines[] = '    <lastmod>'.$entry['lastmod'].'</lastmod>';
             $lines[] = '    <changefreq>'.$entry['changefreq'].'</changefreq>';
             $lines[] = '    <priority>'.$entry['priority'].'</priority>';
-            $lines[] = '    <xhtml:link rel="alternate" hreflang="en" href="'.e($entry['loc']).'" />';
-            $lines[] = '    <xhtml:link rel="alternate" hreflang="fr" href="'.e($entry['loc'].'?lang=fr').'" />';
+            foreach ($entry['alternates'] ?? [] as $lang => $href) {
+                $lines[] = '    <xhtml:link rel="alternate" hreflang="'.$lang.'" href="'.e($href).'" />';
+            }
             $lines[] = '  </url>';
         }
 
         $lines[] = '</urlset>';
 
         return implode("\n", $lines)."\n";
+    }
+
+    /**
+     * One entry per language for pages that have a /fr version (each listing both as alternates),
+     * a single entry otherwise (blog posts, profiles, auth pages).
+     *
+     * @return list<array{loc: string, lastmod: string, changefreq: string, priority: string, alternates?: array<string, string>}>
+     */
+    private function localizedEntries(
+        string $base,
+        string $path,
+        CarbonInterface $lastmod,
+        string $changefreq,
+        string $priority,
+    ): array {
+        if (! LocalizedUrls::isLocalizedPath($path)) {
+            return [$this->entry($base, $path, $lastmod, $changefreq, $priority)];
+        }
+
+        $en = $this->entry($base, $path, $lastmod, $changefreq, $priority);
+        $fr = $this->entry($base, LocalizedUrls::pathFor($path, 'fr'), $lastmod, $changefreq, $priority);
+        $alternates = ['en' => $en['loc'], 'fr' => $fr['loc'], 'x-default' => $en['loc']];
+
+        return [$en + ['alternates' => $alternates], $fr + ['alternates' => $alternates]];
     }
 
     /**

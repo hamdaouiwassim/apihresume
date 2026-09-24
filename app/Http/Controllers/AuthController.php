@@ -801,12 +801,7 @@ class AuthController extends Controller
 
                     // Verify file was actually stored
                     if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
-                        // Generate full URL using the request's scheme and host (includes port if present)
-                        // This ensures the URL matches the API server the frontend is calling
-                        $scheme = $request->getScheme();
-                        $host = $request->getHost();
-                        $port = $request->getPort();
-                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
+                        $baseUrl = rtrim((string) config('app.url'), '/'); // never the request host (it may be a former domain)
                         $updateData['avatar'] = $baseUrl.'/storage/'.$avatarPath;
                     } else {
                         throw new \RuntimeException('Failed to store avatar file.');
@@ -854,10 +849,7 @@ class AuthController extends Controller
                     $brandPath = $file->storeAs('brand-avatars', $filename, 'public');
 
                     if ($brandPath && Storage::disk('public')->exists($brandPath)) {
-                        $scheme = $request->getScheme();
-                        $host = $request->getHost();
-                        $port = $request->getPort();
-                        $baseUrl = $scheme.'://'.$host.($port && $port != 80 && $port != 443 ? ':'.$port : '');
+                        $baseUrl = rtrim((string) config('app.url'), '/'); // never the request host (it may be a former domain)
                         $user->recruiter->update(['brand_avatar' => $baseUrl.'/storage/'.$brandPath]);
                     } else {
                         throw new \RuntimeException('Failed to store company logo file.');

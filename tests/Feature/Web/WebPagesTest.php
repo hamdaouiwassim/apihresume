@@ -58,6 +58,17 @@ class WebPagesTest extends TestCase
         }
     }
 
+    public function test_home_page_has_a_single_descriptive_h1(): void
+    {
+        $html = $this->get('/')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, '<h1'));
+        $this->assertStringContainsString('>Create a CV Recruiters Actually Read</h1>', $html);
+        $this->assertStringContainsString('Free AI-powered CV builder for ATS-friendly resumes, professional templates, cover letters, and PDF export.', $html);
+
+        $this->flushSession();
+        $this->get('/fr')->assertSee('>Créez un CV que les recruteurs lisent vraiment</h1>', false);
+    }
+
     public function test_blog_post_is_rendered_with_article_metadata(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);
@@ -82,14 +93,85 @@ class WebPagesTest extends TestCase
         $this->get('/blog/does-not-exist')->assertNotFound();
     }
 
-    public function test_template_preview_returns_404_for_unknown_template(): void
+    public function test_home_page_links_web_application_to_organization_and_website(): void
     {
+        config(['app.frontend_url' => 'https://hresume.pro']);
+
+        $html = $this->get('/')->assertOk()->getContent();
+        preg_match('#<script type="application/ld\+json">(.+?)</script>#s', $html, $m);
+        $graph = collect(json_decode($m[1], true)['@graph'])->keyBy('@type');
+
+        $this->assertSame('https://hresume.pro/#organization', $graph['Organization']['@id']);
+        $this->assertSame('https://hresume.pro/logo.png', $graph['Organization']['logo']['url']);
+        $this->assertSame('https://hresume.pro/#website', $graph['WebSite']['@id']);
+        $this->assertSame(['@id' => 'https://hresume.pro/#organization'], $graph['WebSite']['publisher']);
+        $this->assertSame(['@id' => 'https://hresume.pro/#organization'], $graph['WebApplication']['publisher']);
+        $this->assertSame(['@id' => 'https://hresume.pro/#website'], $graph['WebApplication']['isPartOf']);
+    }
+
+    public function test_template_pages_have_slug_urls_and_server_rendered_content(): void
+    {
+        config(['app.frontend_url' => 'https://hresume.pro']);
+        $classic = Template::create(['name' => 'Classic', 'category' => 'Corporate', 'description' => 'Traditional layout for corporate roles.']);
+        $split = Template::create(['name' => 'Nordic Split', 'category' => 'Corporate', 'description' => 'Split-column layout.']);
+
+        $this->assertSame('classic', $classic->slug);
+        $this->assertSame('nordic-split', $split->slug);
+
+        $this->get('/templates/classic')->assertOk()
+            ->assertSee('<h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">Classic resume template</h1>', false)
+            ->assertSee('Traditional layout for corporate roles.', false)
+            ->assertSee('<link rel="canonical" href="https://hresume.pro/templates/classic">', false)
+            ->assertSee('<link rel="alternate" hreflang="fr" href="https://hresume.pro/fr/templates/classic">', false)
+            ->assertSee('BreadcrumbList', false)
+            ->assertSee('data-island="template-preview"', false)
+            ->assertSee('/resume/start?template='.$classic->id, false)
+            ->assertSee('/templates/nordic-split', false);
+
+        $this->flushSession();
+        $this->get('/fr/templates/classic')->assertOk()
+            ->assertSee('Modèle de CV Classic', false)
+            ->assertSee('<link rel="canonical" href="https://hresume.pro/fr/templates/classic">', false);
+
+        $this->flushSession();
+        $this->get('/templates/does-not-exist')->assertNotFound()->assertSee('noindex', false);
+        $this->get('/templates/public')->assertOk()->assertSee('/templates/classic', false)->assertSee('/templates/nordic-split', false);
+    }
+
+    public function test_old_template_preview_urls_redirect_permanently(): void
+    {
+        $template = Template::create(['name' => 'Classic', 'category' => 'Corporate']);
+
+        $this->get('/templates/public/preview/'.$template->id)->assertStatus(301)->assertRedirectContains('/templates/classic');
+        $this->flushSession();
+        $this->get('/fr/templates/public/preview/'.$template->id)->assertStatus(301)->assertRedirectContains('/fr/templates/classic');
+        $this->flushSession();
         $this->get('/templates/public/preview/999')->assertNotFound();
 
-        $template = Template::create(['name' => 'Classic', 'category' => 'Corporate', 'description' => 'Test']);
-        $this->get('/templates/public/preview/'.$template->id)
-            ->assertOk()
-            ->assertSee('data-island="template-preview"', false);
+        // The signed-in app preview keeps its id URL.
+        $this->actingAs($this->user());
+        $this->get('/templates/preview/'.$template->id)->assertOk();
+    }
+
+    public function test_slugs_are_unique_and_never_collide_with_fixed_paths(): void
+    {
+        $this->assertSame('classic', Template::create(['name' => 'Classic'])->slug);
+        $this->assertSame('classic-2', Template::create(['name' => 'Classic'])->slug);
+        $this->assertSame('public-template', Template::create(['name' => 'Public'])->slug);
+
+        $renamed = Template::where('slug', 'classic')->first();
+        $renamed->update(['name' => 'Classic Pro']);
+        $this->assertSame('classic', $renamed->fresh()->slug, 'Renaming keeps the indexed URL');
+    }
+
+    public function test_home_template_cards_have_descriptive_alt_and_dimensions(): void
+    {
+        Template::create(['name' => 'Classic', 'category' => 'Corporate', 'preview_image_url' => 'https://cdn.example.com/classic.png']);
+
+        $this->get('/')->assertOk()
+            ->assertSee('alt="Classic ATS-friendly resume template"', false)
+            ->assertSee('width="600" height="848"', false)
+            ->assertSee('/templates/classic', false);
     }
 
     public function test_private_pages_redirect_guests_to_login(): void
@@ -155,11 +237,122 @@ class WebPagesTest extends TestCase
 
     public function test_locale_switch_persists_in_session(): void
     {
+        // Private pages follow the session language.
+        $this->actingAs($this->user());
         $this->get('/locale/fr')->assertRedirect();
-        $this->get('/pricing')->assertOk()->assertSee('<html lang="fr">', false);
+        $this->get('/profile')->assertOk()->assertSee('<html lang="fr">', false);
 
         $this->get('/locale/en');
-        $this->get('/pricing')->assertSee('<html lang="en">', false);
+        $this->get('/profile')->assertSee('<html lang="en">', false);
+    }
+
+    public function test_french_pages_have_their_own_urls_with_reciprocal_hreflang(): void
+    {
+        config(['app.frontend_url' => 'https://hresume.pro']);
+
+        $alternates = [
+            '<link rel="alternate" hreflang="en" href="https://hresume.pro/pricing">',
+            '<link rel="alternate" hreflang="fr" href="https://hresume.pro/fr/pricing">',
+            '<link rel="alternate" hreflang="x-default" href="https://hresume.pro/pricing">',
+        ];
+
+        $en = $this->get('/pricing')->assertOk()
+            ->assertSee('<html lang="en">', false)
+            ->assertSee('<link rel="canonical" href="https://hresume.pro/pricing">', false)
+            ->assertDontSee('name="language"', false);
+        $fr = $this->get('/fr/pricing')->assertOk()
+            ->assertSee('<html lang="fr">', false)
+            ->assertSee('<link rel="canonical" href="https://hresume.pro/fr/pricing">', false);
+
+        foreach ($alternates as $tag) {
+            $en->assertSee($tag, false);
+            $fr->assertSee($tag, false);
+        }
+
+        $this->flushSession();
+        $this->get('/fr')->assertOk()
+            ->assertSee('<link rel="canonical" href="https://hresume.pro/fr">', false)
+            ->assertSee('<link rel="alternate" hreflang="en" href="https://hresume.pro/">', false)
+            ->assertSee('<link rel="alternate" hreflang="x-default" href="https://hresume.pro/">', false);
+    }
+
+    public function test_crawlers_get_the_language_of_the_url_and_visitors_their_chosen_language(): void
+    {
+        // No session (crawler): each URL renders in its own language, no redirect.
+        $this->get('/faq')->assertOk()->assertSee('<html lang="en">', false);
+        $this->flushSession();
+        $this->get('/fr/faq')->assertOk()->assertSee('<html lang="fr">', false);
+
+        // A visitor who chose French is sent from the English URL to the French one.
+        $this->get('/faq?x=1')->assertRedirect('/fr/faq?x=1');
+
+        // The toggle goes to the other language's URL of the same page.
+        $this->from('/fr/faq')->get('/locale/en')->assertRedirect('/faq');
+        $this->get('/faq')->assertOk()->assertSee('<html lang="en">', false);
+        $this->from('/faq')->get('/locale/fr')->assertRedirect('/fr/faq');
+
+        // Pages without a French URL keep theirs.
+        $this->from('/blog')->get('/locale/fr')->assertRedirect('/blog');
+    }
+
+    public function test_french_pages_have_french_meta_and_titles_are_escaped_once(): void
+    {
+        $this->get('/fr')->assertOk()
+            ->assertSee('<title>HResume - CV, lettre de motivation et attestation de travail gratuits</title>', false)
+            ->assertSee('Créez gratuitement des CV compatibles ATS', false);
+
+        $this->flushSession();
+        $this->get('/fr/terms')->assertOk()
+            ->assertSee('<title>Conditions générales d&#039;utilisation | HResume</title>', false)
+            ->assertDontSee('&amp;#039;', false);
+    }
+
+    /** Paths of the page's <a href> links to this site (host-agnostic). */
+    private function linkPaths(string $html): array
+    {
+        preg_match_all('#<a\s[^>]*href="https?://[^/"]+(/[^"?\#]*)#', $html, $m);
+
+        return array_values(array_unique($m[1]));
+    }
+
+    public function test_french_pages_link_to_french_urls(): void
+    {
+        $links = $this->linkPaths($this->get('/fr')->assertOk()->getContent());
+
+        foreach (['/fr/pricing', '/fr/faq', '/fr/contact', '/fr/terms', '/fr/privacy', '/fr/refund', '/fr/templates/public', '/fr/cover-letter-builder', '/fr/work-certificate'] as $path) {
+            $this->assertContains($path, $links);
+        }
+        // No English URL of a page that has a French version; pages without one keep their URL.
+        foreach (['/pricing', '/faq', '/contact', '/terms', '/privacy', '/refund', '/templates/public', '/cover-letter-builder', '/work-certificate'] as $path) {
+            $this->assertNotContains($path, $links);
+        }
+        $this->assertContains('/blog', $links);
+        $this->assertNotContains('/fr/blog', $links);
+
+        $this->flushSession();
+        $links = $this->linkPaths($this->get('/pricing')->assertOk()->getContent());
+        $this->assertContains('/faq', $links);
+        $this->assertEmpty(array_filter($links, fn ($path) => str_starts_with($path, '/fr')));
+    }
+
+    public function test_single_language_pages_have_no_hreflang(): void
+    {
+        $this->get('/blog')->assertOk()->assertDontSee('hreflang', false);
+        $this->get('/fr/blog')->assertRedirect('/');
+    }
+
+    public function test_sitemap_lists_french_urls_with_alternates(): void
+    {
+        config(['sitemap.base_url' => 'https://hresume.pro']);
+        app(\App\Services\SitemapService::class)->bustCache();
+
+        $this->get('/sitemap.xml')->assertOk()
+            ->assertSee('<loc>https://hresume.pro/fr/pricing</loc>', false)
+            ->assertSee('<loc>https://hresume.pro/fr</loc>', false)
+            ->assertSee('hreflang="fr" href="https://hresume.pro/fr/pricing"', false)
+            ->assertSee('hreflang="x-default" href="https://hresume.pro/pricing"', false)
+            ->assertDontSee('?lang=fr', false)
+            ->assertDontSee('https://hresume.pro/fr/blog', false);
     }
 
     public function test_recruiter_pages_are_removed(): void
@@ -189,6 +382,18 @@ class WebPagesTest extends TestCase
     {
         $this->get('/this-page-does-not-exist')->assertRedirect('/');
         $this->getJson('/api/this-does-not-exist')->assertNotFound();
+    }
+
+    public function test_old_spa_chunks_return_404_and_clear_the_browser_cache(): void
+    {
+        foreach (['/assets/login-BOnU3Ery.js', '/assets/welcome-DM_XirWM.jsx', '/registerSW.js', '/manifest.json'] as $path) {
+            $this->get($path)
+                ->assertNotFound()
+                ->assertHeader('Clear-Site-Data', '"cache"')
+                ->assertHeader('Content-Type', 'text/plain; charset=utf-8');
+        }
+
+        $this->get('/old-spa-page')->assertRedirect('/')->assertHeaderMissing('Clear-Site-Data');
     }
 
     public function test_placeholder_images_are_served_locally(): void

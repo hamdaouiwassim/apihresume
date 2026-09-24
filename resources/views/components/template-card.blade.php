@@ -4,11 +4,14 @@
     $name = $template->name;
     $category = $template->category ?: 'Professional';
     $image = $template->preview_image_url ?? null;
+    $imageSize = $image ? $template->previewImageSize() : null;
 @endphp
-<a href="{{ route('templates.public.preview', $template->id) }}" class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group block">
+<a href="{{ localized_route('templates.show', $template->slug) }}" class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group block">
     <div class="relative">
         @if ($image)
-            <img src="{{ $image }}" alt="{{ $name }} Template" class="w-full h-48 object-cover" loading="lazy"
+            <img src="{{ $image }}" alt="{{ t('templatePage.imageAlt', ['name' => $name]) }}"
+                width="{{ $imageSize['width'] ?? 600 }}" height="{{ $imageSize['height'] ?? 848 }}"
+                class="w-full h-48 object-cover" loading="lazy" decoding="async"
                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
         @endif
         <div class="{{ $image ? 'hidden' : '' }} bg-gradient-to-br from-blue-50 to-white h-48 p-4 border-b">

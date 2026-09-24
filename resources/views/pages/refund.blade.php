@@ -82,9 +82,9 @@
                                 <a href="mailto:contact@hresume.pro" class="text-blue-600 hover:underline">contact@hresume.pro</a>
                             </p>
                             <p class="mt-4 text-sm text-gray-600">
-                                <a href="{{ route('contact') }}" class="text-blue-600 hover:underline font-medium">{{ t('refund.contact.formLink', [], 'Contact form') }}</a>
+                                <a href="{{ localized_route('contact') }}" class="text-blue-600 hover:underline font-medium">{{ t('refund.contact.formLink', [], 'Contact form') }}</a>
                                 ·
-                                <a href="{{ route('pricing') }}" class="text-blue-600 hover:underline font-medium">{{ t('refund.contact.pricingLink', [], 'Pricing') }}</a>
+                                <a href="{{ localized_route('pricing') }}" class="text-blue-600 hover:underline font-medium">{{ t('refund.contact.pricingLink', [], 'Pricing') }}</a>
                             </p>
                         </div>
                     </div>

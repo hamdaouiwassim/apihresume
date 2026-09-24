@@ -16,7 +16,7 @@
             <div x-show="status === 'error' || status === 'missing_session'" x-cloak class="space-y-6">
                 <x-lucide-alert-circle class="h-16 w-16 text-amber-500 mx-auto" />
                 <p class="text-slate-700">{{ $s['error'] ?? 'We could not confirm your payment. If you were charged, contact support.' }}</p>
-                <a href="{{ route('pricing') }}" class="text-blue-600 font-semibold hover:underline">{{ $s['goToPricing'] ?? 'Back to pricing' }}</a>
+                <a href="{{ localized_route('pricing') }}" class="text-blue-600 font-semibold hover:underline">{{ $s['goToPricing'] ?? 'Back to pricing' }}</a>
             </div>
         </div>
     </div>

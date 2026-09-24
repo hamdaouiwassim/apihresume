@@ -21,6 +21,22 @@ class OptimizeBlogImages extends Command
 
     public function handle(BlogImageOptimizer $optimizer): int
     {
+        if (! function_exists('imagewebp') || ! (gd_info()['WebP Support'] ?? false)) {
+            $this->error('PHP GD has no WebP support: install/enable it (e.g. apt install php-gd, then restart PHP-FPM) and run again.');
+
+            return self::FAILURE;
+        }
+
+        // Files must land in the folder the site serves as /storage (public/storage -> storage/app/public).
+        $diskRoot = realpath(Storage::disk('public')->path(''));
+        $served = realpath(public_path('storage'));
+        if (! app()->runningUnitTests() && (! $diskRoot || $diskRoot !== $served)) {
+            $this->error("The public disk writes to [{$diskRoot}] but the site serves /storage from [{$served}].");
+            $this->line('Run artisan from the deployed app folder, then: php artisan config:clear && php artisan storage:link');
+
+            return self::FAILURE;
+        }
+
         $marker = '/storage/'.BlogImageOptimizer::DIRECTORY.'/';
         $converted = 0;
 
@@ -64,7 +80,7 @@ class OptimizeBlogImages extends Command
                 $this->info("#{$post->id} converted ({$meta['width']}x{$meta['height']}, ".count($meta['variants']).' variants)');
             });
 
-        $this->info("Done. {$converted} image(s) converted.");
+        $this->info("Done. {$converted} image(s) converted; their posts now point to the WebP files.");
 
         return self::SUCCESS;
     }

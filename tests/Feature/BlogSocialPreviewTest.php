@@ -36,7 +36,9 @@ class BlogSocialPreviewTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('property="og:title" content="My Post | HResume Blog"', false);
-        $response->assertSee('property="og:image" content="https://apihresume.hamdaouiacademy.com/storage/blog-images/test.png"', false);
+        // Uploads saved under the former API domain are served from APP_URL (App\Support\LegacyUrls).
+        $response->assertSee('property="og:image" content="'.rtrim(config('app.url'), '/').'/storage/blog-images/test.png"', false);
+        $response->assertDontSee('hamdaouiacademy', false);
         $response->assertSee('property="og:url" content="https://hresume.pro/blog/my-post"', false);
     }
 

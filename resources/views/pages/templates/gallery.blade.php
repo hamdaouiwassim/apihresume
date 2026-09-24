@@ -77,18 +77,13 @@
                     <p class="text-gray-600">Open each CV template with sample data to see the full layout.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <a href="{{ route('templates.public.preview', 1) }}" class="block rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:bg-blue-50 transition-colors">
-                        <p class="font-semibold text-gray-900">Classic</p>
-                        <p class="text-sm text-gray-600 mt-1">Traditional and ATS-friendly.</p>
-                    </a>
-                    <a href="{{ route('templates.public.preview', 2) }}" class="block rounded-xl border border-gray-200 p-5 hover:border-purple-300 hover:bg-purple-50 transition-colors">
-                        <p class="font-semibold text-gray-900">Executive Split</p>
-                        <p class="text-sm text-gray-600 mt-1">Premium split-column structure.</p>
-                    </a>
-                    <a href="{{ route('templates.public.preview', 3) }}" class="block rounded-xl border border-gray-200 p-5 hover:border-green-300 hover:bg-green-50 transition-colors">
-                        <p class="font-semibold text-gray-900">Modern Professional</p>
-                        <p class="text-sm text-gray-600 mt-1">Balanced modern two-column design.</p>
-                    </a>
+                    @php $hovers = ['hover:border-blue-300 hover:bg-blue-50', 'hover:border-purple-300 hover:bg-purple-50', 'hover:border-green-300 hover:bg-green-50']; @endphp
+                    @foreach ($templates as $template)
+                        <a href="{{ localized_route('templates.show', $template->slug) }}" class="block rounded-xl border border-gray-200 p-5 {{ $hovers[$loop->index % 3] }} transition-colors">
+                            <p class="font-semibold text-gray-900">{{ $template->name }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ \Illuminate\Support\Str::limit($template->description ?: $template->category, 80) }}</p>
+                        </a>
+                    @endforeach
                 </div>
             </div>
 

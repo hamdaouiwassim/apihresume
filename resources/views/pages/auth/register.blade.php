@@ -3,7 +3,7 @@
 <x-layouts.guest title="Create your account | HResume" description="Create a free HResume account to build ATS-friendly resumes, cover letters and work certificates." canonical="/register">
     <div class="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-lg" x-data="registerForm">
-            <a href="{{ url('/') }}" class="inline-flex items-center text-sm text-slate-600 hover:text-slate-800 transition-colors">
+            <a href="{{ localized_url('/') }}" class="inline-flex items-center text-sm text-slate-600 hover:text-slate-800 transition-colors">
                 <x-lucide-arrow-left class="h-4 w-4 mr-2" />
                 Back to Home
             </a>

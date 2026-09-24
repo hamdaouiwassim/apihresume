@@ -15,6 +15,38 @@ if (! function_exists('t')) {
     }
 }
 
+if (! function_exists('localized_route')) {
+    /**
+     * route() in the current page language: "/fr/..." for pages that have a French URL when the page is
+     * French (App\Support\LocalizedUrls::ROUTES), the normal URL otherwise.
+     */
+    function localized_route(string $name, mixed $parameters = [], bool $absolute = true): string
+    {
+        if (app()->getLocale() === 'fr' && in_array($name, \App\Support\LocalizedUrls::ROUTES, true)) {
+            $name = 'fr.'.$name;
+        }
+
+        return route($name, $parameters, $absolute);
+    }
+}
+
+if (! function_exists('localized_url')) {
+    /** url() in the current page language ("/pricing" -> "/fr/pricing" on French pages). */
+    function localized_url(string $path): string
+    {
+        static $localized = [];
+
+        if (app()->getLocale() === 'fr') {
+            $localized[$path] ??= \App\Support\LocalizedUrls::isLocalizedPath($path);
+            if ($localized[$path]) {
+                $path = \App\Support\LocalizedUrls::pathFor($path, 'fr');
+            }
+        }
+
+        return url($path);
+    }
+}
+
 if (! function_exists('nav_active')) {
     /**
      * True when the current path matches any of the given patterns (Request::is syntax).

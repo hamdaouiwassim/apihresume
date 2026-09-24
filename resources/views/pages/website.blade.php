@@ -9,7 +9,7 @@
                 <x-lucide-globe class="h-10 w-10 text-rose-500 mx-auto mb-3" />
                 <h1 class="text-xl font-semibold text-slate-900 mb-2">Profile unavailable</h1>
                 <p class="text-slate-600 mb-4">{{ $error ?: 'This public profile could not be loaded.' }}</p>
-                <a href="{{ url('/') }}" class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                <a href="{{ localized_url('/') }}" class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
                     <x-lucide-arrow-left class="h-4 w-4 mr-2" />
                     Back to home
                 </a>

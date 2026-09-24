@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\LegacyUrls;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -116,5 +118,16 @@ class BlogPost extends Model
     public function incrementViews()
     {
         $this->increment('views');
+    }
+
+    /** Uploads saved under a former domain of this app are served from APP_URL now. */
+    protected function featuredImage(): Attribute
+    {
+        return Attribute::get(fn ($value) => LegacyUrls::rewrite($value));
+    }
+
+    protected function content(): Attribute
+    {
+        return Attribute::get(fn ($value) => LegacyUrls::rewrite($value));
     }
 }

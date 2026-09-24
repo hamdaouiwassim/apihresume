@@ -155,10 +155,7 @@ class BasicInfoController extends Controller
                 throw new \Exception('Failed to store avatar file.');
             }
 
-            $scheme = $request->getScheme();
-            $host = $request->getHost();
-            $port = $request->getPort();
-            $baseUrl = $scheme . '://' . $host . ($port && $port != 80 && $port != 443 ? ':' . $port : '');
+            $baseUrl = rtrim((string) config('app.url'), '/'); // never the request host (it may be a former domain)
             $avatarUrl = $baseUrl . '/storage/' . $path;
 
             // Persist avatar to basic_info so it's saved with resume data (no extra "Save" needed)

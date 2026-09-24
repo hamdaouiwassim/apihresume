@@ -2,14 +2,14 @@
 @php
     $blog = (array) t('blog', [], []);
     $jsonLd = [
-        '@context' => 'https://schema.org',
         '@type' => 'BlogPosting',
         'headline' => $post->title,
         'description' => $description,
         'datePublished' => $post->published_at?->toIso8601String(),
         'dateModified' => $post->updated_at?->toIso8601String(),
         'author' => ['@type' => 'Person', 'name' => $post->user?->name ?? 'HResume'],
-        'publisher' => ['@type' => 'Organization', 'name' => 'HResume'],
+        'publisher' => ['@id' => \App\Support\SchemaOrg::organizationId()],
+        'isPartOf' => ['@id' => \App\Support\SchemaOrg::websiteId()],
         'mainEntityOfPage' => \App\Support\BlogSeo::postUrl($post),
     ];
     $optimized = $post->optimizedFeaturedImage();
@@ -18,6 +18,7 @@
             ? ['@type' => 'ImageObject', 'url' => $ogImage, 'width' => $optimized['width'], 'height' => $optimized['height']]
             : $ogImage;
     }
+    $jsonLd = \App\Support\SchemaOrg::graph($jsonLd);
 @endphp
 <x-layouts.guest
     :title="$post->title.' | HResume Blog'"

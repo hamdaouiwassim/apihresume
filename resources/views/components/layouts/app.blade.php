@@ -42,7 +42,7 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="{{ url('/') }}" class="flex items-center space-x-2 group">
+                        <a href="{{ localized_url('/') }}" class="flex items-center space-x-2 group">
                             <img src="/logo.webp" width="40" height="40" alt="HResume Logo" class="h-10 w-auto group-hover:scale-110 transition-transform duration-300" />
                             <span class="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">HResume</span>
                         </a>

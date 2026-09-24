@@ -32,6 +32,16 @@ Node is only needed at build time (you can build in CI and upload `public/build`
   `https://hresume.pro/api/auth/google/callback`, `.../api/auth/linkedin/callback`, `.../api/auth/github/import/callback`.
 - Optional landing options (formerly Vite env vars): `LANDING_HERO_VARIANT`, `WALKTHROUGH_VIDEO_URL`, `SHOW_WALKTHROUGH_SECTION`.
 
+### Uploads saved under the old API domain
+Blog images and avatars uploaded while the API ran on `apihresume.hamdaouiacademy.com` were stored with that
+domain in their URL (browsers now reject it: its certificate does not match). They are rewritten to `APP_URL`
+when read, and new uploads always use `APP_URL`. Fix the stored data once:
+```bash
+php artisan app:rewrite-legacy-urls --dry-run   # show what changes
+php artisan app:rewrite-legacy-urls
+```
+Other former domains can be listed in `LEGACY_APP_URLS` (comma separated, default: the old API domain).
+
 ### Blog image optimization
 Uploaded blog featured images are converted to WebP at 480, 800 and 1200 px wide (never upscaled).
 Blog pages serve them with `srcset`, real `width`/`height` and a preload for the article image.
@@ -71,7 +81,16 @@ Images added by external URL are left as they are.
 
 ### Notes
 - UI translations live in `resources/translations/{en,fr}.json` (same keys as the old React app); use `t('key')` in Blade.
-- The chosen language is stored in the session (`/locale/fr`, `/locale/en`).
+- Public marketing pages have real French URLs: `/fr`, `/fr/pricing`, `/fr/faq`, ... (list in
+  `App\Support\LocalizedUrls::ROUTES`), with reciprocal `hreflang` (en, fr, x-default) in the page head and
+  in `/sitemap.xml`. The URL decides the language, so crawlers index both versions.
+- The language toggle (`/locale/fr`, `/locale/en`) stores the choice in the session and goes to the same page
+  in that language; visitors who chose French are redirected from `/pricing` to `/fr/pricing`.
+  Private app pages and blog posts have one URL and follow the session language.
+- Resume templates have indexable pages at `/templates/{slug}` (e.g. `/templates/classic`, `/fr/templates/classic`).
+  The slug is generated from the name on creation (`php artisan migrate` backfills existing templates) and kept
+  when the template is renamed. Old `/templates/public/preview/{id}` links redirect with 301.
+- After deploying: `php artisan route:clear` (or `route:cache`) and resubmit `/sitemap.xml` in Search Console.
 - The recruiter role is disabled: its pages and API routes are removed, `/recruiter/*` and `/register/recruiter`
   redirect. Models, migrations and `app/Http/Controllers/Recruiter/*` are kept so it can be re-enabled later.
 - Web pages send a CSP that allows `'unsafe-eval'` (required by Alpine.js) and Google Analytics.

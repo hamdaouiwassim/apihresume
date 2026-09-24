@@ -39,21 +39,31 @@ Route::get('/locale/{locale}', LocaleController::class)
 | Public pages (server-rendered for SEO)
 |--------------------------------------------------------------------------
 */
-Route::get('/', [PageController::class, 'home'])->name('home');
-Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
-Route::get('/faq', [PageController::class, 'faq'])->name('faq');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
-Route::get('/terms', [PageController::class, 'terms'])->name('terms');
-Route::get('/refund', [PageController::class, 'refund'])->name('refund');
-Route::get('/cover-letter-builder', [PageController::class, 'coverLetterBuilder'])->name('landing.cover-letter');
-Route::get('/work-certificate', [PageController::class, 'workCertificate'])->name('landing.work-certificate');
+// Marketing pages exist in English ("/pricing") and French ("/fr/pricing"), linked with hreflang.
+// Keep this list in sync with App\Support\LocalizedUrls::ROUTES.
+$localizedPages = function () {
+    Route::get('/', [PageController::class, 'home'])->name('home');
+    Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
+    Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+    Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+    Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
+    Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+    Route::get('/refund', [PageController::class, 'refund'])->name('refund');
+    Route::get('/cover-letter-builder', [PageController::class, 'coverLetterBuilder'])->name('landing.cover-letter');
+    Route::get('/work-certificate', [PageController::class, 'workCertificate'])->name('landing.work-certificate');
+    Route::get('/templates/public', [TemplatePageController::class, 'gallery'])->name('templates.public');
+    // Old id URL -> 301 to the template page.
+    Route::get('/templates/public/preview/{id}', [TemplatePageController::class, 'legacyPreview'])->name('templates.public.preview');
+    Route::get('/templates/{slug}', [TemplatePageController::class, 'show'])
+        ->where('slug', '(?!(?:public|preview)$)[a-z0-9]+(?:-[a-z0-9]+)*')
+        ->name('templates.show');
+};
+Route::middleware('page.locale:en')->group($localizedPages);
+Route::prefix('fr')->name('fr.')->middleware('page.locale:fr')->group($localizedPages);
 
 Route::get('/blog', [BlogPageController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogPageController::class, 'show'])->name('blog.show');
 
-Route::get('/templates/public', [TemplatePageController::class, 'gallery'])->name('templates.public');
-Route::get('/templates/public/preview/{id}', [TemplatePageController::class, 'preview'])->name('templates.public.preview');
 
 Route::get('/share/{token}', [PublicResumeController::class, 'share'])->name('share.view');
 Route::get('/website/{token}', [PublicResumeController::class, 'website'])->name('website.token');
@@ -202,6 +212,17 @@ if (class_exists(\Laravel\Pulse\Facades\Pulse::class) && method_exists(\Laravel\
 Route::fallback(function () {
     if (request()->is('api/*')) {
         abort(404);
+    }
+
+    // Missing static files get a real 404, never a redirect to an HTML page. Browsers still running a
+    // cached copy of the old React SPA request its chunks (/assets/login-xxxx.js, *.jsx): tell them to
+    // drop their HTTP cache so the next load gets the Blade site.
+    if (request()->is('assets/*') || preg_match('/\.(?:m?jsx?|css|map|json|webmanifest)$/i', request()->path())) {
+        return response('Not Found', 404, [
+            'Content-Type' => 'text/plain; charset=utf-8',
+            'Cache-Control' => 'no-store',
+            'Clear-Site-Data' => '"cache"',
+        ]);
     }
 
     return redirect('/');

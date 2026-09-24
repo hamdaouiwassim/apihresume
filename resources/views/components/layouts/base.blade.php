@@ -23,13 +23,27 @@
     unset($__kebab, $__camel);
 
     $siteOrigin = rtrim((string) config('app.frontend_url', config('app.url')), '/');
-    $defaultTitle = 'HResume - Free CV, Cover Letter & Work Certificate Builder';
-    $defaultDescription = 'Create ATS-friendly CVs, professional cover letters, and employment work certificates for free with HResume. Templates, live preview, and PDF export. No credit card required.';
-    $pageTitle = $title ?: $defaultTitle;
-    $pageDescription = $description ?: $defaultDescription;
+    $isFrench = app()->getLocale() === 'fr';
+    $defaultTitle = $isFrench
+        ? 'HResume - CV, lettre de motivation et attestation de travail gratuits'
+        : 'HResume - Free CV, Cover Letter & Work Certificate Builder';
+    $defaultDescription = $isFrench
+        ? 'Créez gratuitement des CV compatibles ATS, des lettres de motivation professionnelles et des attestations de travail avec HResume. Modèles, aperçu en direct et export PDF. Sans carte bancaire.'
+        : 'Create ATS-friendly CVs, professional cover letters, and employment work certificates for free with HResume. Templates, live preview, and PDF export. No credit card required.';
+    // Props forwarded by the guest/app/admin layouts ({{ $attributes }}) arrive HTML-escaped once already;
+    // decode so {{ }} below escapes exactly once (otherwise "d'utilisation" shows as "d&#039;utilisation").
+    $plain = fn ($value) => is_string($value) ? html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8') : $value;
+    $pageTitle = $plain($title) ?: $defaultTitle;
+    $pageDescription = $plain($description) ?: $defaultDescription;
+    $imageAlt = $plain($imageAlt);
+    // French URLs (/fr/...) are canonical for themselves: a page's relative canonical gets the /fr prefix.
+    $isFrenchUrl = \App\Support\LocalizedUrls::isFrenchRoute(request()->route());
     $canonicalUrl = $canonical
-        ? (preg_match('#^https?://#i', $canonical) ? $canonical : $siteOrigin.'/'.ltrim($canonical, '/'))
+        ? (preg_match('#^https?://#i', $canonical)
+            ? $canonical
+            : $siteOrigin.($isFrenchUrl ? \App\Support\LocalizedUrls::pathFor($canonical, 'fr') : '/'.ltrim($canonical, '/')))
         : $siteOrigin.'/'.ltrim(request()->path() === '/' ? '' : request()->path(), '/');
+    $hreflang = str_contains((string) $robots, 'noindex') ? null : \App\Support\LocalizedUrls::alternates($siteOrigin);
     $ogImage = $image
         ? (preg_match('#^https?://#i', $image) ? $image : (str_starts_with($image, '//') ? 'https:'.$image : $siteOrigin.'/'.ltrim($image, '/')))
         : $siteOrigin.'/og-image.jpg';
@@ -63,7 +77,6 @@
     <meta name="keywords" content="resume builder, CV builder, cover letter builder, work certificate generator, attestation de travail, free resume maker, ATS friendly resume, resume templates, lettre de motivation, create resume online, download resume PDF, job application">
     <meta name="author" content="HResume">
     <meta name="robots" content="{{ $robots }}">
-    <meta name="language" content="English, French">
 
     <meta property="og:type" content="{{ $ogType }}">
     <meta property="og:url" content="{{ $canonicalUrl }}">
@@ -95,6 +108,11 @@
     <meta name="apple-mobile-web-app-title" content="HResume">
 
     <link rel="canonical" href="{{ $canonicalUrl }}">
+    @if ($hreflang)
+        @foreach ($hreflang as $lang => $href)
+            <link rel="alternate" hreflang="{{ $lang }}" href="{{ $href }}">
+        @endforeach
+    @endif
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 
     @if ($jsonLd)

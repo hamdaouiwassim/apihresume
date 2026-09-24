@@ -63,9 +63,9 @@
                     <h2 class="text-2xl font-bold text-gray-900">{{ t('terms.payments.title', [], 'Paid plans') }}</h2>
                     <p class="text-gray-700 leading-relaxed">{{ t('terms.payments.content', [], '') }}</p>
                     <p class="text-sm text-gray-600">
-                        <a href="{{ route('pricing') }}" class="text-blue-600 hover:underline font-medium">Pricing</a>
+                        <a href="{{ localized_route('pricing') }}" class="text-blue-600 hover:underline font-medium">Pricing</a>
                         ·
-                        <a href="{{ route('refund') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.refundLink', [], 'Refund Policy') }}</a>
+                        <a href="{{ localized_route('refund') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.refundLink', [], 'Refund Policy') }}</a>
                     </p>
                 </x-legal-section>
 
@@ -73,7 +73,7 @@
                     <h2 class="text-2xl font-bold text-gray-900">{{ t('terms.privacy.title', [], 'Privacy') }}</h2>
                     <p class="text-gray-700 leading-relaxed">{{ t('terms.privacy.content', [], '') }}</p>
                     <p class="text-sm">
-                        <a href="{{ route('privacy') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.privacyLink', [], 'Privacy Policy') }}</a>
+                        <a href="{{ localized_route('privacy') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.privacyLink', [], 'Privacy Policy') }}</a>
                     </p>
                 </x-legal-section>
 
@@ -107,11 +107,11 @@
                                 <a href="mailto:contact@hresume.pro" class="text-blue-600 hover:underline">contact@hresume.pro</a>
                             </p>
                             <p class="mt-4 text-sm text-gray-600">
-                                <a href="{{ route('contact') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.formLink', [], 'Contact form') }}</a>
+                                <a href="{{ localized_route('contact') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.formLink', [], 'Contact form') }}</a>
                                 ·
-                                <a href="{{ route('privacy') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.privacyLink', [], 'Privacy') }}</a>
+                                <a href="{{ localized_route('privacy') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.privacyLink', [], 'Privacy') }}</a>
                                 ·
-                                <a href="{{ route('refund') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.refundLink', [], 'Refunds') }}</a>
+                                <a href="{{ localized_route('refund') }}" class="text-blue-600 hover:underline font-medium">{{ t('terms.contact.refundLink', [], 'Refunds') }}</a>
                             </p>
                         </div>
                     </div>

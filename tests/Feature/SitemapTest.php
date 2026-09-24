@@ -93,7 +93,7 @@ class SitemapTest extends TestCase
         $response->assertOk();
         $this->assertStringContainsString('<loc>https://hresume.pro/u/jane-doe</loc>', $response->getContent());
         $this->assertStringContainsString(
-            '<loc>https://hresume.pro/templates/public/preview/'.$template->id.'</loc>',
+            '<loc>https://hresume.pro/templates/'.$template->slug.'</loc>',
             $response->getContent()
         );
     }

@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <template x-if="exhausted && !isPro">
-                        <a href="{{ url('/pricing') }}" class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-xs font-bold text-white shadow-sm hover:opacity-95 shrink-0">
+                        <a href="{{ localized_url('/pricing') }}" class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-xs font-bold text-white shadow-sm hover:opacity-95 shrink-0">
                             <x-lucide-crown class="h-3.5 w-3.5" />
                             {{ $fr ? 'Passer Pro' : 'Upgrade Pro' }}
                         </a>

@@ -8,7 +8,7 @@
     <div class="min-h-screen bg-gray-50 py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-6">
-                <a href="{{ route('templates.public') }}" class="inline-flex items-center text-blue-600 hover:text-blue-700">
+                <a href="{{ localized_route('templates.public') }}" class="inline-flex items-center text-blue-600 hover:text-blue-700">
                     <x-lucide-arrow-left class="h-4 w-4 mr-2" />
                     Back to Templates
                 </a>
