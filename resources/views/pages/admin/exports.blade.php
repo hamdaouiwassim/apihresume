@@ -193,31 +193,53 @@
                         {{-- Tables Picker --}}
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <label class="text-xs font-bold uppercase tracking-wider text-gray-500">Select Tables</label>
-                                <div class="flex items-center gap-3">
-                                    <button type="button" @click="toggleAllTables()" class="text-xs font-semibold text-purple-600 hover:text-purple-800">
+                                <div class="flex items-center gap-2">
+                                    <label class="text-xs font-bold uppercase tracking-wider text-gray-500">Select Tables</label>
+                                    <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">App-Only Filter</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs">
+                                    <button type="button" @click="selectAppTablesOnly()" class="font-semibold text-purple-600 hover:text-purple-800" title="Select all core application tables, excluding temporary cache and sessions">
+                                        App Data
+                                    </button>
+                                    <span class="text-gray-300">|</span>
+                                    <button type="button" @click="toggleAllTables()" class="font-semibold text-gray-500 hover:text-gray-700">
                                         <span x-text="selectAllTables ? 'Deselect All' : 'Select All'">Select All</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="relative mb-2">
-                                <x-lucide-search class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                                <input type="text" x-model="tableSearch" placeholder="Filter tables..." class="w-full rounded-xl border border-gray-200 bg-white py-1.5 pl-9 pr-3 text-xs placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500" />
+                            <p class="mb-2 text-[11px] text-gray-500">
+                                Strictly filters to your app's tables. Foreign or unrelated tables sharing your MySQL database are automatically excluded.
+                            </p>
+
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="relative flex-1">
+                                    <x-lucide-search class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                                    <input type="text" x-model="tableSearch" placeholder="Search tables..." class="w-full rounded-xl border border-gray-200 bg-white py-1.5 pl-9 pr-3 text-xs placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500" />
+                                </div>
+                                <div class="flex rounded-xl bg-gray-100 p-0.5 text-[11px]">
+                                    <button type="button" @click="tableCategoryFilter = 'all'" class="rounded-lg px-2 py-1 font-medium transition-colors" :class="tableCategoryFilter === 'all' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-500 hover:text-gray-900'">All</button>
+                                    <button type="button" @click="tableCategoryFilter = 'app'" class="rounded-lg px-2 py-1 font-medium transition-colors" :class="tableCategoryFilter === 'app' ? 'bg-white text-purple-700 shadow-xs' : 'text-gray-500 hover:text-gray-900'">App</button>
+                                    <button type="button" @click="tableCategoryFilter = 'system'" class="rounded-lg px-2 py-1 font-medium transition-colors" :class="tableCategoryFilter === 'system' ? 'bg-white text-gray-700 shadow-xs' : 'text-gray-500 hover:text-gray-900'">Cache</button>
+                                </div>
                             </div>
 
                             <div class="max-h-48 overflow-y-auto rounded-xl border border-gray-200 bg-gray-50/50 p-2 divide-y divide-gray-100 custom-scrollbar">
                                 <template x-for="t in filteredTables" :key="t.name">
                                     <label class="flex cursor-pointer items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white transition-colors">
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-2 min-w-0">
                                             <input type="checkbox" :checked="selectedTables.includes(t.name)" @change="toggleTable(t.name)" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
-                                            <span class="text-xs font-medium text-gray-800" x-text="t.name"></span>
+                                            <span class="text-xs font-medium text-gray-800 truncate" x-text="t.name"></span>
+                                            <span class="text-[9px] font-semibold uppercase px-1.5 py-0.2 rounded"
+                                                :class="t.is_core ? 'bg-purple-100 text-purple-700' : 'bg-gray-200 text-gray-600'"
+                                                x-text="t.category">
+                                            </span>
                                         </div>
-                                        <span class="text-[11px] font-mono text-gray-400" x-text="(t.rows || 0) + ' rows'"></span>
+                                        <span class="text-[11px] font-mono text-gray-400 flex-shrink-0 ml-2" x-text="(t.rows || 0) + ' rows'"></span>
                                     </label>
                                 </template>
                                 <div x-show="filteredTables.length === 0" class="py-4 text-center text-xs text-gray-400">
-                                    No tables match your search
+                                    No tables match your search or filter
                                 </div>
                             </div>
                         </div>

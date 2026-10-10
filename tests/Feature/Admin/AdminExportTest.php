@@ -254,4 +254,30 @@ class AdminExportTest extends TestCase
         $this->actingAs($admin)->deleteJson('/api/admin/exports/non_existent_file.sql')
             ->assertNotFound();
     }
+
+    public function test_only_app_related_tables_are_exported_and_external_tables_are_excluded(): void
+    {
+        $admin = $this->adminUser();
+
+        // Create a dummy foreign table (e.g. from another app in the same database)
+        \Illuminate\Support\Facades\Schema::create('unrelated_external_table', function ($table) {
+            $table->id();
+            $table->string('name');
+        });
+
+        $service = app(\App\Services\DatabaseExportService::class);
+        $tables = $service->getAllTables(false);
+
+        // Verify the foreign table is completely excluded from the tables list
+        $this->assertNotContains('unrelated_external_table', $tables);
+
+        // Export database without passing tables: should only export core app tables
+        $result = $service->export('sql', null, false, false);
+        $content = file_get_contents($result['path']);
+
+        $this->assertStringNotContainsString('unrelated_external_table', $content);
+        $this->assertStringContainsString('users', $content);
+
+        \Illuminate\Support\Facades\Schema::dropIfExists('unrelated_external_table');
+    }
 }

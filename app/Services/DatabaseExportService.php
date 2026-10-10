@@ -12,6 +12,58 @@ use ZipArchive;
 class DatabaseExportService
 {
     /**
+     * Core business and content tables belonging to the HResume application.
+     * Exported by default in logical dependency order.
+     */
+    public const CORE_APP_TABLES = [
+        'users',
+        'admins',
+        'candidates',
+        'recruiters',
+        'personal_access_tokens',
+        'password_reset_tokens',
+        'resumes',
+        'basic_infos',
+        'experiences',
+        'education',
+        'skills',
+        'projects',
+        'certificates',
+        'languages',
+        'hobbies',
+        'resume_collaborators',
+        'shareable_links',
+        'templates',
+        'template_proposals',
+        'cover_letters',
+        'cover_letter_templates',
+        'work_certificates',
+        'blog_posts',
+        'reviews',
+        'subscribers',
+        'pdf_fonts',
+        'ai_usage_logs',
+        'outbound_emails',
+        'migrations',
+    ];
+
+    /**
+     * Ephemeral Laravel framework cache/job/session tables.
+     * Can optionally be selected but excluded from core data exports.
+     */
+    public const SYSTEM_EPHEMERAL_TABLES = [
+        'sessions',
+        'cache',
+        'cache_locks',
+        'jobs',
+        'job_batches',
+        'failed_jobs',
+        'pulse_values',
+        'pulse_entries',
+        'pulse_aggregates',
+    ];
+
+    /**
      * Get summary statistics for the database.
      *
      * @return array<string, mixed>
@@ -22,9 +74,10 @@ class DatabaseExportService
         $driver = DB::connection()->getDriverName();
         $databaseName = config("database.connections.{$connection}.database", '');
 
-        $allTables = $this->getAllTables();
+        $allTables = $this->getAllTables(false);
         $tableStats = [];
         $totalRecords = 0;
+        $coreRecords = 0;
 
         foreach ($allTables as $table) {
             try {
@@ -32,31 +85,41 @@ class DatabaseExportService
             } catch (\Throwable) {
                 $count = 0;
             }
+            $isCore = in_array($table, self::CORE_APP_TABLES, true);
             $tableStats[] = [
                 'name' => $table,
                 'rows' => $count,
+                'is_core' => $isCore,
+                'category' => $isCore ? 'App Data' : 'Cache / Session',
             ];
             $totalRecords += $count;
+            if ($isCore) {
+                $coreRecords += $count;
+            }
         }
 
-        // Calculate database file size if SQLite, or query information_schema if MySQL
+        // Calculate database size strictly for the application's tables
         $sizeBytes = 0;
         if ($driver === 'sqlite') {
             $path = is_file($databaseName) ? $databaseName : database_path('database.sqlite');
             if (File::exists($path)) {
                 $sizeBytes = File::size($path);
             }
-        } elseif ($driver === 'mysql' || $driver === 'mariadb') {
+        } elseif (($driver === 'mysql' || $driver === 'mariadb') && ! empty($allTables)) {
             try {
+                $placeholders = implode(',', array_fill(0, count($allTables), '?'));
+                $bindings = array_merge([$databaseName], $allTables);
                 $result = DB::select(
-                    'SELECT SUM(data_length + index_length) AS size_bytes FROM information_schema.TABLES WHERE table_schema = ?',
-                    [$databaseName]
+                    "SELECT SUM(data_length + index_length) AS size_bytes FROM information_schema.TABLES WHERE table_schema = ? AND table_name IN ({$placeholders})",
+                    $bindings
                 );
                 $sizeBytes = (int) ($result[0]->size_bytes ?? 0);
             } catch (\Throwable) {
                 $sizeBytes = 0;
             }
         }
+
+        $coreTables = $this->getAllTables(true);
 
         return [
             'driver' => $driver,
@@ -65,29 +128,44 @@ class DatabaseExportService
             'size_bytes' => $sizeBytes,
             'size_formatted' => $this->formatBytes($sizeBytes),
             'total_tables' => count($allTables),
+            'core_tables_count' => count($coreTables),
             'total_records' => $totalRecords,
+            'core_records' => $coreRecords,
             'tables' => $tableStats,
         ];
     }
 
     /**
-     * List all table names for the current connection, ignoring internal system tables.
+     * List application-related tables that exist in the database.
+     * Any foreign or unrelated tables in MySQL are automatically excluded.
      *
+     * @param  bool  $coreOnly  If true, returns only core application data tables (excludes cache/sessions/pulse).
      * @return array<string>
      */
-    public function getAllTables(): array
+    public function getAllTables(bool $coreOnly = false): array
     {
-        $tables = Schema::getTableListing();
+        $rawTables = Schema::getTableListing();
+        $existing = [];
 
-        $clean = [];
-        foreach ($tables as $table) {
+        foreach ($rawTables as $table) {
             $name = str_contains($table, '.') ? substr($table, strrpos($table, '.') + 1) : $table;
             if (! str_starts_with($name, 'sqlite_')) {
-                $clean[] = $name;
+                $existing[strtolower($name)] = $name;
             }
         }
 
-        return array_values(array_unique($clean));
+        $allowedList = $coreOnly ? self::CORE_APP_TABLES : array_merge(self::CORE_APP_TABLES, self::SYSTEM_EPHEMERAL_TABLES);
+        $result = [];
+
+        // Return strictly in defined logical order, only including tables present in the DB
+        foreach ($allowedList as $table) {
+            $lower = strtolower($table);
+            if (isset($existing[$lower])) {
+                $result[] = $existing[$lower];
+            }
+        }
+
+        return array_values($result);
     }
 
     /**
@@ -99,11 +177,18 @@ class DatabaseExportService
      */
     public function export(string $format = 'sql', ?array $tables = null, bool $compress = false, bool $saveToBackups = true): array
     {
-        $allTables = $this->getAllTables();
-        $selectedTables = $tables ? array_values(array_intersect($tables, $allTables)) : $allTables;
+        $allowedTables = $this->getAllTables(false);
+        $defaultTables = $this->getAllTables(true); // Default: Core app tables only
+
+        if ($tables !== null && ! empty($tables)) {
+            // Strictly intersect with recognized application tables to discard any foreign tables
+            $selectedTables = array_values(array_intersect($tables, $allowedTables));
+        } else {
+            $selectedTables = $defaultTables;
+        }
 
         if (empty($selectedTables)) {
-            $selectedTables = $allTables;
+            $selectedTables = $defaultTables;
         }
 
         $timestamp = Carbon::now()->format('Y-m-d_His');

@@ -35,8 +35,9 @@ export default function register(Alpine) {
         // Full backup state
         exportingFull: false,
 
-        // Table search in database selector
+        // Table search and category filter in database selector
         tableSearch: '',
+        tableCategoryFilter: 'all', // 'all' | 'app' | 'system'
         backupsSearch: '',
 
         init() {
@@ -49,8 +50,11 @@ export default function register(Alpine) {
                 const { data } = await window.api.get('admin/exports/status');
                 if (data.status) {
                     this.stats = data.data;
-                    if (this.selectAllTables && this.stats.database?.tables) {
-                        this.selectedTables = this.stats.database.tables.map((t) => t.name);
+                    // Default selection: Core Application Tables only (exclude ephemeral cache/sessions/pulse)
+                    if (this.selectedTables.length === 0 && this.stats.database?.tables) {
+                        this.selectedTables = this.stats.database.tables
+                            .filter((t) => t.is_core !== false)
+                            .map((t) => t.name);
                     }
                 }
             } catch (err) {
@@ -61,7 +65,12 @@ export default function register(Alpine) {
         },
 
         get filteredTables() {
-            const list = this.stats.database?.tables || [];
+            let list = this.stats.database?.tables || [];
+            if (this.tableCategoryFilter === 'app') {
+                list = list.filter((t) => t.is_core);
+            } else if (this.tableCategoryFilter === 'system') {
+                list = list.filter((t) => !t.is_core);
+            }
             if (!this.tableSearch.trim()) return list;
             const q = this.tableSearch.toLowerCase();
             return list.filter((t) => t.name.toLowerCase().includes(q));
@@ -72,6 +81,14 @@ export default function register(Alpine) {
             if (!this.backupsSearch.trim()) return list;
             const q = this.backupsSearch.toLowerCase();
             return list.filter((b) => b.filename.toLowerCase().includes(q) || b.type.toLowerCase().includes(q));
+        },
+
+        selectAppTablesOnly() {
+            this.selectedTables = (this.stats.database?.tables || [])
+                .filter((t) => t.is_core !== false)
+                .map((t) => t.name);
+            this.selectAllTables = false;
+            window.toast.success('Selected all core application tables');
         },
 
         toggleAllTables() {
