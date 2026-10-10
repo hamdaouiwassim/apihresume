@@ -221,6 +221,13 @@ Route::middleware(['auth:sanctum', 'verified', 'track.activity', 'admin', 'throt
     Route::get('/ai-usage/summary', [AiUsageController::class, 'summary']);
     Route::get('/ai-usage/user-limits', [AiUsageController::class, 'userLimits']);
     Route::patch('/ai-usage/users/{user}/token-limit', [AiUsageController::class, 'updateUserTokenLimit']);
+
+    // Database and Assets Export & Backups
+    Route::get('/exports/status', [\App\Http\Controllers\Admin\AdminExportController::class, 'status']);
+    Route::post('/exports/database', [\App\Http\Controllers\Admin\AdminExportController::class, 'exportDatabase']);
+    Route::post('/exports/assets', [\App\Http\Controllers\Admin\AdminExportController::class, 'exportAssets']);
+    Route::post('/exports/full', [\App\Http\Controllers\Admin\AdminExportController::class, 'exportFull']);
+    Route::delete('/exports/{filename}', [\App\Http\Controllers\Admin\AdminExportController::class, 'destroy']);
 });
 
 // Recruiter routes removed: the recruiter role is disabled for now (controllers kept in app/Http/Controllers/Recruiter).

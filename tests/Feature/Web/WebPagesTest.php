@@ -214,7 +214,7 @@ class WebPagesTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true, 'email_verified_at' => now()]));
 
-        foreach (['/admin', '/admin/users', '/admin/users/1', '/admin/users/1/cvs', '/admin/cvs', '/admin/cover-letters', '/admin/work-certificates', '/admin/templates', '/admin/cover-letter-templates', '/admin/ai-usage', '/admin/emails', '/admin/blog', '/admin/blog/new', '/admin/fonts', '/admin/reviews', '/admin/profile'] as $path) {
+        foreach (['/admin', '/admin/users', '/admin/users/1', '/admin/users/1/cvs', '/admin/cvs', '/admin/cover-letters', '/admin/work-certificates', '/admin/templates', '/admin/cover-letter-templates', '/admin/ai-usage', '/admin/emails', '/admin/blog', '/admin/blog/new', '/admin/fonts', '/admin/reviews', '/admin/profile', '/admin/exports'] as $path) {
             $this->get($path)->assertOk();
         }
     }

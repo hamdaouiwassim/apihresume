@@ -32,6 +32,7 @@
         ['/admin/blog', 'pen-line', 'Blog posts', 'Create and publish articles', 'default'],
         ['/admin/cover-letters', 'mail', 'Generated cover letters', 'Browse user-generated letters', 'default'],
         ['/admin/work-certificates', 'scroll-text', 'Work certificates', 'Review employment certificates', 'soft'],
+        ['/admin/exports', 'database', 'Database & Assets', 'Export SQL database and storage assets', 'soft'],
     ];
     $variants = [
         'primary' => 'border-purple-200/80 bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-md shadow-purple-200/50 hover:shadow-lg hover:shadow-purple-300/40',

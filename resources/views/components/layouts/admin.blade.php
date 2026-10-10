@@ -15,6 +15,7 @@
         ['path' => 'admin/work-certificates', 'icon' => 'scroll-text', 'label' => 'Work certs'],
         ['path' => 'admin/reviews', 'icon' => 'message-square', 'label' => 'Reviews'],
         ['path' => 'admin/fonts', 'icon' => 'type', 'label' => 'Fonts'],
+        ['path' => 'admin/exports', 'icon' => 'database', 'label' => 'Exports & Backups'],
     ];
     $isActive = fn (string $path) => $path === 'admin' ? request()->is('admin') : request()->is($path, $path.'/*');
 @endphp

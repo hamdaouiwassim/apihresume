@@ -95,6 +95,11 @@ class AdminPageController extends Controller
         return view('pages.admin.profile');
     }
 
+    public function exports(): View
+    {
+        return view('pages.admin.exports');
+    }
+
     private function island(string $island, string $title): View
     {
         return view('pages.island', [

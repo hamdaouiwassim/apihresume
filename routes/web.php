@@ -64,7 +64,6 @@ Route::prefix('fr')->name('fr.')->middleware('page.locale:fr')->group($localized
 Route::get('/blog', [BlogPageController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogPageController::class, 'show'])->name('blog.show');
 
-
 Route::get('/share/{token}', [PublicResumeController::class, 'share'])->name('share.view');
 Route::get('/website/{token}', [PublicResumeController::class, 'website'])->name('website.token');
 Route::get('/u/{slug}', [PublicResumeController::class, 'website'])->name('website.slug');
@@ -140,6 +139,11 @@ Route::middleware(['auth', 'admin', 'track.activity'])->prefix('admin')->name('a
     Route::get('/fonts', [AdminPageController::class, 'fonts'])->name('fonts');
     Route::get('/reviews', [AdminPageController::class, 'reviews'])->name('reviews');
     Route::get('/profile', [AdminPageController::class, 'profile'])->name('profile');
+    Route::get('/exports', [AdminPageController::class, 'exports'])->name('exports');
+    Route::get('/exports/database/download', [\App\Http\Controllers\Admin\AdminExportController::class, 'downloadDatabaseDirect'])->name('exports.database.download');
+    Route::get('/exports/assets/download', [\App\Http\Controllers\Admin\AdminExportController::class, 'downloadAssetsDirect'])->name('exports.assets.download');
+    Route::get('/exports/full/download', [\App\Http\Controllers\Admin\AdminExportController::class, 'downloadFullDirect'])->name('exports.full.download');
+    Route::get('/exports/download/{filename}', [\App\Http\Controllers\Admin\AdminExportController::class, 'download'])->name('exports.download');
 });
 
 /*
