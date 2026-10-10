@@ -64,6 +64,28 @@ class DatabaseExportService
     ];
 
     /**
+     * Get the configured database name from .env / config for this application.
+     */
+    public function getTargetDatabaseName(): string
+    {
+        $connection = config('database.default', 'sqlite');
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver === 'sqlite') {
+            $dbPath = config("database.connections.{$connection}.database", '');
+
+            return basename($dbPath) ?: 'database.sqlite';
+        }
+
+        return (string) (
+            config("database.connections.{$connection}.database")
+            ?: env('DB_DATABASE')
+            ?: DB::connection()->getDatabaseName()
+            ?: 'laravel'
+        );
+    }
+
+    /**
      * Get summary statistics for the database.
      *
      * @return array<string, mixed>
@@ -72,7 +94,7 @@ class DatabaseExportService
     {
         $connection = config('database.default', 'sqlite');
         $driver = DB::connection()->getDriverName();
-        $databaseName = config("database.connections.{$connection}.database", '');
+        $targetDb = $this->getTargetDatabaseName();
 
         $allTables = $this->getAllTables(false);
         $tableStats = [];
@@ -98,17 +120,20 @@ class DatabaseExportService
             }
         }
 
-        // Calculate database size strictly for the application's tables
+        // Calculate database size strictly for the application's tables within targetDb
         $sizeBytes = 0;
         if ($driver === 'sqlite') {
-            $path = is_file($databaseName) ? $databaseName : database_path('database.sqlite');
+            $path = config("database.connections.{$connection}.database", '');
+            if (! is_file($path)) {
+                $path = database_path('database.sqlite');
+            }
             if (File::exists($path)) {
                 $sizeBytes = File::size($path);
             }
         } elseif (($driver === 'mysql' || $driver === 'mariadb') && ! empty($allTables)) {
             try {
                 $placeholders = implode(',', array_fill(0, count($allTables), '?'));
-                $bindings = array_merge([$databaseName], $allTables);
+                $bindings = array_merge([$targetDb], $allTables);
                 $result = DB::select(
                     "SELECT SUM(data_length + index_length) AS size_bytes FROM information_schema.TABLES WHERE table_schema = ? AND table_name IN ({$placeholders})",
                     $bindings
@@ -124,7 +149,7 @@ class DatabaseExportService
         return [
             'driver' => $driver,
             'connection' => $connection,
-            'database_name' => basename($databaseName) ?: 'database',
+            'database_name' => $targetDb,
             'size_bytes' => $sizeBytes,
             'size_formatted' => $this->formatBytes($sizeBytes),
             'total_tables' => count($allTables),
@@ -136,7 +161,7 @@ class DatabaseExportService
     }
 
     /**
-     * List application-related tables that exist in the database.
+     * List application-related tables that exist in the specific target database from .env.
      * Any foreign or unrelated tables in MySQL are automatically excluded.
      *
      * @param  bool  $coreOnly  If true, returns only core application data tables (excludes cache/sessions/pulse).
@@ -144,20 +169,43 @@ class DatabaseExportService
      */
     public function getAllTables(bool $coreOnly = false): array
     {
-        $rawTables = Schema::getTableListing();
+        $connection = config('database.default', 'sqlite');
+        $driver = DB::connection()->getDriverName();
+        $targetDb = $this->getTargetDatabaseName();
         $existing = [];
 
-        foreach ($rawTables as $table) {
-            $name = str_contains($table, '.') ? substr($table, strrpos($table, '.') + 1) : $table;
-            if (! str_starts_with($name, 'sqlite_')) {
-                $existing[strtolower($name)] = $name;
+        if ($driver === 'mysql' || $driver === 'mariadb') {
+            // Strictly query information_schema for tables belonging ONLY to this specific database from .env
+            try {
+                $rows = DB::select(
+                    'SELECT TABLE_NAME AS name FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = "BASE TABLE"',
+                    [$targetDb]
+                );
+                foreach ($rows as $row) {
+                    $name = (string) $row->name;
+                    $existing[strtolower($name)] = $name;
+                }
+            } catch (\Throwable) {
+                $rawTables = Schema::getTableListing();
+                foreach ($rawTables as $table) {
+                    $name = str_contains($table, '.') ? substr($table, strrpos($table, '.') + 1) : $table;
+                    $existing[strtolower($name)] = $name;
+                }
+            }
+        } else {
+            $rawTables = Schema::getTableListing();
+            foreach ($rawTables as $table) {
+                $name = str_contains($table, '.') ? substr($table, strrpos($table, '.') + 1) : $table;
+                if (! str_starts_with($name, 'sqlite_')) {
+                    $existing[strtolower($name)] = $name;
+                }
             }
         }
 
         $allowedList = $coreOnly ? self::CORE_APP_TABLES : array_merge(self::CORE_APP_TABLES, self::SYSTEM_EPHEMERAL_TABLES);
         $result = [];
 
-        // Return strictly in defined logical order, only including tables present in the DB
+        // Return strictly in defined logical order, only including tables belonging to this project in the target DB
         foreach ($allowedList as $table) {
             $lower = strtolower($table);
             if (isset($existing[$lower])) {
@@ -262,11 +310,13 @@ class DatabaseExportService
 
         $driver = DB::connection()->getDriverName();
         $isMysql = in_array($driver, ['mysql', 'mariadb'], true);
+        $targetDb = $this->getTargetDatabaseName();
         $timestamp = Carbon::now()->toIso8601String();
         $appName = config('app.name', 'HResume');
 
         fwrite($handle, "-- ============================================================\n");
         fwrite($handle, "-- {$appName} Database Backup\n");
+        fwrite($handle, "-- Database Name: {$targetDb}\n");
         fwrite($handle, "-- Generated: {$timestamp}\n");
         fwrite($handle, "-- Database Driver: {$driver}\n");
         fwrite($handle, '-- Tables ('.count($tables).'): '.implode(', ', $tables)."\n");
@@ -284,6 +334,9 @@ class DatabaseExportService
             fwrite($handle, "/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n");
             fwrite($handle, "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n");
             fwrite($handle, "/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\n\n");
+            fwrite($handle, "-- Ensure target database exists and is selected\n");
+            fwrite($handle, "CREATE DATABASE IF NOT EXISTS `{$targetDb}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\n");
+            fwrite($handle, "USE `{$targetDb}`;\n\n");
         }
 
         $pdo = DB::connection()->getPdo();
